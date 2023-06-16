@@ -9,7 +9,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useSearchParams } from 'next/navigation';
 
 const fakeData = {
-  restaurantName: 'Test',
+  restaurant_name: 'Test',
   questions: [
     {
       id: 0,
@@ -52,8 +52,7 @@ export default function Questionnaire() {
   const optionsDiv = useRef<HTMLDivElement>(null);
   const currentOption = useRef<HTMLDivElement>(null);
 
-  const { restaurantName, questions } = restaurantData ?? fakeData;
-
+  const { restaurant_name, questions } = restaurantData ?? fakeData;
 
   useEffect(() => {
     setLoading(true);
@@ -105,7 +104,7 @@ export default function Questionnaire() {
 
   return (
     <div className={`${styles.vflex} ${styles.container}`}>
-      <div className={styles.header}><b>Welcome to {restaurantName}!</b></div>
+      <div className={styles.header}><b>Welcome to {restaurant_name}!</b></div>
       <div className={styles.control}>
         <div className={styles.vflex}>
           {questionNumber != 0 && <button
