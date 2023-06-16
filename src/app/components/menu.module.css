@@ -1,0 +1,113 @@
+.container {
+  margin: 0;
+  width: 100%;
+  height: 92vh;
+  padding: 1rem 3rem;
+  position: relative;
+  background-color: #ffe9c4;
+  z-index: 1;
+}
+
+/* Container with vertical item alignment */
+.vflex {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Container with horizonal item alignment */
+.hflex {
+  display: flex;
+  flex-direction: row;
+  /* align-items: center; */
+  justify-content: space-between;
+  width: 90%;
+  height: 10rem;
+}
+
+/* Control panel container */
+.control {
+  display: grid;
+  grid-template-columns: 15% 70% 15%;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 5vh;
+  margin-top: 1vh;
+  margin-bottom: 1vh;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 6vh;
+}
+
+.prompt {
+  font-size: 2.5vh;
+  justify-self: center;
+}
+
+.option {
+  /* Text alignment */ 
+  justify-content: center;
+  align-items: center;
+  display: flex;
+
+  /* On-page boxing */
+  width: 13vw;
+  height: 7.5vh;
+  overflow: hidden;
+
+  /* Styling */
+  font-size: 3vw;
+  border-radius: 2rem;
+  border: none;
+  color: white;
+  text-shadow: 2px 2px 1px black;
+  font-weight: 500;
+  background: linear-gradient(170deg, #e3a63d 25%, #ed7b4a 75%);
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.option:hover {
+  scale: 1.25;
+}
+
+.btn {
+  background-color: burlywood;
+  border-radius: 20%;
+  padding: 0.5rem 1rem;
+  border-style: solid;
+  border-color:black;
+}
+
+/* Control button styling */
+.cbtn {
+  border: solid black;
+  border-width: 0 0.4rem 0.4rem 0;
+  display: inline-block;
+  padding: 0.3rem;
+}
+
+.cbtn:hover {
+  scale: 1.1;
+}
+
+.left {
+  transform: rotate(135deg);
+}
+
+.right {
+  transform: rotate(-45deg);
+}
+
+.mascot {
+  position: absolute;
+  bottom: 0%;
+  height: 60vh;
+  width: auto;
+  /* min-width: 500px; */
+}

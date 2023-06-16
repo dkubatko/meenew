@@ -2,6 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;1,900&display=swap');
+
+
+@font-face {
+  font-family: BagelFatOne;
+  src: url(../assets/fonts/BagelFatOne-Regular.ttf);
+}
+
 :root {
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
@@ -17,11 +25,49 @@
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  background-color: white;
+  color: black;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  max-height: 100%;
+  overflow: hidden;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+.navigation {
+  width: 100%;
+  height: 5vh;
+  background-color: #fdc19f;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 5px 3px 0 rgba(0,0,0,.3);
+  z-index: 2;
+  position: relative;
+}
+
+.footer {
+  width: 100%;
+  height: 3vh;
+  color: white;
+  background-color: #45010a;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 5px 3px 0 rgba(0,0,0,.5);
+}
+
+.logo {
+  text-align: center;
+  vertical-align: center;
+  font-size: 4.5vh;
+  padding-bottom: 0.7vh;
+  font-family: BagelFatOne;
+  -webkit-text-stroke: 2px #fc6a6d;
+	-webkit-text-fill-color: white;
 }
