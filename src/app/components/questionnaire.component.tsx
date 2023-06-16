@@ -57,7 +57,7 @@ export default function Questionnaire() {
 
   useEffect(() => {
     setLoading(true);
-    fetch(`http://127.0.0.1:8000/api/${searchParams.get('id') ?? 'Test'}/stub`)
+    fetch(`/api/${searchParams.get('id') ?? 'Test'}/stub`)
       .then((res) => res.json())
       .then((data) => {
         setRestaurantData(data);
