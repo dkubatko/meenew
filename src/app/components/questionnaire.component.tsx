@@ -159,7 +159,9 @@ export default function Questionnaire() {
           }
         </motion.div>
       }
-      <Image src={meenew} alt='meenew' className={styles.mascot}></Image>
+      <div className={styles.bottom}>
+        <Image src={meenew} alt='meenew' className={styles.mascot}></Image>
+      </div>
     </div>
   )
 }

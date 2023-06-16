@@ -6,6 +6,7 @@
   position: relative;
   background-color: #ffe9c4;
   z-index: 1;
+  overflow: hidden;
 }
 
 /* Container with vertical item alignment */
@@ -104,9 +105,15 @@
   transform: rotate(-45deg);
 }
 
+.bottom {
+  height: 100%;
+  width: 100%;
+}
+
 .mascot {
-  position: absolute;
-  bottom: 1%;
-  height: 50vh;
+  position: relative;
+  bottom: 2%;
+  height: 100%;
   width: auto;
+  margin: auto;
 }
