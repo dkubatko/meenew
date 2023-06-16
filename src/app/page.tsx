@@ -1,7 +1,11 @@
-export default function Test() {
+import Link from 'next/link';
+
+export default function Home() {
   return (
     <div>
-      Hello world.
+      <Link href='/menu/123'>Sample menu!</Link>
+      <br/>
+      <Link href='http://127.0.0.1:8000/api/python'>Try the Python integration!</Link>
     </div>
   );
 }

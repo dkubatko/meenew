@@ -6,7 +6,20 @@ import styles from '@/app/components/menu.module.css';
 import ProgressBar from '@/app/components/progress_bar.component';
 import { AnimatePresence, motion, stagger, animate } from 'framer-motion';
 import { useState, useEffect, useRef } from 'react';
+import { useSearchParams } from 'next/navigation';
 
+const fakeData = {
+  restaurantName: 'Test',
+  questions: [
+    {
+      id: 0,
+      question_text: 'Test question',
+      answer_options: [
+        { id: 1, text: 'test'}
+      ]
+    }
+  ]
+}
 
 const containerVariants = {
   hidden: { scale: 1 },
@@ -27,13 +40,30 @@ const optionVariants = {
   hover: { scale: 1.3 }
 };
 
-export default function Questionnaire({ restaurant_data }: any) {
-  const { restaurant_name, questions } = restaurant_data;
+export default function Questionnaire() {
+  const searchParams = useSearchParams();
+  const [loading, setLoading] = useState(false);
+  const [restaurantData, setRestaurantData] = useState(null);
+
   const [questionNumber, setQuestionNumber] = useState(0);
   const [complete, setComplete] = useState(false);
+
   const recordedAnswers = useRef<(string | null)[]>([]);
   const optionsDiv = useRef<HTMLDivElement>(null);
   const currentOption = useRef<HTMLDivElement>(null);
+
+  const { restaurantName, questions } = restaurantData ?? fakeData;
+
+
+  useEffect(() => {
+    setLoading(true);
+    fetch(`http://127.0.0.1:8000/api/${searchParams.get('id') ?? 'Test'}/stub`)
+      .then((res) => res.json())
+      .then((data) => {
+        setRestaurantData(data);
+        setLoading(false);
+      })
+    }, []);
 
   function handleAnswerClick(option: string) {
     recordedAnswers.current.push(option);
@@ -75,7 +105,7 @@ export default function Questionnaire({ restaurant_data }: any) {
 
   return (
     <div className={`${styles.vflex} ${styles.container}`}>
-      <div className={styles.header}><b>Welcome to {restaurant_name}!</b></div>
+      <div className={styles.header}><b>Welcome to {restaurantName}!</b></div>
       <div className={styles.control}>
         <div className={styles.vflex}>
           {questionNumber != 0 && <button

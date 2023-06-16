@@ -1,4 +1,3 @@
-import { useState, useEffect, useRef } from 'react';
 import Questionnaire from '@/app/components/questionnaire.component';
 
 // TODO:
@@ -11,29 +10,22 @@ import Questionnaire from '@/app/components/questionnaire.component';
 // [X] Make responsive
 // [X] Add FastAPI server + connect
 // [X] Split into client and server components
+// [X] Refactor code into components
+// [X] github
+// [ ] Extract components from questionnaire
+// [ ] Deploy to vercel
+// [ ] Update headers and metadata
+// [ ] Add readme with task tracking
+// [ ] Add JWS tokens (or other encryption) for api
+// [ ] Fix routing
+// [ ] Add QR code
 // [ ] Fix 'not defined' for client-side functions on the server render
 // [ ] Fix image boxing to not cover buttons
-// [ ] github
-// [ ] Deploy to vercel
-// [ ] Refactor code into components
 // [ ] add entry / final conditions
 // [ ] add cat animations
 
-
-async function getData() {
-  const res = await fetch('http://127.0.0.1:8000/api/Spot/stub');
- 
-  if (!res.ok) {
-    throw new Error('Failed to fetch data');
-  }
- 
-  return res.json();
-}
-
 export default async function Main() {
-  const data = await getData();
-
   return (
-    <Questionnaire restaurant_data={data}></Questionnaire>
+    <Questionnaire/>
   );
 }

@@ -18,7 +18,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
       <nav className='navigation'>
-        <Link href='/menu' className='logo'>Meenew</Link>
+        <Link href='/' className='logo'>Meenew</Link>
       </nav>
       {children}
       <nav className='footer'>
