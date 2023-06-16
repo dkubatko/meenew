@@ -106,14 +106,18 @@
 }
 
 .bottom {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   height: 100%;
   width: 100%;
 }
 
 .mascot {
-  position: relative;
-  bottom: 2%;
+  position: absolute;
   height: 100%;
+  max-width: 100%;
   width: auto;
   margin: auto;
 }
