@@ -94,7 +94,7 @@ export default function Questionnaire() {
     // Calculate 1 rem unit.
     let rem = parseFloat(getComputedStyle(document.documentElement).fontSize);
 
-    let maxMargin = (optionsDiv.current?.clientHeight ?? 10 * rem) - 3 * rem;
+    let maxMargin = (optionsDiv.current?.clientHeight ?? 10 * rem) / 2;
     let mid_index = (total - 1) / 2;
     let k = maxMargin / Math.pow(mid_index, 2);
     let offset = k * Math.pow(index - mid_index, 2)

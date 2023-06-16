@@ -12,8 +12,8 @@ import Questionnaire from '@/app/components/questionnaire.component';
 // [X] Split into client and server components
 // [X] Refactor code into components
 // [X] github
+// [X] Deploy to vercel
 // [ ] Extract components from questionnaire
-// [ ] Deploy to vercel
 // [ ] Update headers and metadata
 // [ ] Add readme with task tracking
 // [ ] Add JWS tokens (or other encryption) for api
