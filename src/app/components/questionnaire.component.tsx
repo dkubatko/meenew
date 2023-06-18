@@ -8,6 +8,7 @@ import { AnimatePresence, motion, stagger, animate } from 'framer-motion';
 import { useState, useEffect, useRef } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Options from './options.component';
+import { ThreeDots } from 'react-loader-spinner';
 
 const fakeData = {
   restaurant_name: 'Test',
@@ -40,7 +41,9 @@ export default function Questionnaire() {
       .then((res) => res.json())
       .then((data) => {
         setRestaurantData(data);
-        setLoading(false);
+        setTimeout(() => {
+          setLoading(false);
+        }, 2000);
       })
     }, []);
 
@@ -95,8 +98,19 @@ export default function Questionnaire() {
       <ProgressBar progressPercent={questionNumber / questions.length * 100} />
       {
         complete ? 
-        (<div>Done!</div>) : 
+        (<div>Done!</div>) :
+        (loading ? <ThreeDots 
+          height="10vh"
+          width="200" 
+          radius="7"
+          color="#ff9d1b" 
+          ariaLabel="three-dots-loading"
+          wrapperStyle={{}}
+          wrapperClass=""
+          visible={true}
+           /> : 
         <Options question={questions[questionNumber]} handleAnswerClick={handleAnswerClick}></Options>
+        )
       }
       <div className={styles.bottom}>
         <Image src={meenew} alt='meenew' className={styles.mascot}></Image>
