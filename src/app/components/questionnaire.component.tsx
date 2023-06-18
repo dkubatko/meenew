@@ -7,6 +7,7 @@ import ProgressBar from '@/app/components/progress_bar.component';
 import { AnimatePresence, motion, stagger, animate } from 'framer-motion';
 import { useState, useEffect, useRef } from 'react';
 import { useSearchParams } from 'next/navigation';
+import Options from './options.component';
 
 const fakeData = {
   restaurant_name: 'Test',
@@ -21,25 +22,6 @@ const fakeData = {
   ]
 }
 
-const containerVariants = {
-  hidden: { scale: 1 },
-  show: {
-      scale: 1,
-      transition: {
-          staggerChildren: 0.25,
-      }
-  },
-  hover: { scale: 1 }
-};
-
-const optionVariants = {
-  hidden: { scale: 0 },
-  show: {
-      scale: 1,
-  },
-  hover: { scale: 1.3 }
-};
-
 export default function Questionnaire() {
   const searchParams = useSearchParams();
   const [loading, setLoading] = useState(false);
@@ -49,8 +31,6 @@ export default function Questionnaire() {
   const [complete, setComplete] = useState(false);
 
   const recordedAnswers = useRef<(string | null)[]>([]);
-  const optionsDiv = useRef<HTMLDivElement>(null);
-  const currentOption = useRef<HTMLDivElement>(null);
 
   const { restaurant_name, questions } = restaurantData ?? fakeData;
 
@@ -90,18 +70,6 @@ export default function Questionnaire() {
     setQuestionNumber((questionNumber + 1) % questions.length);
   }
 
-  function circularTranslate(index: number, total: number) {
-    // Calculate 1 rem unit.
-    let rem = parseFloat(getComputedStyle(document.documentElement).fontSize);
-
-    let maxMargin = (optionsDiv.current?.clientHeight ?? 10 * rem) / 2;
-    let mid_index = (total - 1) / 2;
-    let k = maxMargin / Math.pow(mid_index, 2);
-    let offset = k * Math.pow(index - mid_index, 2)
-
-    return offset;
-  }
-
   return (
     <div className={`${styles.vflex} ${styles.container}`}>
       <div className={styles.header}><b>Welcome to {restaurant_name}!</b></div>
@@ -128,36 +96,7 @@ export default function Questionnaire() {
       {
         complete ? 
         (<div>Done!</div>) : 
-        <motion.div 
-          className={styles.hflex} 
-          ref={optionsDiv}
-          initial="hidden"
-          animate="show"
-          variants={containerVariants}
-          key={questions[questionNumber].id}
-        >
-          {
-            questions[questionNumber].answer_options.map(
-              (option: any, index: number) => (
-                <motion.div
-                  variants={optionVariants}
-                  whileTap={{ scale: 0.97 }}
-                  className={styles.option}
-                  ref={currentOption}
-                  style={
-                    {
-                      marginTop: `${circularTranslate(index, questions[questionNumber].answer_options.length)}px`
-                    }
-                  }
-                  onClick={e => handleAnswerClick(option)}
-                  key={option.id}>
-                  {option.text}
-                  <div className='tail'></div>
-                </motion.div>
-              )
-            )
-          }
-        </motion.div>
+        <Options question={questions[questionNumber]} handleAnswerClick={handleAnswerClick}></Options>
       }
       <div className={styles.bottom}>
         <Image src={meenew} alt='meenew' className={styles.mascot}></Image>
