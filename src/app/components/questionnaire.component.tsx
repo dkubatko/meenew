@@ -4,6 +4,7 @@ import Image from 'next/image';
 import meenew from '@/assets/character/meenew.png';
 import styles from '@/app/components/questionnaire.module.css';
 import ProgressBar from '@/app/components/progress_bar.component';
+import Results from '@/app/components/results.component';
 import { AnimatePresence, motion, stagger, animate } from 'framer-motion';
 import { useState, useEffect, useRef } from 'react';
 import { useSearchParams } from 'next/navigation';
@@ -98,7 +99,7 @@ export default function Questionnaire() {
       <ProgressBar progressPercent={questionNumber / questions.length * 100} />
       {
         complete ? 
-        (<div>Done!</div>) :
+        <Results /> :
         (loading ? <ThreeDots 
           height="10vh"
           width="200" 
