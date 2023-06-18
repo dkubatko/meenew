@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import styles from '@/app/components/menu.module.css';
+import styles from '@/app/components/options.module.css';
 import { useRef } from 'react';
 
 const containerVariants = {
@@ -60,10 +60,9 @@ export default function Options({ question, handleAnswerClick} : { question: any
                       marginTop: `${circularTranslate(index, question.answer_options.length)}px`
                     }
                   }
-                  onClick={e => handleAnswerClick(option)}
+                  onClick={_ => handleAnswerClick(option)}
                   key={option.id}>
                   {option.text}
-                  <div className='tail'></div>
                 </motion.div>
               )
             )

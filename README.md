@@ -19,7 +19,6 @@ Python FastAPI server is served on [http://localhost:8000](http://localhost:3000
 # Current task list
 ## In progress
 - [ ] Add results page
-- [ ] Split CSS into modules
 - [ ] Fix CSS for mobile
 - [ ] Adjust circularTranslate to be vh-based
 - [ ] Fix image boxing to not cover buttons
@@ -30,6 +29,7 @@ Python FastAPI server is served on [http://localhost:8000](http://localhost:3000
 - [ ] Fix 'not defined' for client-side functions on the server render
 - [ ] Add cat animations
 ## Complete
+- [X] Split CSS into modules
 - [X] Add loading spinners
 - [X] Extract components from questionnaire
 - [X] Add readme with task tracking

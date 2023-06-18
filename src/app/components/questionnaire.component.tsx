@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import meenew from '@/assets/character/meenew.png';
-import styles from '@/app/components/menu.module.css';
+import styles from '@/app/components/questionnaire.module.css';
 import ProgressBar from '@/app/components/progress_bar.component';
 import { AnimatePresence, motion, stagger, animate } from 'framer-motion';
 import { useState, useEffect, useRef } from 'react';

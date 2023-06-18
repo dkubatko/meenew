@@ -16,16 +16,6 @@
   align-items: center;
 }
 
-/* Container with horizonal item alignment */
-.hflex {
-  display: flex;
-  flex-direction: row;
-  /* align-items: center; */
-  justify-content: space-between;
-  width: 90%;
-  height: 10vh;
-}
-
 /* Control panel container */
 .control {
   display: grid;
@@ -48,33 +38,6 @@
 .prompt {
   font-size: 2.5vw;
   justify-self: center;
-}
-
-.option {
-  /* Text alignment */ 
-  justify-content: center;
-  align-items: center;
-  display: flex;
-
-  /* On-page boxing */
-  width: 13vw;
-  height: 7.5vh;
-  overflow: hidden;
-
-  /* Styling */
-  font-size: 3vw;
-  border-radius: 2rem;
-  border: none;
-  color: white;
-  text-shadow: 2px 2px 1px black;
-  font-weight: 500;
-  background: linear-gradient(170deg, #e3a63d 25%, #ed7b4a 75%);
-  cursor: pointer;
-  transition: 0.3s;
-}
-
-.option:hover {
-  scale: 1.25;
 }
 
 .btn {
