@@ -18,18 +18,20 @@ Python FastAPI server is served on [http://localhost:8000](http://localhost:3000
 
 # Current task list
 ## In progress
-- [ ] Add readme with task tracking
 - [ ] Add loading spinners
 - [ ] Add results page
+- [ ] Fix CSS for mobile
+- [ ] Adjust circularTranslate to be vh-based
 - [ ] Fix image boxing to not cover buttons
 - [ ] Design application flow
-- [ ] Extract components from questionnaire
 - [ ] Update headers and metadata
 - [ ] Add JWS tokens (or other encryption) for api
 - [ ] Add QR code
 - [ ] Fix 'not defined' for client-side functions on the server render
-- [ ] add cat animations
+- [ ] Add cat animations
 ## Complete
+- [X] Extract components from questionnaire
+- [X] Add readme with task tracking
 - [x] fix side buttons
 - [x] fix circular translate
 - [X] Update circular translate to use parabolic func
