@@ -1,11 +1,13 @@
 /* Container with horizonal item alignment */
 .hflex {
+  position: relative;
   display: flex;
   flex-direction: row;
   /* align-items: center; */
   justify-content: space-between;
   width: 90%;
-  height: 10vh;
+  height: 15vh;
+  z-index: 0;
 }
 
 .option {
@@ -15,13 +17,15 @@
   display: flex;
 
   /* On-page boxing */
-  width: 13vw;
-  height: 7.5vh;
+  width: 100%;
+  margin: 3vw;
+  margin-bottom: 0;
+  height: 50%;
   overflow: hidden;
 
   /* Styling */
-  font-size: 3vw;
-  border-radius: 2rem;
+  font-size: 3.5vw;
+  border-radius: 30%;
   border: none;
   color: white;
   text-shadow: 2px 2px 1px black;

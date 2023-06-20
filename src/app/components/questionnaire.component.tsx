@@ -46,7 +46,7 @@ export default function Questionnaire() {
           setLoading(false);
         }, 2000);
       })
-    }, []);
+    }, [searchParams]);
 
   function handleAnswerClick(option: string) {
     recordedAnswers.current.push(option);

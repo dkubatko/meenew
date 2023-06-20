@@ -1,19 +1,28 @@
+/* Container with vertical item alignment */
+.vflex {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: realtive;
+}
+
 .container {
   margin: 0;
   width: 100%;
   height: 92vh;
-  padding: 1rem 3rem;
+  padding: 1vh 3vw;
   position: relative;
   background-color: #ffe9c4;
   z-index: 1;
   overflow: hidden;
 }
 
-/* Container with vertical item alignment */
-.vflex {
+.header {
   display: flex;
-  flex-direction: column;
   align-items: center;
+  justify-content: center;
+  font-size: 6vw;
+  height: 6vh;
 }
 
 /* Control panel container */
@@ -28,15 +37,8 @@
   margin-bottom: 1vh;
 }
 
-.header {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 6vw;
-}
-
 .prompt {
-  font-size: 2.5vw;
+  font-size: 3vw;
   justify-self: center;
 }
 
@@ -69,12 +71,16 @@
 }
 
 .bottom {
-  position: relative;
+  position: absolute;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100%;
+  bottom: 0;
+  height: 60vh;
   width: 100%;
+  z-index: 1;
+  /* Make mascot unclickable */
+  pointer-events: none;
 }
 
 .mascot {
