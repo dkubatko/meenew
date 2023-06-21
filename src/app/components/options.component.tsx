@@ -28,7 +28,7 @@ export default function Options({ question, handleAnswerClick} : { question: any
   const optionsDiv = useRef<HTMLDivElement>(null);
 
   function circularTranslate(index: number, total: number) {
-    let maxMargin = (optionsDiv.current?.clientHeight || 300) / 2;
+    let maxMargin = (optionsDiv.current?.clientHeight || 150) / 2;
     let mid_index = (total - 1) / 2;
     let k = maxMargin / Math.pow(mid_index, 2);
     let offset = k * Math.pow(index - mid_index, 2)

@@ -9,8 +9,8 @@
 .container {
   margin: 0;
   width: 100%;
-  height: 92vh;
-  padding: 1vh 3vw;
+  height: 100%;
+  padding: 1% 3%;
   position: relative;
   background-color: #ffe9c4;
   z-index: 1;
@@ -22,7 +22,7 @@
   align-items: center;
   justify-content: center;
   font-size: 6vw;
-  height: 6vh;
+  height: 6%;
 }
 
 /* Control panel container */
@@ -32,9 +32,9 @@
   align-items: center;
   justify-content: center;
   width: 100%;
-  height: 5vh;
-  margin-top: 1vh;
-  margin-bottom: 1vh;
+  height: 5%;
+  margin-top: 1%;
+  margin-bottom: 1%;
 }
 
 .prompt {
@@ -76,7 +76,7 @@
   justify-content: center;
   align-items: center;
   bottom: 0;
-  height: 60vh;
+  height: 65%;
   width: 100%;
   z-index: 1;
   /* Make mascot unclickable */
