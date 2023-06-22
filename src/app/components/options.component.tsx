@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import styles from '@/app/components/options.module.css';
+import { ThreeDots } from "react-loader-spinner";
 import { useRef } from 'react';
 
 const containerVariants = {
@@ -28,7 +29,7 @@ export default function Options({ question, handleAnswerClick} : { question: any
   const optionsDiv = useRef<HTMLDivElement>(null);
 
   function circularTranslate(index: number, total: number) {
-    let maxMargin = (optionsDiv.current?.clientHeight || 150) / 2;
+    let maxMargin = (optionsDiv.current?.clientHeight || 300) / 2;
     let mid_index = (total - 1) / 2;
     let k = maxMargin / Math.pow(mid_index, 2);
     let offset = k * Math.pow(index - mid_index, 2)
@@ -43,10 +44,21 @@ export default function Options({ question, handleAnswerClick} : { question: any
           initial="hidden"
           animate="show"
           variants={containerVariants}
-          key={question.id}
+          key={question?.id ?? 0}
         >
           {
-            question.answer_options.map(
+            !question ?
+            <ThreeDots 
+              height="10vh"
+              width="200" 
+              radius="7"
+              color="#ff9d1b" 
+              ariaLabel="three-dots-loading"
+              wrapperStyle={{}}
+              wrapperClass=""
+              visible={true}
+            /> :
+            (question.answer_options.map(
               (option: any, index: number) => (
                 <motion.div
                   variants={optionVariants}
@@ -62,7 +74,7 @@ export default function Options({ question, handleAnswerClick} : { question: any
                   {option.text}
                 </motion.div>
               )
-            )
+            ))
           }
         </motion.div>
   )

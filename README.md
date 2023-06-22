@@ -19,7 +19,8 @@ Python FastAPI server is served on [http://localhost:8000](http://localhost:3000
 # Current task list
 ## In progress
 - [ ] Add appropriate headers
-- [ ] Fix circular translate initial div height reading on mobile
+- [ ] Add props typing
+- [ ] Set 0 margin for middle items in circularOffset
 - [ ] Extract mascot into a component and adjust its styling
 - [ ] Add results page
 - [ ] Design application flow
@@ -31,6 +32,8 @@ Python FastAPI server is served on [http://localhost:8000](http://localhost:3000
 - [ ] Add Toast API integration
 - [ ] Add Square API integration
 ## Complete
+- [X] Fix circular translate initial div height reading on mobile
+- [X] Refactor loading flow
 - [X] Fix CSS for mobile
 - [X] Fix image boxing to not cover buttons
 - [X] Adjust circularTranslate to be vh-based

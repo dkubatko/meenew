@@ -11,39 +11,28 @@ import { useSearchParams } from 'next/navigation';
 import Options from './options.component';
 import { ThreeDots } from 'react-loader-spinner';
 
-const fakeData = {
-  restaurant_name: 'Test',
-  questions: [
-    {
-      id: 0,
-      question_text: 'Test question',
-      answer_options: [
-        { id: 1, text: 'test'}
-      ]
-    }
-  ]
+type RestaurantData = {
+  restaurant_name: string,
+  questions: any[],
 }
 
 export default function Questionnaire() {
   const searchParams = useSearchParams();
-  const [loading, setLoading] = useState(false);
-  const [restaurantData, setRestaurantData] = useState(null);
+  const [restaurantData, setRestaurantData] = useState<RestaurantData>();
 
   const [questionNumber, setQuestionNumber] = useState(0);
   const [complete, setComplete] = useState(false);
 
   const recordedAnswers = useRef<(string | null)[]>([]);
 
-  const { restaurant_name, questions } = restaurantData ?? fakeData;
+  const { restaurant_name = "", questions = [] } = restaurantData || {};
 
   useEffect(() => {
-    setLoading(true);
     fetch(`/api/${searchParams.get('id') ?? 'Test'}/stub`)
       .then((res) => res.json())
       .then((data) => {
-        setRestaurantData(data);
         setTimeout(() => {
-          setLoading(false);
+          setRestaurantData(data);
         }, 2000);
       })
     }, [searchParams]);
@@ -76,8 +65,8 @@ export default function Questionnaire() {
 
   return (
     <div className={`${styles.vflex} ${styles.container}`}>
-      <div className={styles.header}><b>Welcome to {restaurant_name}!</b></div>
-      <div className={styles.control}>
+      <div className={styles.header}><b>{restaurant_name ? `Welcome to ${restaurant_name}!` : "Loading..."}</b></div>
+      { (questions.length > 0 && !complete) && (<div className={styles.control}>
         <div className={styles.vflex}>
           {questionNumber != 0 && <button
             className={`${styles.cbtn} ${styles.left}`}
@@ -86,7 +75,7 @@ export default function Questionnaire() {
           </button>}
         </div>
         <div className={styles.prompt}>
-          {!complete && questions[questionNumber].question_text}
+          {!complete && questions[questionNumber]?.question_text}
         </div>
         <div className={styles.vflex}>
           <button
@@ -95,23 +84,12 @@ export default function Questionnaire() {
           >
           </button>
         </div>
-      </div>
-      <ProgressBar progressPercent={questionNumber / questions.length * 100} />
+      </div>) }
+      { (questions.length > 0 && !complete) && <ProgressBar progressPercent={questionNumber / questions.length * 100} /> }
       {
         complete ? 
         <Results /> :
-        (loading ? <ThreeDots 
-          height="10vh"
-          width="200" 
-          radius="7"
-          color="#ff9d1b" 
-          ariaLabel="three-dots-loading"
-          wrapperStyle={{}}
-          wrapperClass=""
-          visible={true}
-           /> : 
-        <Options question={questions[questionNumber]} handleAnswerClick={handleAnswerClick}></Options>
-        )
+        <Options question={questions[questionNumber] ?? null} handleAnswerClick={handleAnswerClick}></Options>
       }
       <div className={styles.bottom}>
         <Image src={meenew} alt='meenew' className={styles.mascot}></Image>
