@@ -18,7 +18,6 @@ Python FastAPI server is served on [http://localhost:8000](http://localhost:3000
 
 # Current task list
 ## In progress
-- [ ] Add SQLite integration
 - [ ] Add appropriate headers
 - [ ] Add props typing
 - [ ] Set 0 margin for middle items in circularOffset
@@ -33,6 +32,8 @@ Python FastAPI server is served on [http://localhost:8000](http://localhost:3000
 - [ ] Add Toast API integration
 - [ ] Add Square API integration
 ## Complete
+- [X] Create db schema
+- [X] Add SQLite integration
 - [X] Fix circular translate initial div height reading on mobile
 - [X] Refactor loading flow
 - [X] Fix CSS for mobile
