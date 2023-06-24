@@ -18,6 +18,7 @@ Python FastAPI server is served on [http://localhost:8000](http://localhost:3000
 
 # Current task list
 ## In progress
+- [ ] Add restaurant management page
 - [ ] Add appropriate headers
 - [ ] Add props typing
 - [ ] Set 0 margin for middle items in circularOffset
