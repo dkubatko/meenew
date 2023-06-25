@@ -48,6 +48,12 @@ class MenuItem(MenuItemBase):
     class Config:
         orm_mode = True
 
+class MenuItemRead(MenuItemBase):
+    results: list[tuple[MenuItemBase, TagBase]]
+
+    class Config:
+        orm_mode = True
+
 class Restaurant(RestaurantBase):
     id: int
     menu_items: list[MenuItem] = []

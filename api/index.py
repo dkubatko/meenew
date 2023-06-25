@@ -1,13 +1,11 @@
 from fastapi import FastAPI, Depends, HTTPException
-from sqlalchemy.orm import Session
 import json
 from os.path import join
+from typing import List, Optional
 from fastapi.middleware.cors import CORSMiddleware
-from .database.models import models, schemas
-from .database.database import SessionLocal, engine
-from .database import crud
-
-models.Base.metadata.create_all(bind=engine)
+from .database import models, crud
+from .database.database import create_db_and_tables, engine
+from sqlmodel import Session, SQLModel
 
 app = FastAPI()
 
@@ -23,42 +21,37 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Dependency
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+@app.on_event("startup")
+def on_startup():
+    create_db_and_tables()
+
+def get_session():
+    with Session(engine) as session:
+        yield session
 
 @app.get("/api/python")
 def hello_world():
     return {"message": "Hello World"}
 
-@app.post("/restaurant/", response_model=schemas.Restaurant)
-def create_restaurant(restaurant: schemas.Restaurant, db: Session = Depends(get_db)):
-    return crud.create_restaurant(db=db, restaurant=restaurant)
-
-@app.post("/tag/", response_model=schemas.Tag)
-def create_tag(tag: schemas.Tag, db: Session = Depends(get_db)):
-    return crud.create_tag(db = db, tag = tag)
-
-@app.post("/menu_item/", response_model=schemas.MenuItem)
-def create_menu_item(menu_item: schemas.MenuItem, db: Session = Depends(get_db)):
-    return crud.create_menu_item(db = db, item=menu_item)
-
-@app.post("/item_tag/", response_model=schemas.ItemTag)
-def create_item_tag(item_tag: schemas.ItemTag, db: Session = Depends(get_db)):
-    return crud.create_item_tag(db = db, item_tag=item_tag)
-
-
-@app.get("/restaurants/", response_model=list[schemas.Restaurant])
-def get_all_restaurants(db: Session = Depends(get_db)):
+@app.get("/restaurants/", response_model = List[models.RestaurantRead])
+def get_all_restaurants(db: Session = Depends(get_session)):
     return crud.get_all_restaurants(db = db)
 
-@app.get("/tags/", response_model=list[schemas.Tag])
-def get_all_tags(db: Session = Depends(get_db)):
-    return crud.get_all_tags(db = db)
+@app.post("/restaurant/", response_model = models.RestaurantRead)
+def create_restaurant(restaurant: models.RestaurantCreate, db: Session = Depends(get_session)):
+    return crud.create_restaurant(db=db, restaurant = restaurant)
+
+@app.get("/restaurant/{restaurant_id}", response_model = models.RestaurantRead)
+def get_restaurant(restaurant_id: int, db: Session = Depends(get_session)):
+    return crud.get_restaurant(db = db, restaurant_id = restaurant_id)
+
+@app.post("/tag/", response_model=models.TagRead)
+def create_tag(tag: models.TagCreate, db: Session = Depends(get_session)):
+    return crud.create_tag(db = db, tag = tag)
+
+@app.post("/menu_item/", response_model=models.MenuItemRead)
+def create_menu_item(menu_item: models.MenuItemCreate, db: Session = Depends(get_session)):
+    return crud.create_menu_item(db = db, menu_item = menu_item)
 
 @app.get("/api/{restaurant}/stub")
 def stub_data(restaurant: str):

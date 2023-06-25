@@ -1,43 +1,32 @@
-from sqlalchemy.orm import Session
-
-from .models import models, schemas
+from . import models
+from sqlmodel import Session, select
 
 def get_all_restaurants(db: Session):
-    return db.query(models.Restaurant).all()
+    return db.exec(select(models.Restaurant)).all()
 
 def get_restaurant(db: Session, restaurant_id: int):
-    return db.query(models.Restaurant).filter(models.Restaurant.id == restaurant_id).first()
+    return db.get(models.Restaurant, restaurant_id)
 
-def get_restaurant_by_name(db: Session, restaurant_name: str):
-    return db.query(models.Restaurant).filter(models.Restaurant.restaurant_name == restaurant_name).first()
-
-def create_restaurant(db: Session, restaurant: schemas.Restaurant):
-    db_rest = models.Restaurant(**restaurant.dict())
-    db.add(db_rest)
+def create_restaurant(db: Session, restaurant: models.RestaurantCreate):
+    db_restaurant = models.Restaurant.from_orm(restaurant)
+    db.add(db_restaurant)
     db.commit()
-    db.refresh(db_rest)
-    return db_rest
+    db.refresh(db_restaurant)
+    return db_restaurant
 
-def create_menu_item(db: Session, item: schemas.MenuItem):
-    db_item = models.MenuItem(**item.dict())
-    db.add(db_item)
+def create_menu_item(db: Session, menu_item: models.MenuItemCreate):
+    db_menu_item = models.MenuItem.from_orm(menu_item)
+    db.add(db_menu_item)
     db.commit()
-    db.refresh(db_item)
-    return db_item
+    db.refresh(db_menu_item)
+    return db_menu_item
 
-def create_item_tag(db: Session, item_tag: schemas.ItemTag):
-    db_item_tag = models.ItemTag(**item_tag.dict())
-    db.add(db_item_tag)
-    db.commit()
-    db.refresh(db_item_tag)
-    return db_item_tag
-
-def create_tag(db: Session, tag: schemas.Tag):
-    db_tag = models.Tag(**tag.dict())
+def create_tag(db: Session, tag: models.TagCreate):
+    db_tag = models.Tag.from_orm(tag)
     db.add(db_tag)
     db.commit()
     db.refresh(db_tag)
     return db_tag
 
 def get_all_tags(db: Session):
-  return db.query(models.Tag).all()
+  return db.exec(select(models.Tag)).all()
