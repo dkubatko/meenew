@@ -10,6 +10,8 @@ def get_restaurant(db: Session, restaurant_id: int):
 
     if not restaurant:
         raise HTTPException(status_code=404, detail=f"Restaurant w/ id = {restaurant_id} not found.")
+    
+    return restaurant
 
 def create_restaurant(db: Session, restaurant: models.RestaurantCreate):
     db_restaurant = models.Restaurant.from_orm(restaurant)
@@ -20,8 +22,10 @@ def create_restaurant(db: Session, restaurant: models.RestaurantCreate):
 
 def get_tag(db: Session, tag_id: int):
     tag = db.get(models.Tag, tag_id)
+
     if not tag:
         raise HTTPException(status_code=404, detail=f"Tag w/ id = {tag_id} not found.")
+    
     return tag
 
 def create_menu_item(db: Session, menu_item: models.MenuItemCreate):
