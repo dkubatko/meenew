@@ -18,7 +18,6 @@ Python FastAPI server is served on [http://localhost:8000](http://localhost:3000
 
 # Current task list
 ## In progress
-- [ ] Fix Create with Relation in API
 - [ ] Add restaurant management page
 - [ ] Add appropriate headers
 - [ ] Add client generator
@@ -35,6 +34,7 @@ Python FastAPI server is served on [http://localhost:8000](http://localhost:3000
 - [ ] Add Toast API integration
 - [ ] Add Square API integration
 ## Complete
+- [X] Fix Create with Relation in API
 - [X] Migrate to SQLModel
 - [X] Create db schema
 - [X] Add SQLite integration

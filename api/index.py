@@ -49,6 +49,10 @@ def get_restaurant(restaurant_id: int, db: Session = Depends(get_session)):
 def create_tag(tag: models.TagCreate, db: Session = Depends(get_session)):
     return crud.create_tag(db = db, tag = tag)
 
+@app.get("/tags/", response_model=List[models.TagRead])
+def get_all_tags(db: Session = Depends(get_session)):
+    return crud.get_all_tags(db = db)
+
 @app.post("/menu_item/", response_model=models.MenuItemRead)
 def create_menu_item(menu_item: models.MenuItemCreate, db: Session = Depends(get_session)):
     return crud.create_menu_item(db = db, menu_item = menu_item)
