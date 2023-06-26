@@ -1,0 +1,72 @@
+{
+  "restaurant_name": "Spot",
+  "id": 123,
+  "questions": [
+    {
+      "id": 1,
+      "question_text": "What protein would you prefer?",
+      "answer_options": [
+        {
+          "id": 1,
+          "text": "chicken"
+        },
+        {
+          "id": 2,
+          "text": "meat"
+        },
+        {
+          "id": 3,
+          "text": "veggie"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "question_text": "Sweet or salty?",
+      "answer_options": [
+        {
+          "id": 5,
+          "text": "sweet!"
+        }, 
+        {
+          "id": 6,
+          "text": "salty"
+        },
+        {
+          "id": 7,
+          "text": "plain"
+        },
+        {
+          "id": 8,
+          "text": "idk!"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "question_text": "How pricey?",
+      "answer_options": [
+        {
+          "id": 9,
+          "text": "$"
+        }, 
+        {
+          "id": 10,
+          "text": "$$"
+        },
+        {
+          "id": 11,
+          "text": "$$$"
+        },
+        {
+          "id": 12,
+          "text": "$$$$"
+        },
+        {
+          "id": 13,
+          "text": "$$$$$"
+        }
+      ]
+    }
+  ]
+}

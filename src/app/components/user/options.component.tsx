@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import styles from '@/app/components/options.module.css';
+import styles from '@/app/components/user/options.module.css';
 import { ThreeDots } from "react-loader-spinner";
 import { useRef } from 'react';
 
