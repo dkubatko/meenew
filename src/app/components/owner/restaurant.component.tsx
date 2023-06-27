@@ -6,7 +6,11 @@ import { Tag as TagType, Restaurant as RestaurantType, MenuItem as MenuItemType 
 import styles from "@/app/components/owner/restaurant.module.css";
 import MenuItem from "@/app/components/shared/menu_item.component";
 
-export default function Restaurant() {
+interface RestaurantProps {
+  tags: TagType[]
+}
+
+export default function Restaurant({ tags }: RestaurantProps) {
   const [restaurantData, setRestaurantData] = useState<RestaurantType>();
   const searchParams = useSearchParams();
   const { restaurant_name = "", menu_items = [] } = restaurantData || {};
@@ -19,19 +23,23 @@ export default function Restaurant() {
           setRestaurantData(data);
         }, 2000);
       });
-    }, [searchParams]);
+  }, [searchParams]);
 
   return (
     <div className={styles.container}>
-      <div>
+      <div className={styles.itemlist}>
         {
           menu_items.map((menu_item: MenuItemType) => (
             <MenuItem key={menu_item.id} {...menu_item} />
           ))
         }
       </div>
-      <div>
-        Tags
+      <div className={styles.taglist}>
+        {
+          tags.map((tag: TagType) => (
+            <h1 key={tag.id}>{tag.name}</h1>
+          ))
+        }
       </div>
     </div>
   )

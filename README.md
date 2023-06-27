@@ -18,6 +18,8 @@ Python FastAPI server is served on [http://localhost:8000](http://localhost:3000
 
 # Current task list
 ## In progress
+- [ ] Add images to menu items
+- [ ] Create new tags and menu items from client
 - [ ] Add restaurant management page
 - [ ] Add appropriate headers
 - [ ] Add client generator
