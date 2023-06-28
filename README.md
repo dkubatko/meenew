@@ -18,6 +18,7 @@ Python FastAPI server is served on [http://localhost:8000](http://localhost:3000
 
 # Current task list
 ## In progress
+- [ ] Make Tags color coded based on category
 - [ ] Add images to menu items
 - [ ] Create new tags and menu items from client
 - [ ] Add restaurant management page
@@ -36,6 +37,7 @@ Python FastAPI server is served on [http://localhost:8000](http://localhost:3000
 - [ ] Add Toast API integration
 - [ ] Add Square API integration
 ## Complete
+- [X] Add Tag component
 - [X] Fix Create with Relation in API
 - [X] Migrate to SQLModel
 - [X] Create db schema

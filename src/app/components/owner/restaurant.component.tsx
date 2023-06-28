@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useSearchParams } from 'next/navigation';
 import { Tag as TagType, Restaurant as RestaurantType, MenuItem as MenuItemType } from "@/app/types/menu";
+import TagComponent from "@/app/components/shared/tag.component"
 import styles from "@/app/components/owner/restaurant.module.css";
 import MenuItem from "@/app/components/shared/menu_item.component";
 
@@ -37,7 +38,7 @@ export default function Restaurant({ tags }: RestaurantProps) {
       <div className={styles.taglist}>
         {
           tags.map((tag: TagType) => (
-            <h1 key={tag.id}>{tag.name}</h1>
+            <TagComponent key={tag.id} {...tag} />
           ))
         }
       </div>
