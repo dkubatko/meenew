@@ -3,6 +3,49 @@
   flex-direction: row;
   height: 100%;
   width: 100%;
-  justify-content: stretch;
+  justify-content: space-around;
 }
 
+.title {
+  font-weight: bold;
+  align-self: center;
+  font-size: 2vh;
+}
+
+.menu {
+ flex: 3;
+ display: flex;
+ flex-direction: column;
+ align-items: stretch;
+ justify-content: flex-start;
+ height: 100%;
+}
+
+.tags {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  height: 100%;
+}
+
+.add {
+  width: 80%;
+  margin: auto;
+  background-color: lavender; 
+  border-radius: 25%;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 10%;
+  cursor: pointer;
+  transition: 0.3s;
+  font-weight: bold;
+}
+
+.add:hover {
+  background-color: antiquewhite;
+  scale: 1.1;
+}

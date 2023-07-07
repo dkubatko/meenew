@@ -1,4 +1,7 @@
 .tag {
+  width: 80%;
+  margin: auto;
+  
   background-color: violet;
   border-radius: 25%;
   padding: 8px;

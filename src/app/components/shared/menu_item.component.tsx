@@ -4,7 +4,6 @@ import { Tag, MenuItem as MenuItemType } from "@/app/types/menu";
 export default function MenuItem({ item_name, tags }: MenuItemType) {
   return (
     <div className={styles.container}>
-      <div className={styles.title}>Your best match:</div>
       <div className={styles.item}>
         <div className={styles.image}>
           Image

@@ -20,27 +20,41 @@ export default function Restaurant({ tags }: RestaurantProps) {
     fetch(`/api/restaurant/${searchParams.get('id') ?? '0'}`)
       .then((res) => res.json())
       .then((data: RestaurantType) => {
-        setTimeout(() => {
-          setRestaurantData(data);
-        }, 2000);
+        setRestaurantData(data);
       });
   }, [searchParams]);
 
+  function handleAddTag() {
+    // TODO: Add popup form/modal.
+  }
+
   return (
     <div className={styles.container}>
-      <div className={styles.itemlist}>
-        {
-          menu_items.map((menu_item: MenuItemType) => (
-            <MenuItem key={menu_item.id} {...menu_item} />
-          ))
-        }
+      <div className={styles.menu}>
+        <div className={styles.title}>Menu</div>
+        <div className={styles.itemlist}>
+          {
+            menu_items.map((menu_item: MenuItemType) => (
+              <MenuItem key={menu_item.id} {...menu_item} />
+            ))
+          }
+        </div>
       </div>
-      <div className={styles.taglist}>
-        {
-          tags.map((tag: TagType) => (
-            <TagComponent key={tag.id} {...tag} />
-          ))
-        }
+      <div className={styles.tags}>
+        <div className={styles.title}>Tags</div>
+        <div className={styles.taglist}>
+          {
+            tags.map((tag: TagType) => (
+              <TagComponent key={tag.id} {...tag} />
+            ))
+          }
+        </div>
+        <button 
+            className={styles.add}
+            onClick={() => handleAddTag}
+          >
+            +
+          </button>
       </div>
     </div>
   )
