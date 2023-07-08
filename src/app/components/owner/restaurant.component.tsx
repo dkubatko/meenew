@@ -6,6 +6,7 @@ import { Tag as TagType, Restaurant as RestaurantType, MenuItem as MenuItemType 
 import TagComponent from "@/app/components/shared/tag.component"
 import styles from "@/app/components/owner/restaurant.module.css";
 import MenuItem from "@/app/components/shared/menu_item.component";
+import Modal from 'react-overlays/Modal';
 
 interface RestaurantProps {
   tags: TagType[]
@@ -15,6 +16,7 @@ export default function Restaurant({ tags }: RestaurantProps) {
   const [restaurantData, setRestaurantData] = useState<RestaurantType>();
   const searchParams = useSearchParams();
   const { restaurant_name = "", menu_items = [] } = restaurantData || {};
+  const [showTagModal, setShowTagModal] = useState<boolean>(false);
   
   useEffect(() => {
     fetch(`/api/restaurant/${searchParams.get('id') ?? '0'}`)
@@ -24,8 +26,17 @@ export default function Restaurant({ tags }: RestaurantProps) {
       });
   }, [searchParams]);
 
+  function Backdrop() {
+    return (
+      <div 
+        className={styles.backdrop} 
+        onClick={() => setShowTagModal(false)}
+      />
+    )
+  }
+
   function handleAddTag() {
-    // TODO: Add popup form/modal.
+    setShowTagModal(true);
   }
 
   return (
@@ -51,11 +62,21 @@ export default function Restaurant({ tags }: RestaurantProps) {
         </div>
         <button 
             className={styles.add}
-            onClick={() => handleAddTag}
+            onClick={() => handleAddTag()}
           >
             +
           </button>
       </div>
+      <Modal
+        className={styles.modal}
+        show={showTagModal}
+        onHide={() => setShowTagModal(false)}
+        renderBackdrop={Backdrop}
+      >
+        <div>
+          Add Tag Modal
+        </div>
+      </Modal>
     </div>
   )
 }
