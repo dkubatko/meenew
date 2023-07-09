@@ -45,7 +45,7 @@ def create_restaurant(restaurant: models.RestaurantCreate, db: Session = Depends
 def get_restaurant(restaurant_id: int, db: Session = Depends(get_session)):
     return crud.get_restaurant(db = db, restaurant_id = restaurant_id)
 
-@app.post("/api/tag/", response_model=models.TagRead)
+@app.post("/api/tag", response_model=models.TagRead)
 def create_tag(tag: models.TagCreate, db: Session = Depends(get_session)):
     return crud.create_tag(db = db, tag = tag)
 

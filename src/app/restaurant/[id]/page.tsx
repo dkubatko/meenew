@@ -4,7 +4,7 @@ import Restaurant from "@/app/components/owner/restaurant.component";
 import { Tag } from "@/app/types/menu";
 
 async function getTags(): Promise<any> {
-  const res = await fetch('http://127.0.0.1:8000/api/tags/')
+  const res = await fetch('http://127.0.0.1:8000/api/tags/', { next: { revalidate: 10 }});
 
   return res.json();
 }

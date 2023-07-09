@@ -7,6 +7,7 @@ import TagComponent from "@/app/components/shared/tag.component"
 import styles from "@/app/components/owner/restaurant.module.css";
 import MenuItem from "@/app/components/shared/menu_item.component";
 import Modal from 'react-overlays/Modal';
+import NewTagForm from "./new_tag_form.component";
 
 interface RestaurantProps {
   tags: TagType[]
@@ -74,7 +75,7 @@ export default function Restaurant({ tags }: RestaurantProps) {
         renderBackdrop={Backdrop}
       >
         <div>
-          Add Tag Modal
+          <NewTagForm/>
         </div>
       </Modal>
     </div>

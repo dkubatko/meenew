@@ -18,7 +18,7 @@ Python FastAPI server is served on [http://localhost:8000](http://localhost:3000
 
 # Current task list
 ## In progress
-- [ ] Add a component for Add Tag Modal content
+- [ ] Update api paths to not end with `/`
 - [ ] Remove static fetching for tags
 - [ ] Add dropdown to tags based on category
 - [ ] Add images to menu items
@@ -38,6 +38,7 @@ Python FastAPI server is served on [http://localhost:8000](http://localhost:3000
 - [ ] Add Toast API integration
 - [ ] Add Square API integration
 ## Complete
+- [X] Add a component for Add Tag Modal content
 - [X] Add popup modal for the add button
 - [X] Add restaurant management page
 - [X] Add "Add Tag" button
