@@ -9,21 +9,24 @@ import MenuItem from "@/app/components/shared/menu_item.component";
 import Modal from 'react-overlays/Modal';
 import NewTagForm from "./new_tag_form.component";
 
-interface RestaurantProps {
-  tags: TagType[]
-}
-
-export default function Restaurant({ tags }: RestaurantProps) {
+export default function Restaurant() {
   const [restaurantData, setRestaurantData] = useState<RestaurantType>();
+  const [tags, setTags] = useState<TagType[]>([]);
   const searchParams = useSearchParams();
   const { restaurant_name = "", menu_items = [] } = restaurantData || {};
   const [showTagModal, setShowTagModal] = useState<boolean>(false);
   
   useEffect(() => {
-    fetch(`/api/restaurant/${searchParams.get('id') ?? '0'}`)
-      .then((res) => res.json())
-      .then((data: RestaurantType) => {
-        setRestaurantData(data);
+    Promise.all([
+      fetch(`/api/restaurant/${searchParams.get('id') ?? '0'}`),
+      fetch('/api/tags'),
+    ])
+      .then(([resRestaurant, resTags]) =>
+        Promise.all([resRestaurant.json(), resTags.json()])
+      )
+      .then(([restaurant, tags]) => {
+        setRestaurantData(restaurant);
+        setTags(tags);
       });
   }, [searchParams]);
 

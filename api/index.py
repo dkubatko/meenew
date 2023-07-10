@@ -33,11 +33,11 @@ def get_session():
 def hello_world():
     return {"message": "Hello World"}
 
-@app.get("/api/restaurants/", response_model = List[models.RestaurantRead])
+@app.get("/api/restaurants", response_model = List[models.RestaurantRead])
 def get_all_restaurants(db: Session = Depends(get_session)):
     return crud.get_all_restaurants(db = db)
 
-@app.post("/api/restaurant/", response_model = models.RestaurantRead)
+@app.post("/api/restaurant", response_model = models.RestaurantRead)
 def create_restaurant(restaurant: models.RestaurantCreate, db: Session = Depends(get_session)):
     return crud.create_restaurant(db=db, restaurant = restaurant)
 
@@ -49,11 +49,11 @@ def get_restaurant(restaurant_id: int, db: Session = Depends(get_session)):
 def create_tag(tag: models.TagCreate, db: Session = Depends(get_session)):
     return crud.create_tag(db = db, tag = tag)
 
-@app.get("/api/tags/", response_model=List[models.TagRead])
+@app.get("/api/tags", response_model=List[models.TagRead])
 def get_all_tags(db: Session = Depends(get_session)):
     return crud.get_all_tags(db = db)
 
-@app.post("/api/menu_item/", response_model=models.MenuItemRead)
+@app.post("/api/menu_item", response_model=models.MenuItemRead)
 def create_menu_item(menu_item: models.MenuItemCreate, db: Session = Depends(get_session)):
     return crud.create_menu_item(db = db, menu_item = menu_item)
 
