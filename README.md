@@ -18,6 +18,7 @@ Python FastAPI server is served on [http://localhost:8000](http://localhost:3000
 
 # Current task list
 ## In progress
+- [ ] Update tag list on new tag submission
 - [ ] Move progress tracking to Obsidian
 - [ ] Add dropdown to tags based on category
 - [ ] Add images to menu items
