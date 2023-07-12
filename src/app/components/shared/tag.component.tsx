@@ -4,7 +4,8 @@ import { motion } from "framer-motion";
 
 export default function Tag({ id, name }: TagType) {
   return (
-    <motion.div 
+    <motion.div
+      id={id.toString()}
       className={styles.tag}
       whileTap={{ scale: 0.97 }}
     >

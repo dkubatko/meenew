@@ -5,11 +5,9 @@ import meenew from '@/assets/character/meenew.png';
 import styles from '@/app/components/user/questionnaire.module.css';
 import ProgressBar from '@/app/components/progress_bar.component';
 import Results from '@/app/components/results.component';
-import { AnimatePresence, motion, stagger, animate } from 'framer-motion';
 import { useState, useEffect, useRef } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Options from './options.component';
-import { ThreeDots } from 'react-loader-spinner';
 
 type RestaurantData = {
   restaurant_name: string,

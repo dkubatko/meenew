@@ -15,7 +15,7 @@ export default function Restaurant() {
   const searchParams = useSearchParams();
   const { restaurant_name = "", menu_items = [] } = restaurantData || {};
   const [showTagModal, setShowTagModal] = useState<boolean>(false);
-  
+
   useEffect(() => {
     Promise.all([
       fetch(`/api/restaurant/${searchParams.get('id') ?? '0'}`),
@@ -32,8 +32,8 @@ export default function Restaurant() {
 
   function Backdrop() {
     return (
-      <div 
-        className={styles.backdrop} 
+      <div
+        className={styles.backdrop}
         onClick={() => setShowTagModal(false)}
       />
     )
@@ -43,44 +43,54 @@ export default function Restaurant() {
     setShowTagModal(true);
   }
 
+  function handlePostTagSubmit() {
+    setShowTagModal(false);
+    fetch('/api/tags').then((res) => res.json()).then((tags) => setTags(tags));
+  }
+
   return (
-    <div className={styles.container}>
-      <div className={styles.menu}>
-        <div className={styles.title}>Menu</div>
-        <div className={styles.itemlist}>
-          {
-            menu_items.map((menu_item: MenuItemType) => (
-              <MenuItem key={menu_item.id} {...menu_item} />
-            ))
-          }
-        </div>
+    <div className={styles.restaurantView}>
+      <div className={styles.restaurantName}>
+        {restaurant_name}
       </div>
-      <div className={styles.tags}>
-        <div className={styles.title}>Tags</div>
-        <div className={styles.taglist}>
-          {
-            tags.map((tag: TagType) => (
-              <TagComponent key={tag.id} {...tag} />
-            ))
-          }
+      <div className={styles.container}>
+        <div className={styles.menu}>
+          <div className={styles.title}>Menu</div>
+          <div className={styles.itemlist}>
+            {
+              menu_items.map((menu_item: MenuItemType) => (
+                <MenuItem key={menu_item.id} {...menu_item} />
+              ))
+            }
+          </div>
         </div>
-        <button 
+        <div className={styles.tags}>
+          <div className={styles.title}>Tags</div>
+          <div className={styles.taglist}>
+            {
+              tags.map((tag: TagType) => (
+                <TagComponent key={tag.id} {...tag} />
+              ))
+            }
+          </div>
+          <button
             className={styles.add}
             onClick={() => handleAddTag()}
           >
             +
           </button>
-      </div>
-      <Modal
-        className={styles.modal}
-        show={showTagModal}
-        onHide={() => setShowTagModal(false)}
-        renderBackdrop={Backdrop}
-      >
-        <div>
-          <NewTagForm/>
         </div>
-      </Modal>
+        <Modal
+          className={styles.modal}
+          show={showTagModal}
+          onHide={() => setShowTagModal(false)}
+          renderBackdrop={Backdrop}
+        >
+          <div>
+            <NewTagForm handlePostSubmit={handlePostTagSubmit}/>
+          </div>
+        </Modal>
+      </div>
     </div>
   )
 }

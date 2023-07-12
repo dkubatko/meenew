@@ -1,3 +1,17 @@
+.restaurantView {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+}
+
+.restaurantName {
+  margin: 2vh 0;
+  font-size: 3vh;
+  font-weight: bold;
+}
+
 .container {
   display: flex;
   flex-direction: row;
