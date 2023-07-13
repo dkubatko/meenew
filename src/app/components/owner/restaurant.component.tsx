@@ -8,6 +8,7 @@ import styles from "@/app/components/owner/restaurant.module.css";
 import MenuItem from "@/app/components/shared/menu_item.component";
 import Modal from 'react-overlays/Modal';
 import NewTagForm from "./new_tag_form.component";
+import ConfirmationModal from "../shared/confirmation_modal.component";
 
 export default function Restaurant() {
   const [restaurantData, setRestaurantData] = useState<RestaurantType>();
@@ -15,6 +16,7 @@ export default function Restaurant() {
   const searchParams = useSearchParams();
   const { restaurant_name = "", menu_items = [] } = restaurantData || {};
   const [showTagModal, setShowTagModal] = useState<boolean>(false);
+  const [showDeleteTagModal, setShowDeleteTagModal] = useState<boolean>(false);
 
   useEffect(() => {
     Promise.all([
@@ -43,8 +45,17 @@ export default function Restaurant() {
     setShowTagModal(true);
   }
 
+  function handleDeleteTag() {
+    setShowDeleteTagModal(true);
+  }
+
   function handlePostTagSubmit() {
     setShowTagModal(false);
+    fetch('/api/tags').then((res) => res.json()).then((tags) => setTags(tags));
+  }
+
+  function handlePostTagDelete() {
+    setShowDeleteTagModal(false);
     fetch('/api/tags').then((res) => res.json()).then((tags) => setTags(tags));
   }
 
@@ -69,7 +80,7 @@ export default function Restaurant() {
           <div className={styles.taglist}>
             {
               tags.map((tag: TagType) => (
-                <TagComponent key={tag.id} {...tag} />
+                <TagComponent key={tag.id} deletable={true} tag={tag} onDelete={handleDeleteTag}/>
               ))
             }
           </div>
@@ -86,9 +97,19 @@ export default function Restaurant() {
           onHide={() => setShowTagModal(false)}
           renderBackdrop={Backdrop}
         >
-          <div>
-            <NewTagForm handlePostSubmit={handlePostTagSubmit}/>
-          </div>
+          <NewTagForm handlePostSubmit={handlePostTagSubmit}/>
+        </Modal>
+        <Modal
+          className={styles.modal}
+          show={showDeleteTagModal}
+          onHide={() => setShowDeleteTagModal(false)}
+          renderBackdrop={Backdrop}
+        >
+          <ConfirmationModal
+            text={"Delete tag?"}
+            onConfirm={handlePostTagDelete}
+            onCancel={() => setShowDeleteTagModal(false)}
+          />
         </Modal>
       </div>
     </div>

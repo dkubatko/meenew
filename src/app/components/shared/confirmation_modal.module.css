@@ -1,0 +1,33 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.text {
+  font-size: 1.5vh;
+}
+
+.control {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 80%;
+}
+
+.confirm {
+  background-color: greenyellow;
+}
+
+.confirm:hover {
+  background-color: green;
+}
+
+.cancel {
+  background-color: red;
+}
+
+.cancel:hover {
+  background-color: brown;
+}
