@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useSearchParams } from 'next/navigation';
-import { Tag as TagType, Restaurant as RestaurantType, MenuItem as MenuItemType } from "@/app/types/menu";
+import { Tag as TagType, Restaurant as RestaurantType, MenuItem as MenuItemType, Tag } from "@/app/types/menu";
 import TagComponent from "@/app/components/shared/tag.component"
 import styles from "@/app/components/owner/restaurant.module.css";
 import MenuItem from "@/app/components/shared/menu_item.component";
@@ -15,6 +15,7 @@ export default function Restaurant() {
   const [tags, setTags] = useState<TagType[]>([]);
   const searchParams = useSearchParams();
   const { restaurant_name = "", menu_items = [] } = restaurantData || {};
+  const [selectedTag, setSelectedTag] = useState<TagType>();
   const [showTagModal, setShowTagModal] = useState<boolean>(false);
   const [showDeleteTagModal, setShowDeleteTagModal] = useState<boolean>(false);
 
@@ -45,7 +46,8 @@ export default function Restaurant() {
     setShowTagModal(true);
   }
 
-  function handleDeleteTag() {
+  function handleDeleteTagClick(tag: TagType) {
+    setSelectedTag(tag);
     setShowDeleteTagModal(true);
   }
 
@@ -54,7 +56,14 @@ export default function Restaurant() {
     fetch('/api/tags').then((res) => res.json()).then((tags) => setTags(tags));
   }
 
-  function handlePostTagDelete() {
+  async function handleDeleteTag(tag: TagType) {
+    await fetch(
+      `/api/tag/${tag.id}`,
+      { 
+        method: 'delete', 
+        headers: { "content-type": "application/json" },
+      });
+    
     setShowDeleteTagModal(false);
     fetch('/api/tags').then((res) => res.json()).then((tags) => setTags(tags));
   }
@@ -80,7 +89,12 @@ export default function Restaurant() {
           <div className={styles.taglist}>
             {
               tags.map((tag: TagType) => (
-                <TagComponent key={tag.id} deletable={true} tag={tag} onDelete={handleDeleteTag}/>
+                <TagComponent 
+                  key={tag.id} 
+                  deletable={true} 
+                  tag={tag} 
+                  onDelete={() => handleDeleteTagClick(tag)}
+                />
               ))
             }
           </div>
@@ -106,8 +120,8 @@ export default function Restaurant() {
           renderBackdrop={Backdrop}
         >
           <ConfirmationModal
-            text={"Delete tag?"}
-            onConfirm={handlePostTagDelete}
+            text={`Delete tag ${selectedTag?.name}?"`}
+            onConfirm={() => handleDeleteTag(selectedTag!)}
             onCancel={() => setShowDeleteTagModal(false)}
           />
         </Modal>

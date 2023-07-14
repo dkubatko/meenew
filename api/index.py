@@ -49,6 +49,11 @@ def get_restaurant(restaurant_id: int, db: Session = Depends(get_session)):
 def create_tag(tag: models.TagCreate, db: Session = Depends(get_session)):
     return crud.create_tag(db = db, tag = tag)
 
+@app.delete('/api/tag/{tag_id}')
+def delete_tag(tag_id: int, db: Session = Depends(get_session)):
+    return crud.delete_tag(db = db, tag_id = tag_id)
+
+
 @app.get("/api/tags", response_model=List[models.TagRead])
 def get_all_tags(db: Session = Depends(get_session)):
     return crud.get_all_tags(db = db)
