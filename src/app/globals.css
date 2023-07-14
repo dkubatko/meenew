@@ -75,3 +75,20 @@ body {
   -webkit-text-stroke: 2px #fc6a6d;
 	-webkit-text-fill-color: white;
 }
+
+.list {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.link {
+  font-weight: bold;
+  font-size: 3vh;
+  margin: 3vh 3vw;
+  cursor: pointer;
+}
+
+.link:hover {
+  color: burlywood;
+}
