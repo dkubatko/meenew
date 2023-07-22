@@ -7,6 +7,7 @@
   border: 1px solid wheat;
   background-color: blanchedalmond;
   padding: 0.5vh 10vw;
+  cursor: pointer;
 }
 
 .form {

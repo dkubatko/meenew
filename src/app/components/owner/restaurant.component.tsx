@@ -9,6 +9,7 @@ import MenuItem from "@/app/components/shared/menu_item.component";
 import Modal from 'react-overlays/Modal';
 import NewTagForm from "./new_tag_form.component";
 import ConfirmationModal from "../shared/confirmation_modal.component";
+import MenuItemModal from "./menu_item_modal.component";
 
 export default function Restaurant() {
   const [restaurantData, setRestaurantData] = useState<RestaurantType>();
@@ -18,6 +19,7 @@ export default function Restaurant() {
   const [selectedTag, setSelectedTag] = useState<TagType>();
   const [showTagModal, setShowTagModal] = useState<boolean>(false);
   const [showDeleteTagModal, setShowDeleteTagModal] = useState<boolean>(false);
+  const [showMenuItemModal, setShowMenuItemModal] = useState<boolean>(false);
 
   useEffect(() => {
     Promise.all([
@@ -33,11 +35,11 @@ export default function Restaurant() {
       });
   }, [searchParams]);
 
-  function Backdrop() {
+  function Backdrop(onClick: () => void) {
     return (
       <div
         className={styles.backdrop}
-        onClick={() => setShowTagModal(false)}
+        onClick={onClick}
       />
     )
   }
@@ -68,6 +70,10 @@ export default function Restaurant() {
     fetch('/api/tags').then((res) => res.json()).then((tags) => setTags(tags));
   }
 
+  function handleMenuItemEditClick() {
+    setShowMenuItemModal(true);
+  }
+
   return (
     <div className={styles.restaurantView}>
       <div className={styles.restaurantName}>
@@ -79,7 +85,12 @@ export default function Restaurant() {
           <div className={styles.itemlist}>
             {
               menu_items.map((menu_item: MenuItemType) => (
-                <MenuItem key={menu_item.id} {...menu_item} />
+                <MenuItem 
+                  key={menu_item.id} 
+                  menu_item={menu_item} 
+                  editable={true} 
+                  onEdit={handleMenuItemEditClick}
+                />
               ))
             }
           </div>
@@ -109,7 +120,7 @@ export default function Restaurant() {
           className={styles.modal}
           show={showTagModal}
           onHide={() => setShowTagModal(false)}
-          renderBackdrop={Backdrop}
+          renderBackdrop={() => Backdrop(() => setShowTagModal(false))}
         >
           <NewTagForm handlePostSubmit={handlePostTagSubmit}/>
         </Modal>
@@ -117,12 +128,22 @@ export default function Restaurant() {
           className={styles.modal}
           show={showDeleteTagModal}
           onHide={() => setShowDeleteTagModal(false)}
-          renderBackdrop={Backdrop}
+          renderBackdrop={() => Backdrop(() => setShowDeleteTagModal(false))}
         >
           <ConfirmationModal
             text={`Delete tag ${selectedTag?.name}?"`}
             onConfirm={() => handleDeleteTag(selectedTag!)}
             onCancel={() => setShowDeleteTagModal(false)}
+          />
+        </Modal>
+        <Modal
+          className={styles.modal}
+          show={showMenuItemModal}
+          onHide={() => setShowMenuItemModal(false)}
+          renderBackdrop={() => Backdrop(() => setShowMenuItemModal(false))}
+        >
+          <MenuItemModal
+           edit={true}
           />
         </Modal>
       </div>
