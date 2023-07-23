@@ -20,6 +20,7 @@ export default function Restaurant() {
   const [showTagModal, setShowTagModal] = useState<boolean>(false);
   const [showDeleteTagModal, setShowDeleteTagModal] = useState<boolean>(false);
   const [showMenuItemModal, setShowMenuItemModal] = useState<boolean>(false);
+  const [selectedMenuItem, setSelectedMenuItem] = useState<MenuItemType>();
 
   useEffect(() => {
     Promise.all([
@@ -70,7 +71,8 @@ export default function Restaurant() {
     fetch('/api/tags').then((res) => res.json()).then((tags) => setTags(tags));
   }
 
-  function handleMenuItemEditClick() {
+  function handleMenuItemEditClick(menu_item: MenuItemType) {
+    setSelectedMenuItem(menu_item);
     setShowMenuItemModal(true);
   }
 
@@ -89,7 +91,7 @@ export default function Restaurant() {
                   key={menu_item.id} 
                   menu_item={menu_item} 
                   editable={true} 
-                  onEdit={handleMenuItemEditClick}
+                  onEdit={() => handleMenuItemEditClick(menu_item)}
                 />
               ))
             }
@@ -101,9 +103,9 @@ export default function Restaurant() {
             {
               tags.map((tag: TagType) => (
                 <TagComponent 
-                  key={tag.id} 
+                  key={tag.id}
                   deletable={true} 
-                  tag={tag} 
+                  tag={tag}
                   onDelete={() => handleDeleteTagClick(tag)}
                 />
               ))
@@ -143,6 +145,7 @@ export default function Restaurant() {
           renderBackdrop={() => Backdrop(() => setShowMenuItemModal(false))}
         >
           <MenuItemModal
+           menu_item={selectedMenuItem}
            edit={true}
           />
         </Modal>

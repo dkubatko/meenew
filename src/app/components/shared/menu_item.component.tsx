@@ -1,4 +1,5 @@
 import styles from "@/app/components/shared/menu_item.module.css";
+import sharedStyles from '@/app/components/shared/shared.module.css';
 import { Tag as TagType, MenuItem as MenuItemType } from "@/app/types/menu";
 import Tag from "./tag.component";
 
@@ -20,7 +21,12 @@ export default function MenuItem({menu_item: { item_name, tags }, editable, onEd
           <div className={styles.tags}>
             {
               tags.map((tag: TagType) => (
-                <Tag key={tag.id} deletable={false} tag={tag}/>
+                <Tag 
+                  key={tag.id}
+                  deletable={false} 
+                  tag={tag}
+                  className={sharedStyles.tag}
+                />
               ))
             }
           </div>

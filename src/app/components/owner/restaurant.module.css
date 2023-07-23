@@ -80,7 +80,8 @@
 
 .modal {
   position: fixed;
-  width: 400px;
+  width: 50%;
+  height: 20%;
   z-index: 1040;
   top: 20%;
   left: 50%;

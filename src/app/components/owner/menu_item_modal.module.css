@@ -14,7 +14,19 @@
 }
 
 .inputsContainer {
+  width: 100%;
   flex: 1;
   display: flex;
   flex-direction: column;
+  align-items: start;
+  justify-content: center;
+}
+
+.tagsContainer {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-around;
 }

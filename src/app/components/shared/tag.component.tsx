@@ -3,16 +3,22 @@ import styles from "@/app/components/shared/tag.module.css";
 import { motion } from "framer-motion";
 
 interface TagProps {
-  deletable: boolean;
-  onDelete?: () => void;
   tag: TagType;
+  deletable?: boolean;
+  onDelete?: () => void;
+  className?: string;
 }
 
-export default function Tag({ deletable = false, onDelete, tag: { id, name } }: TagProps) {
+export default function Tag({ 
+  tag: { id, name },
+  deletable, 
+  onDelete,
+  className
+}: TagProps) {
   return (
     <motion.div
       id={id.toString()}
-      className={styles.tag}
+      className={className || styles.tag}
     >
       {
         deletable &&

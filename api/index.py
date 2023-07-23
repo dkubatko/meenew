@@ -62,6 +62,10 @@ def get_all_tags(db: Session = Depends(get_session)):
 def create_menu_item(menu_item: models.MenuItemCreate, db: Session = Depends(get_session)):
     return crud.create_menu_item(db = db, menu_item = menu_item)
 
+@app.post("/api/menu_item_tag", response_model=models.MenuItemRead)
+def add_tag_for_menu_item(menu_item_id: int, tag_id: int, db: Session = Depends(get_session)):
+    return crud.add_tag_for_menu_item(db, menu_item_id, tag_id)
+
 @app.get("/api/{restaurant}/stub")
 def stub_data(restaurant: str):
     with open(join('api', 'data', 'sample_data.json'), 'r') as file:

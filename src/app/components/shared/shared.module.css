@@ -4,3 +4,33 @@
   cursor: pointer;
   margin: 1vh 1vw;
 }
+
+.smallTag {
+  position: relative;
+  width: 45%;
+  font-size: smaller;
+  margin: auto;
+  background-color: violet;
+  border-radius: 35% 15%;
+  padding: 0.3vh 0.3vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0.2vh 0.2vw;
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+.tag {
+  position: relative;
+  width: 30%;
+  margin: auto;
+  background-color: violet;
+  border-radius: 35% 15%;
+  padding: 0.5vh 0.5vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0.3vh 0.3vw;
+  font-weight: bold;
+}
