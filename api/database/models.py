@@ -25,7 +25,8 @@ class MenuItem(MenuItemBase, table = True):
 
     id: Optional[int] = Field(default=None, primary_key=True, index=True)
     restaurant_id: Optional[int] = Field(default = None, foreign_key="restaurants.id")
-    
+    image_path: Optional[str] = Field(default = None)
+
     restaurant: Optional[Restaurant] = Relationship(back_populates="menu_items")
     tags: List["Tag"] = Relationship(back_populates="menu_items", link_model=ItemTagLink)
 
@@ -44,6 +45,7 @@ class TagRead(TagBase):
 
 class MenuItemRead(MenuItemBase):
     id: int
+    image_path: Optional[str]
     tags: List["TagRead"] = []
 
 class RestaurantRead(RestaurantBase):
