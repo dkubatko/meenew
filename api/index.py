@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Depends, HTTPException
+from fastapi import FastAPI, Depends, UploadFile, File
 import json
 from os.path import join
 from typing import List, Optional
@@ -6,8 +6,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from .database import models, crud
 from .database.database import create_db_and_tables, engine
 from sqlmodel import Session, SQLModel
+from .database.gcs import GCS
 
 app = FastAPI()
+gcs = GCS()
 
 origins = [
     "http://127.0.0.1:3000",
@@ -53,7 +55,6 @@ def create_tag(tag: models.TagCreate, db: Session = Depends(get_session)):
 def delete_tag(tag_id: int, db: Session = Depends(get_session)):
     return crud.delete_tag(db = db, tag_id = tag_id)
 
-
 @app.get("/api/tags", response_model=List[models.TagRead])
 def get_all_tags(db: Session = Depends(get_session)):
     return crud.get_all_tags(db = db)
@@ -65,6 +66,15 @@ def create_menu_item(menu_item: models.MenuItemCreate, db: Session = Depends(get
 @app.post("/api/menu_item_tag", response_model=models.MenuItemRead)
 def add_tag_for_menu_item(menu_item_id: int, tag_id: int, db: Session = Depends(get_session)):
     return crud.add_tag_for_menu_item(db, menu_item_id, tag_id)
+
+@app.post("/api/menu_item_image_upload")
+def create_upload_file(file: UploadFile = File(...)):
+    gcs_url = gcs.upload_file(file)
+    
+    if gcs_url is None:
+        return {"error": "File upload failed."}
+
+    return { "file_url": gcs_url }
 
 @app.get("/api/{restaurant}/stub")
 def stub_data(restaurant: str):
