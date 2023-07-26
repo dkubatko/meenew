@@ -1,8 +1,25 @@
 .btn {
   border-radius: 25%;
-  padding: 1vh;
+  padding: 1vh 1vw;
   cursor: pointer;
   margin: 1vh 1vw;
+}
+
+.controlButton {
+  border-radius: 25%;
+  padding: 0.5vh 0.5vw;
+  margin: 0.3vh 0.5vw;
+  cursor: pointer;
+}
+
+.confirmButton {
+  composes: controlButton;
+  background-color: rgb(53, 195, 157);
+}
+
+.cancelButton {
+  composes: controlButton;
+  background-color: rgb(177, 27, 65);
 }
 
 .smallTag {

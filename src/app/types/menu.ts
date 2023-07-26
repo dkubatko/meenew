@@ -12,6 +12,7 @@ export type Tag = {
 export type MenuItem = {
   id: number
   item_name: string
+  image_path: string
   tags: Tag[]
 }
 

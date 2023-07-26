@@ -68,13 +68,13 @@ def add_tag_for_menu_item(menu_item_id: int, tag_id: int, db: Session = Depends(
     return crud.add_tag_for_menu_item(db, menu_item_id, tag_id)
 
 @app.post("/api/menu_item_image_upload")
-def create_upload_file(file: UploadFile = File(...)):
-    gcs_url = gcs.upload_file(file)
+def create_upload_file(image: UploadFile = File(...)):
+    gcs_url = gcs.upload_file(image)
     
     if gcs_url is None:
         return {"error": "File upload failed."}
 
-    return { "file_url": gcs_url }
+    return { "image_url": gcs_url }
 
 @app.get("/api/{restaurant}/stub")
 def stub_data(restaurant: str):

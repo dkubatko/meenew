@@ -1,8 +1,15 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  justify-content: space-between;
+}
+
 .formContainer {
   display: flex;
   flex-direction: row;
-  width: 100%;
-  height: 100%;
+  flex: 5;
 }
 
 .imageContainer {
@@ -14,7 +21,6 @@
 }
 
 .inputsContainer {
-  width: 100%;
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -23,12 +29,18 @@
 }
 
 .tagsContainer {
-  width: 100%;
-  height: 100%;
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
   align-items: self-start;
   justify-content: space-around;
-  /* align-content: flex-start; */
+  align-content: flex-start;
+}
+
+.footer {
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
 }

@@ -62,11 +62,11 @@ export default function Restaurant() {
   async function handleDeleteTag(tag: TagType) {
     await fetch(
       `/api/tag/${tag.id}`,
-      { 
-        method: 'delete', 
+      {
+        method: 'delete',
         headers: { "content-type": "application/json" },
       });
-    
+
     setShowDeleteTagModal(false);
     fetch('/api/tags').then((res) => res.json()).then((tags) => setTags(tags));
   }
@@ -87,10 +87,10 @@ export default function Restaurant() {
           <div className={styles.itemlist}>
             {
               menu_items.map((menu_item: MenuItemType) => (
-                <MenuItem 
-                  key={menu_item.id} 
-                  menu_item={menu_item} 
-                  editable={true} 
+                <MenuItem
+                  key={menu_item.id}
+                  menu_item={menu_item}
+                  editable={true}
                   onEdit={() => handleMenuItemEditClick(menu_item)}
                 />
               ))
@@ -102,9 +102,9 @@ export default function Restaurant() {
           <div className={styles.taglist}>
             {
               tags.map((tag: TagType) => (
-                <TagComponent 
+                <TagComponent
                   key={tag.id}
-                  deletable={true} 
+                  deletable={true}
                   tag={tag}
                   onDelete={() => handleDeleteTagClick(tag)}
                 />
@@ -124,7 +124,7 @@ export default function Restaurant() {
           onHide={() => setShowTagModal(false)}
           renderBackdrop={() => Backdrop(() => setShowTagModal(false))}
         >
-          <NewTagForm handlePostSubmit={handlePostTagSubmit}/>
+          <NewTagForm handlePostSubmit={handlePostTagSubmit} />
         </Modal>
         <Modal
           className={styles.modal}
@@ -145,8 +145,10 @@ export default function Restaurant() {
           renderBackdrop={() => Backdrop(() => setShowMenuItemModal(false))}
         >
           <MenuItemModal
-           menu_item={selectedMenuItem}
-           edit={true}
+            onCancel={() => setShowMenuItemModal(false)}
+            onConfirm={() => console.log('Menu item modal confirm.')}
+            menu_item={selectedMenuItem}
+            edit={true}
           />
         </Modal>
       </div>
