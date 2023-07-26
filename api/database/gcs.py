@@ -6,7 +6,7 @@ from fastapi import UploadFile
 
 class GCS:
   def __init__(self):
-    client = storage.Client()
+    client = storage.Client.from_service_account_info(configs.GCS_CREDENTIALS)
     self.bucket = client.bucket(configs.GCS_BUCKET)
 
   def upload_file(self, source_file: UploadFile):
