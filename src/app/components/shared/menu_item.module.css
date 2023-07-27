@@ -6,7 +6,6 @@
   justify-content: center;
   width: 80%;
   height: 10vh;
-  margin: auto;
   margin-top: 3%;
 }
 
@@ -20,10 +19,11 @@
 }
 
 .image {
-  border: 1px solid black;
+  position: relative;
+  flex-grow: 0;
+  aspect-ratio: 16 / 9;
   height: 100%;
-  width: 100%;
-  flex: 1;
+  overflow: hidden;
 }
 
 .content {

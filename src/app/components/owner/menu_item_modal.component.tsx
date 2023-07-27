@@ -8,40 +8,37 @@ import { useState } from "react";
 
 interface MenuItemModalProps {
   onCancel: () => void;
-  onConfirm: () => void;
-  menu_item?: MenuItem;
+  onConfirm: (formData: MenuItemFormData) => void;
+  menu_item: MenuItem;
   edit?: boolean;
 }
 
-interface ImageUploadResponse {
-  image_url: string;
+export interface MenuItemFormData {
+  id: number;
+  name: string;
+  image: File | null;
 }
 
 export default function MenuItemModal({ onCancel, onConfirm, menu_item, edit }: MenuItemModalProps) {
-  const [imageUrl, setImageUrl] = useState<string>(menu_item?.image_path!);
+  const [imageUrl, setImageUrl] = useState<string | null>(menu_item?.image_path!);
+  const [formData, setFormData] = useState<MenuItemFormData>({ 
+    id: menu_item.id,
+    name: menu_item?.item_name!,
+    image: null 
+  });
 
   function onImageUpload(event: React.ChangeEvent<HTMLInputElement>) {
     const image = event.target.files![0];
 
-    const formData = new FormData();
-    formData.append("image", image);
+    setImageUrl(URL.createObjectURL(image));
+    setFormData(formData => ({
+      ...formData,
+      image: image
+    }));
+  }
 
-    fetch('/api/menu_item_image_upload', {
-      method: 'POST',
-      body: formData,
-    })
-    .then(response => {
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      return response.json() as Promise<ImageUploadResponse>;
-    })
-    .then(data => {
-      setImageUrl(data.image_url);
-    })
-    .catch(error => {
-      console.error('An error occurred:', error);
-    });
+  function onImageClear() {
+    setImageUrl(null);
   }
 
   return (
@@ -51,7 +48,11 @@ export default function MenuItemModal({ onCancel, onConfirm, menu_item, edit }: 
           {
             edit ?
               (
-                <ImageUpload onImageUpload={onImageUpload} imageUrl={imageUrl}/>
+                <ImageUpload 
+                  onImageUpload={onImageUpload}
+                  imageUrl={imageUrl}
+                  onImageClear={onImageClear}
+                />
               ) :
               (
                 <div>
@@ -92,7 +93,7 @@ export default function MenuItemModal({ onCancel, onConfirm, menu_item, edit }: 
         </div>
         <div 
           className={sharedStyles.confirmButton}
-          onClick={onConfirm}
+          onClick={() => onConfirm(formData)}
         >
             Update
         </div>

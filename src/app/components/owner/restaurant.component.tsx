@@ -9,7 +9,11 @@ import MenuItem from "@/app/components/shared/menu_item.component";
 import Modal from 'react-overlays/Modal';
 import NewTagForm from "./new_tag_form.component";
 import ConfirmationModal from "../shared/confirmation_modal.component";
-import MenuItemModal from "./menu_item_modal.component";
+import MenuItemModal, { MenuItemFormData } from "./menu_item_modal.component";
+
+interface ImageUploadResponse {
+  menu_item: MenuItemType;
+}
 
 export default function Restaurant() {
   const [restaurantData, setRestaurantData] = useState<RestaurantType>();
@@ -57,6 +61,48 @@ export default function Restaurant() {
   function handlePostTagSubmit() {
     setShowTagModal(false);
     fetch('/api/tags').then((res) => res.json()).then((tags) => setTags(tags));
+  }
+
+  function handleMenuItemEditModalConfirm({ id, image }: MenuItemFormData) {
+    if (!image) {
+      console.log("Empty image");
+      return;
+    }
+
+    const htmlFormData = new FormData();
+    htmlFormData.append("image", image!);
+    htmlFormData.append("menu_item_id", id.toString());
+
+    fetch('/api/menu_item_image_upload', {
+      method: 'POST',
+      body: htmlFormData,
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      return response.json() as Promise<MenuItemType>;
+    })
+    .then((menu_item: MenuItemType) => {
+      setRestaurantData(prevRestaurantData => {
+        // Update only if defined.
+        if (prevRestaurantData) {
+          return {
+            ...prevRestaurantData,
+            menu_items: prevRestaurantData.menu_items.map(item =>
+              item.id === menu_item.id ? menu_item : item
+            )
+          };
+        }
+        // If prevRestaurantData is undefined, return the current state (which is also undefined)
+        return prevRestaurantData;
+      });
+      // Close the modal after successful update.
+      setShowMenuItemModal(false);
+    })
+    .catch(error => {
+      console.error('An error occurred:', error);
+    });
   }
 
   async function handleDeleteTag(tag: TagType) {
@@ -146,8 +192,8 @@ export default function Restaurant() {
         >
           <MenuItemModal
             onCancel={() => setShowMenuItemModal(false)}
-            onConfirm={() => console.log('Menu item modal confirm.')}
-            menu_item={selectedMenuItem}
+            onConfirm={handleMenuItemEditModalConfirm}
+            menu_item={selectedMenuItem!}
             edit={true}
           />
         </Modal>

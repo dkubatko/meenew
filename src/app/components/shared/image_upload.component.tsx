@@ -4,10 +4,11 @@ import Image from 'next/image';
 
 interface ImageUploadProps {
   onImageUpload: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  imageUrl: string;
+  onImageClear?: () => void;
+  imageUrl: string | null;
 }
 
-export default function ImageUpload({ onImageUpload, imageUrl }: ImageUploadProps) {
+export default function ImageUpload({ onImageUpload, onImageClear, imageUrl }: ImageUploadProps) {
   return (
     <div className={styles.container}>
       { !imageUrl &&
@@ -21,7 +22,7 @@ export default function ImageUpload({ onImageUpload, imageUrl }: ImageUploadProp
           <div className={styles.preview}>
             <Image src={imageUrl} alt={'preview'} fill style={{objectFit: 'contain'}}/>
           </div> 
-          {/* <div className={styles.clearButton} onClick={clearFile}>Clear</div> */}
+          <div className={styles.clearButton} onClick={onImageClear}>Clear</div>
         </div>
       }
     </div>

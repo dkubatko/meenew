@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Depends, UploadFile, File
+from fastapi import FastAPI, Depends, Form, HTTPException, UploadFile, File
 import json
 from os.path import join
 from typing import List, Optional
@@ -67,14 +67,14 @@ def create_menu_item(menu_item: models.MenuItemCreate, db: Session = Depends(get
 def add_tag_for_menu_item(menu_item_id: int, tag_id: int, db: Session = Depends(get_session)):
     return crud.add_tag_for_menu_item(db, menu_item_id, tag_id)
 
-@app.post("/api/menu_item_image_upload")
-def create_upload_file(image: UploadFile = File(...)):
+@app.post("/api/menu_item_image_upload", response_model=models.MenuItemRead)
+def create_upload_file(menu_item_id: int = Form(...), image: UploadFile = File(...), db: Session = Depends(get_session)):
     gcs_url = gcs.upload_file(image)
     
     if gcs_url is None:
-        return {"error": "File upload failed."}
-
-    return { "image_url": gcs_url }
+        raise HTTPException(status_code=400, detail="File upload failed.")
+    
+    return crud.add_image_url_to_menu_item(db, menu_item_id, gcs_url)
 
 @app.get("/api/{restaurant}/stub")
 def stub_data(restaurant: str):

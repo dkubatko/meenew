@@ -35,6 +35,7 @@
   align-items: self-start;
   justify-content: space-around;
   align-content: flex-start;
+  width: 100%;
 }
 
 .footer {
