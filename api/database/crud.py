@@ -83,3 +83,6 @@ def create_tag(db: Session, tag: models.TagCreate):
 
 def get_all_tags(db: Session):
   return db.exec(select(models.Tag)).all()
+
+def get_root_tag(db: Session):
+   return get_tag(db, 0)

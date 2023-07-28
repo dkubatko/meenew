@@ -59,6 +59,10 @@ def delete_tag(tag_id: int, db: Session = Depends(get_session)):
 def get_all_tags(db: Session = Depends(get_session)):
     return crud.get_all_tags(db = db)
 
+@app.get("/api/tag_tree", response_model=models.TagTreeRead)
+def get_tag_tree(db: Session = Depends(get_session)):
+    return crud.get_root_tag(db = db)
+
 @app.post("/api/menu_item", response_model=models.MenuItemRead)
 def create_menu_item(menu_item: models.MenuItemCreate, db: Session = Depends(get_session)):
     return crud.create_menu_item(db = db, menu_item = menu_item)
