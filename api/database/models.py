@@ -37,11 +37,19 @@ class Tag(TagBase, table = True):
     __tablename__: str = "tags"
 
     id: Optional[int] = Field(default=None, primary_key=True, index=True)
+    parent_id: Optional[int] = Field(default=None, foreign_key="tags.id")
 
+    children: List["Tag"] = Relationship(back_populates="parent")
+    parent: Optional["Tag"] = Relationship(back_populates="children")
     menu_items: List["MenuItem"] = Relationship(back_populates="tags", link_model=ItemTagLink)
 
 class TagRead(TagBase):
     id: int
+
+class TagTreeRead(TagBase):
+    id: int
+    parent_id: Optional[int]
+    children: List["TagTreeRead"] = []
 
 class MenuItemRead(MenuItemBase):
     id: int
