@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { useSearchParams } from 'next/navigation';
-import { Tag as TagType, Restaurant as RestaurantType, MenuItem as MenuItemType, Tag } from "@/app/types/menu";
-import TagComponent from "@/app/components/shared/tag.component"
+import { Tag as TagType, TagTree as TagTreeType, Restaurant as RestaurantType, MenuItem as MenuItemType } from "@/app/types/menu";
+import TagCategory from "../shared/tag_category.component";
 import styles from "@/app/components/owner/restaurant.module.css";
 import MenuItem from "@/app/components/shared/menu_item.component";
 import Modal from 'react-overlays/Modal';
@@ -17,11 +17,11 @@ interface ImageUploadResponse {
 
 export default function Restaurant() {
   const [restaurantData, setRestaurantData] = useState<RestaurantType>();
-  const [tags, setTags] = useState<TagType[]>([]);
+  const [rootTag, setRootTag] = useState<TagTreeType>();
   const searchParams = useSearchParams();
   const { restaurant_name = "", menu_items = [] } = restaurantData || {};
   const [selectedTag, setSelectedTag] = useState<TagType>();
-  const [showTagModal, setShowTagModal] = useState<boolean>(false);
+  const [showNewTagModal, setShowNewTagModal] = useState<boolean>(false);
   const [showDeleteTagModal, setShowDeleteTagModal] = useState<boolean>(false);
   const [showMenuItemModal, setShowMenuItemModal] = useState<boolean>(false);
   const [selectedMenuItem, setSelectedMenuItem] = useState<MenuItemType>();
@@ -29,14 +29,14 @@ export default function Restaurant() {
   useEffect(() => {
     Promise.all([
       fetch(`/api/restaurant/${searchParams.get('id') ?? '0'}`),
-      fetch('/api/tags'),
+      fetch('/api/tag_tree'),
     ])
-      .then(([resRestaurant, resTags]) =>
-        Promise.all([resRestaurant.json(), resTags.json()])
+      .then(([resRestaurant, resRootTag]) =>
+        Promise.all([resRestaurant.json(), resRootTag.json()])
       )
-      .then(([restaurant, tags]) => {
+      .then(([restaurant, rootTag]) => {
         setRestaurantData(restaurant);
-        setTags(tags);
+        setRootTag(rootTag);
       });
   }, [searchParams]);
 
@@ -49,19 +49,46 @@ export default function Restaurant() {
     )
   }
 
-  function handleAddTag() {
-    setShowTagModal(true);
+  function handleAddTag(tag: TagType) {
+    setSelectedTag(tag);
+    setShowNewTagModal(true);
+  }
+
+  function handlePostTagSubmit(tag: TagType) {
+    if (!tag) {
+      console.log("Empty tag");
+      return;
+    }
+    const htmlFormData = new FormData();
+    htmlFormData.append("name", tag.name);
+    htmlFormData.append("parent_id", tag.parent_id!.toString());
+    const formJson = Object.fromEntries(htmlFormData.entries());
+
+    fetch('/api/tag', {
+      method: 'POST',
+      headers:  { "content-type": "application/json" },
+      body: JSON.stringify(formJson),
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      return response.json() as Promise<TagType>;
+    })
+    .then((tag: TagType) => {
+      fetch('/api/tag_tree').then((res) => res.json()).then((rootTag) => setRootTag(rootTag));
+      // Close the modal after successful update.
+      setShowNewTagModal(false);
+    })
+    .catch(error => {
+      console.error('An error occurred:', error);
+    });
   }
 
   function handleDeleteTagClick(tag: TagType) {
     setSelectedTag(tag);
     setShowDeleteTagModal(true);
-  }
-
-  function handlePostTagSubmit() {
-    setShowTagModal(false);
-    fetch('/api/tags').then((res) => res.json()).then((tags) => setTags(tags));
-  }
+  }  
 
   function handleMenuItemEditModalConfirm({ id, image }: MenuItemFormData) {
     if (!image) {
@@ -114,7 +141,7 @@ export default function Restaurant() {
       });
 
     setShowDeleteTagModal(false);
-    fetch('/api/tags').then((res) => res.json()).then((tags) => setTags(tags));
+    fetch('/api/tag_tree').then((res) => res.json()).then((rootTag) => setRootTag(rootTag));
   }
 
   function handleMenuItemEditClick(menu_item: MenuItemType) {
@@ -146,31 +173,16 @@ export default function Restaurant() {
         <div className={styles.tags}>
           <div className={styles.title}>Tags</div>
           <div className={styles.taglist}>
-            {
-              tags.map((tag: TagType) => (
-                <TagComponent
-                  key={tag.id}
-                  deletable={true}
-                  tag={tag}
-                  onDelete={() => handleDeleteTagClick(tag)}
-                />
-              ))
-            }
+            { rootTag && <TagCategory rootTag={rootTag} onAddTag={handleAddTag} onDeleteTag={handleDeleteTagClick}/> }
           </div>
-          <button
-            className={styles.add}
-            onClick={() => handleAddTag()}
-          >
-            +
-          </button>
         </div>
         <Modal
           className={styles.modal}
-          show={showTagModal}
-          onHide={() => setShowTagModal(false)}
-          renderBackdrop={() => Backdrop(() => setShowTagModal(false))}
+          show={showNewTagModal}
+          onHide={() => setShowNewTagModal(false)}
+          renderBackdrop={() => Backdrop(() => setShowNewTagModal(false))}
         >
-          <NewTagForm handlePostSubmit={handlePostTagSubmit} />
+          <NewTagForm handlePostSubmit={handlePostTagSubmit} parentTag={selectedTag!} />
         </Modal>
         <Modal
           className={styles.modal}
@@ -179,7 +191,7 @@ export default function Restaurant() {
           renderBackdrop={() => Backdrop(() => setShowDeleteTagModal(false))}
         >
           <ConfirmationModal
-            text={`Delete tag ${selectedTag?.name}?"`}
+            text={`Delete tag ${selectedTag?.name}?`}
             onConfirm={() => handleDeleteTag(selectedTag!)}
             onCancel={() => setShowDeleteTagModal(false)}
           />

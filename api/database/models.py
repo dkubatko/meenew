@@ -48,6 +48,7 @@ class Tag(TagBase, table = True):
 
 class TagRead(TagBase):
     id: int
+    parent_id: Optional[int]
 
 class TagTreeRead(TagBase):
     id: int
@@ -67,7 +68,7 @@ class RestaurantCreate(RestaurantBase):
     pass
 
 class TagCreate(TagBase):
-    pass
+    parent_id: int
 
 class MenuItemCreate(MenuItemBase):
     restaurant_id: int

@@ -4,6 +4,7 @@
   width: 100%;
   height: 100%;
   align-items: center;
+  padding: 1vh 1vw;
 }
 
 .restaurantName {
@@ -53,24 +54,12 @@
   height: 100%;
 }
 
-.add {
-  width: 80%;
-  margin: auto;
-  background-color: lavender; 
-  border-radius: 25%;
-  padding: 8px;
+.taglist {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  margin-top: 10%;
-  cursor: pointer;
-  transition: 0.3s;
-  font-weight: bold;
-}
-
-.add:hover {
-  background-color: antiquewhite;
-  scale: 1.1;
+  justify-content: flex-start;
+  height: 100%;
 }
 
 .backdrop {

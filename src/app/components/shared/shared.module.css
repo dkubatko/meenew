@@ -50,4 +50,25 @@
   justify-content: center;
   margin: 0.3vh 0.3vw;
   font-weight: bold;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.addButton {
+  width: 100%;
+  background-color: lavender; 
+  border-radius: 25%;
+  padding: 0.7vh 0.7vw;
+  margin: 0.5vh 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: 0.3s;
+  font-weight: bold;
+}
+
+.addButton:hover {
+  background-color: antiquewhite;
+  scale: 1.1;
 }

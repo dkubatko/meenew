@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 interface TagProps {
   tag: TagType;
   deletable?: boolean;
-  onDelete?: () => void;
+  onDelete?: (tag: TagType) => void;
   className?: string;
 }
 
@@ -21,10 +21,10 @@ export default function Tag({
       className={className || styles.tag}
     >
       {
-        deletable &&
+        deletable && onDelete &&
         <div
           className={styles.remove}
-          onClick={onDelete}
+          onClick={() => onDelete({ id, name })}
         >
           X
         </div>

@@ -7,6 +7,14 @@ export type Restaurant = {
 export type Tag = {
   id: number
   name: string
+  parent_id?: number;
+}
+
+export type TagTree = {
+  id: number
+  name: string
+  parent_id: number
+  children?: TagTree[]
 }
 
 export type MenuItem = {

@@ -1,14 +1,13 @@
 .tag {
   position: relative;
-  width: 80%;
-  margin: auto;
+  width: 100%;
   background-color: violet;
   border-radius: 35% 15%;
-  padding: 8px;
+  padding: 0.7vh 0.7vw;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-top: 10%;
+  margin: 0.5vh 0;
   transition: 0.3s;
   font-weight: bold;
 }

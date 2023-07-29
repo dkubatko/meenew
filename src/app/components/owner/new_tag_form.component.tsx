@@ -1,57 +1,57 @@
 import { SyntheticEvent, useState } from "react";
 import styles from "@/app/components/owner/new_tag_form.module.css";
 import { ThreeDots } from "react-loader-spinner";
+import { Tag as TagType } from "@/app/types/menu";
 
 type TagData = {
   name: string
 }
 
 interface NewTagFormPropsType {
-  handlePostSubmit: () => void;
+  parentTag: TagType;
+  handlePostSubmit: (tag: TagType) => void;
 }
 
-export default function NewTagForm({ handlePostSubmit }: NewTagFormPropsType) {
-  const [tagData, setTagData] = useState<TagData>();
+export default function NewTagForm({ handlePostSubmit, parentTag }: NewTagFormPropsType) {
   const [submitting, setSubmitting] = useState<boolean>(false);
+  const [name, setName] = useState<string>("");
 
-  function handleSubmit(e: SyntheticEvent) {
-    e.preventDefault();
+  function handleSubmit() {
     setSubmitting(true);
-
-    const form = e.target as HTMLFormElement;
-    const formData = new FormData(form);
-    const formJson = Object.fromEntries(formData.entries());
-
-    fetch(
-      '/api/tag',
-      { 
-        method: form.method, 
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify(formJson),
-      }).then((res) => console.log(res));
-    
-    setTimeout(() => {
-      setSubmitting(false);
-      handlePostSubmit();
-    }, 1000);
+    const tag: TagType = { id: 0, name: name, parent_id: parentTag.id };
+    handlePostSubmit(tag);
   }
 
   return (
-    <form method="post" onSubmit={handleSubmit} className={styles.form}>
-      <label>
-        Name: <input name="name" className={styles.inp} autoComplete="off"/>
-      </label>
-      <button type="submit" className={styles.submit}>Add</button>
-      <ThreeDots 
-              height="1vh"
-              width="200" 
-              radius="7"
-              color="#ff9d1b" 
-              ariaLabel="three-dots-loading"
-              wrapperStyle={{}}
-              wrapperClass=""
-              visible={submitting}
-            />
-    </form>
+    <div className={styles.container}>
+      <div className={styles.prompt}>
+        Adding under category  &quot;{parentTag.name}&quot;
+      </div>
+      <div onSubmit={handleSubmit} className={styles.form}>
+        <label>
+          Name: 
+          <input 
+            value={name} 
+            onInput={
+              (e: React.ChangeEvent<HTMLInputElement>) => 
+                setName(e.target.value)
+            } 
+            className={styles.inp} 
+            autoComplete="off"
+          />
+        </label>
+        <button onClick={handleSubmit} className={styles.submit}>Add</button>
+        <ThreeDots 
+                height="1vh"
+                width="200" 
+                radius="7"
+                color="#ff9d1b" 
+                ariaLabel="three-dots-loading"
+                wrapperStyle={{}}
+                wrapperClass=""
+                visible={submitting}
+              />
+      </div>
+    </div>
   )
 }
