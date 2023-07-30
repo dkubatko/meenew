@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useSearchParams } from 'next/navigation';
-import { Tag as TagType, TagTree as TagTreeType, Restaurant as RestaurantType, MenuItem as MenuItemType } from "@/app/types/menu";
+import { Tag as TagType, TagTree as TagTreeType, Restaurant as RestaurantType, MenuItem as MenuItemType, TagCreate } from "@/app/types/menu";
 import TagCategory from "../shared/tag_category.component";
 import styles from "@/app/components/owner/restaurant.module.css";
 import MenuItem from "@/app/components/shared/menu_item.component";
@@ -36,7 +36,7 @@ export default function Restaurant() {
       )
       .then(([restaurant, rootTag]) => {
         setRestaurantData(restaurant);
-        setRootTag(rootTag);
+        setRootTag(TagTreeType.fromObject(rootTag));
       });
   }, [searchParams]);
 
@@ -49,19 +49,19 @@ export default function Restaurant() {
     )
   }
 
-  function handleAddTag(tag: TagType) {
-    setSelectedTag(tag);
+  function handleAddTag(parentTag: TagType) {
+    setSelectedTag(parentTag);
     setShowNewTagModal(true);
   }
 
-  function handlePostTagSubmit(tag: TagType) {
+  function handleTagSubmit(tag: TagCreate) {
     if (!tag) {
       console.log("Empty tag");
       return;
     }
     const htmlFormData = new FormData();
     htmlFormData.append("name", tag.name);
-    htmlFormData.append("parent_id", tag.parent_id!.toString());
+    htmlFormData.append("parent_id", tag.parent_id.toString());
     const formJson = Object.fromEntries(htmlFormData.entries());
 
     fetch('/api/tag', {
@@ -76,7 +76,8 @@ export default function Restaurant() {
       return response.json() as Promise<TagType>;
     })
     .then((tag: TagType) => {
-      fetch('/api/tag_tree').then((res) => res.json()).then((rootTag) => setRootTag(rootTag));
+      // Update the tag list with new data.
+      fetch('/api/tag_tree').then((res) => res.json()).then((rootTag) => setRootTag(TagTreeType.fromObject(rootTag)));
       // Close the modal after successful update.
       setShowNewTagModal(false);
     })
@@ -141,7 +142,8 @@ export default function Restaurant() {
       });
 
     setShowDeleteTagModal(false);
-    fetch('/api/tag_tree').then((res) => res.json()).then((rootTag) => setRootTag(rootTag));
+    // Update the tag list with new data.
+    fetch('/api/tag_tree').then((res) => res.json()).then((rootTag) => setRootTag(TagTreeType.fromObject(rootTag)));
   }
 
   function handleMenuItemEditClick(menu_item: MenuItemType) {
@@ -173,7 +175,7 @@ export default function Restaurant() {
         <div className={styles.tags}>
           <div className={styles.title}>Tags</div>
           <div className={styles.taglist}>
-            { rootTag && <TagCategory rootTag={rootTag} onAddTag={handleAddTag} onDeleteTag={handleDeleteTagClick}/> }
+            { rootTag && <TagCategory rootTag={rootTag} onAddTag={handleAddTag} onEditTag={handleDeleteTagClick}/> }
           </div>
         </div>
         <Modal
@@ -182,7 +184,7 @@ export default function Restaurant() {
           onHide={() => setShowNewTagModal(false)}
           renderBackdrop={() => Backdrop(() => setShowNewTagModal(false))}
         >
-          <NewTagForm handlePostSubmit={handlePostTagSubmit} parentTag={selectedTag!} />
+          <NewTagForm handlePostSubmit={handleTagSubmit} parentTag={selectedTag!} />
         </Modal>
         <Modal
           className={styles.modal}

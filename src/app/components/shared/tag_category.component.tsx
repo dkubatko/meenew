@@ -6,11 +6,11 @@ import Tag from "./tag.component";
 
 interface TagCategoryProps {
   rootTag: TagTree;
-  onAddTag?: (tag: TagType) => void;
-  onDeleteTag?: (tag: TagType) => void;
+  onAddTag?: (parent_tag: TagType) => void;
+  onEditTag?: (tag: TagType) => void;
 }
 
-export default function TagCategory({ rootTag, onAddTag, onDeleteTag }: TagCategoryProps) {
+export default function TagCategory({ rootTag, onAddTag, onEditTag }: TagCategoryProps) {
   const [expand, setExpand] = useState<Boolean>();
 
   rootTag.children?.sort((a, b) => b.children?.length! - a.children?.length!);
@@ -30,15 +30,15 @@ export default function TagCategory({ rootTag, onAddTag, onDeleteTag }: TagCateg
             expand &&
             rootTag.children?.map((subTag: TagTree) =>
               subTag.children?.length == 0 ?
-                <Tag key={subTag.id} tag={subTag} deletable={true} onDelete={onDeleteTag} />
+                <Tag key={subTag.id} tag={subTag.toTagType()} onEdit={onEditTag} />
                 :
-                <TagCategory key={subTag.id} rootTag={subTag} onDeleteTag={onDeleteTag} onAddTag={onAddTag} />)
+                <TagCategory key={subTag.id} rootTag={subTag} onEditTag={onEditTag} onAddTag={onAddTag} />)
           }
           {
             expand && onAddTag &&
             <button
               className={sharedStyles.addButton}
-              onClick={() => onAddTag({ id: rootTag.id, name: rootTag.name })}
+              onClick={() => onAddTag(rootTag.toTagType())}
             >
               +
             </button>

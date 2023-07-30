@@ -1,35 +1,35 @@
 import { Tag as TagType } from "@/app/types/menu";
 import styles from "@/app/components/shared/tag.module.css";
 import { motion } from "framer-motion";
+import editIcon from "@/assets/icons/pencil-edit.svg";
+import Image from "next/image";
 
 interface TagProps {
   tag: TagType;
-  deletable?: boolean;
-  onDelete?: (tag: TagType) => void;
+  onEdit?: (tag: TagType) => void;
   className?: string;
 }
 
 export default function Tag({ 
-  tag: { id, name },
-  deletable, 
-  onDelete,
+  tag,
+  onEdit,
   className
 }: TagProps) {
   return (
     <motion.div
-      id={id.toString()}
+      id={tag.id.toString()}
       className={className || styles.tag}
     >
       {
-        deletable && onDelete &&
+        onEdit &&
         <div
           className={styles.remove}
-          onClick={() => onDelete({ id, name })}
+          onClick={() => onEdit(tag)}
         >
-          X
+          <Image src={editIcon} alt={"edit"} className={styles.icon}></Image>
         </div>
       }
-      {name}
+      {tag.name}
     </motion.div>
   )
 }

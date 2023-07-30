@@ -1,7 +1,7 @@
 import { SyntheticEvent, useState } from "react";
 import styles from "@/app/components/owner/new_tag_form.module.css";
 import { ThreeDots } from "react-loader-spinner";
-import { Tag as TagType } from "@/app/types/menu";
+import { TagCreate, Tag as TagType } from "@/app/types/menu";
 
 type TagData = {
   name: string
@@ -9,7 +9,7 @@ type TagData = {
 
 interface NewTagFormPropsType {
   parentTag: TagType;
-  handlePostSubmit: (tag: TagType) => void;
+  handlePostSubmit: (tag: TagCreate) => void;
 }
 
 export default function NewTagForm({ handlePostSubmit, parentTag }: NewTagFormPropsType) {
@@ -18,7 +18,7 @@ export default function NewTagForm({ handlePostSubmit, parentTag }: NewTagFormPr
 
   function handleSubmit() {
     setSubmitting(true);
-    const tag: TagType = { id: 0, name: name, parent_id: parentTag.id };
+    const tag: TagCreate = { name: name, parent_id: parentTag.id };
     handlePostSubmit(tag);
   }
 
