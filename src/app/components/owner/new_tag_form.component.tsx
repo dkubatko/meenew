@@ -1,4 +1,4 @@
-import { SyntheticEvent, useState } from "react";
+import { useState } from "react";
 import styles from "@/app/components/owner/new_tag_form.module.css";
 import { ThreeDots } from "react-loader-spinner";
 import { TagCreate, Tag as TagType } from "@/app/types/menu";
@@ -27,7 +27,7 @@ export default function NewTagForm({ handlePostSubmit, parentTag }: NewTagFormPr
       <div className={styles.prompt}>
         Adding under category  &quot;{parentTag.name}&quot;
       </div>
-      <div onSubmit={handleSubmit} className={styles.form}>
+      <div className={styles.form}>
         <label>
           Name: 
           <input 

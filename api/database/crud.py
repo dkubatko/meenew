@@ -81,6 +81,16 @@ def create_tag(db: Session, tag: models.TagCreate):
     db.refresh(db_tag)
     return db_tag
 
+def update_tag(db: Session, tag: models.TagRead):
+   db_tag = get_tag(db, tag.id)
+   
+   db_tag.name = tag.name
+   db_tag.is_leaf = tag.is_leaf
+
+   db.commit()
+   db.refresh(db_tag)
+   return db_tag
+
 def get_all_tags(db: Session):
   return db.exec(select(models.Tag)).all()
 

@@ -8,6 +8,7 @@ import styles from "@/app/components/owner/restaurant.module.css";
 import MenuItem from "@/app/components/shared/menu_item.component";
 import Modal from 'react-overlays/Modal';
 import NewTagForm from "./new_tag_form.component";
+import TagModal from "@/app/components/owner/tag_modal.component";
 import ConfirmationModal from "../shared/confirmation_modal.component";
 import MenuItemModal, { MenuItemFormData } from "./menu_item_modal.component";
 
@@ -22,7 +23,7 @@ export default function Restaurant() {
   const { restaurant_name = "", menu_items = [] } = restaurantData || {};
   const [selectedTag, setSelectedTag] = useState<TagType>();
   const [showNewTagModal, setShowNewTagModal] = useState<boolean>(false);
-  const [showDeleteTagModal, setShowDeleteTagModal] = useState<boolean>(false);
+  const [showEditTagModal, setShowEditTagModal] = useState<boolean>(false);
   const [showMenuItemModal, setShowMenuItemModal] = useState<boolean>(false);
   const [selectedMenuItem, setSelectedMenuItem] = useState<MenuItemType>();
 
@@ -86,9 +87,9 @@ export default function Restaurant() {
     });
   }
 
-  function handleDeleteTagClick(tag: TagType) {
+  function handleEditTagClick(tag: TagType) {
     setSelectedTag(tag);
-    setShowDeleteTagModal(true);
+    setShowEditTagModal(true);
   }  
 
   function handleMenuItemEditModalConfirm({ id, image }: MenuItemFormData) {
@@ -133,18 +134,34 @@ export default function Restaurant() {
     });
   }
 
-  async function handleDeleteTag(tag: TagType) {
-    await fetch(
-      `/api/tag/${tag.id}`,
-      {
-        method: 'delete',
-        headers: { "content-type": "application/json" },
-      });
-
-    setShowDeleteTagModal(false);
-    // Update the tag list with new data.
-    fetch('/api/tag_tree').then((res) => res.json()).then((rootTag) => setRootTag(TagTreeType.fromObject(rootTag)));
+  function handleDeleteTag(tag: TagType) {
+      fetch(`/api/tag/${tag.id}`, {
+          method: 'delete',
+          headers: { "content-type": "application/json" },
+      })
+      .then(() => {
+          setShowEditTagModal(false);
+          // Update the tag list with new data.
+          return fetch('/api/tag_tree');
+      })
+      .then(res => res.json())
+      .then(rootTag => setRootTag(TagTreeType.fromObject(rootTag)));
   }
+
+  function handleEditTag(tag: TagType) {
+    fetch('/api/tag', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(tag)
+    })
+    .then(() => {
+        setShowEditTagModal(false);
+        // Update the tag list with new data.
+        return fetch('/api/tag_tree');
+    })
+    .then(res => res.json())
+    .then(rootTag => setRootTag(TagTreeType.fromObject(rootTag)));
+}
 
   function handleMenuItemEditClick(menu_item: MenuItemType) {
     setSelectedMenuItem(menu_item);
@@ -175,7 +192,7 @@ export default function Restaurant() {
         <div className={styles.tags}>
           <div className={styles.title}>Tags</div>
           <div className={styles.taglist}>
-            { rootTag && <TagCategory rootTag={rootTag} onAddTag={handleAddTag} onEditTag={handleDeleteTagClick}/> }
+            { rootTag && <TagCategory rootTag={rootTag} onAddTag={handleAddTag} onEditTag={handleEditTagClick}/> }
           </div>
         </div>
         <Modal
@@ -188,14 +205,15 @@ export default function Restaurant() {
         </Modal>
         <Modal
           className={styles.modal}
-          show={showDeleteTagModal}
-          onHide={() => setShowDeleteTagModal(false)}
-          renderBackdrop={() => Backdrop(() => setShowDeleteTagModal(false))}
+          show={showEditTagModal}
+          onHide={() => setShowEditTagModal(false)}
+          renderBackdrop={() => Backdrop(() => setShowEditTagModal(false))}
         >
-          <ConfirmationModal
-            text={`Delete tag ${selectedTag?.name}?`}
-            onConfirm={() => handleDeleteTag(selectedTag!)}
-            onCancel={() => setShowDeleteTagModal(false)}
+          <TagModal
+            tag={selectedTag!}
+            onConfirm={() => handleEditTag(selectedTag!)}
+            onDelete={() => handleDeleteTag(selectedTag!)}
+            onCancel={() => setShowEditTagModal(false)}
           />
         </Modal>
         <Modal

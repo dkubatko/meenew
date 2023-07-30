@@ -17,9 +17,14 @@
   background-color: rgb(53, 195, 157);
 }
 
+.deleteButton {
+  composes: controlButton;
+  background-color: rgb(141, 28, 5);
+}
+
 .cancelButton {
   composes: controlButton;
-  background-color: rgb(177, 27, 65);
+  background-color: rgb(165, 175, 179);
 }
 
 .smallTag {

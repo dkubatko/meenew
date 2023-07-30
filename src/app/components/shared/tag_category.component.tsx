@@ -13,7 +13,8 @@ interface TagCategoryProps {
 export default function TagCategory({ rootTag, onAddTag, onEditTag }: TagCategoryProps) {
   const [expand, setExpand] = useState<Boolean>();
 
-  rootTag.children?.sort((a, b) => b.children?.length! - a.children?.length!);
+  // TODO: Implement proper sorting
+  rootTag.children?.sort((a, b) => Number(a.is_leaf) - Number(b.is_leaf));
 
   return (
     <>
@@ -29,7 +30,7 @@ export default function TagCategory({ rootTag, onAddTag, onEditTag }: TagCategor
           {
             expand &&
             rootTag.children?.map((subTag: TagTree) =>
-              subTag.children?.length == 0 ?
+              subTag.is_leaf ?
                 <Tag key={subTag.id} tag={subTag.toTagType()} onEdit={onEditTag} />
                 :
                 <TagCategory key={subTag.id} rootTag={subTag} onEditTag={onEditTag} onAddTag={onAddTag} />)
