@@ -5,17 +5,17 @@ import { ServerAPIClient } from '@/app/api/APIClient';
 const useFetchRestaurant = (restaurantId: string) => {
   const [restaurantData, setRestaurantData] = useState<RestaurantType | null>(null);
 
-  const fetchRestaurant = useCallback(async () => {
+  const fetchRestaurantData = useCallback(async () => {
     const restaurant = await ServerAPIClient.Restaurant.get(restaurantId);
     setRestaurantData(restaurant);
   }, [restaurantId]);
 
   // Initial fetch
   useEffect(() => {
-    fetchRestaurant();
-  }, [fetchRestaurant]);
+    fetchRestaurantData();
+  }, [fetchRestaurantData]);
 
-  return { restaurantData, fetchRestaurant };
+  return { restaurantData, fetchRestaurantData };
 };
 
 export default useFetchRestaurant;

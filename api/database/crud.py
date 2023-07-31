@@ -47,6 +47,17 @@ def get_menu_item(db: Session, menu_item_id: int):
   
   return menu_item
 
+def update_menu_item(db: Session, menu_item: models.MenuItemRead):
+   db_menu_item = get_menu_item(db, menu_item.id)
+   
+   db_menu_item.item_name = menu_item.item_name
+   db_menu_item.image_path = menu_item.image_path
+   # TODO: Update tags as well
+
+   db.commit()
+   db.refresh(db_menu_item)
+   return db_menu_item
+
 def create_menu_item(db: Session, menu_item: models.MenuItemCreate):
     db_menu_item = models.MenuItem.from_orm(menu_item)
     db_menu_item.tags = [get_tag(db, tag.id) for tag in menu_item.tags]

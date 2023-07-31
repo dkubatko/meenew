@@ -73,13 +73,5 @@ class TagCreate(TagBase):
 
 class MenuItemCreate(MenuItemBase):
     restaurant_id: int
+    image_path: Optional[str]
     tags: List["TagRead"]
-
-
-
-
-
-
-
-
-

@@ -21,6 +21,7 @@ export default class RestaurantAPI {
   }
 
   public async get(id: string): Promise<RestaurantType> {
-    return this.fetcher(`restaurant/${id}`);
+    const data = await this.fetcher(`restaurant/${id}`);
+    return RestaurantType.fromObject(data);
   }
 }

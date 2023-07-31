@@ -5,6 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import { Tag as TagType, TagTree as TagTreeType, Restaurant as RestaurantType, MenuItem as MenuItemType, TagCreate } from "@/app/types/menu";
 import TagCategory from "../shared/tag_category.component";
 import styles from "@/app/components/owner/restaurant.module.css";
+import sharedStyles from "@/app/components/shared/shared.module.css";
 import MenuItem from "@/app/components/shared/menu_item.component";
 import Modal from 'react-overlays/Modal';
 import NewTagForm from "./new_tag_form.component";
@@ -12,7 +13,7 @@ import TagModal from "@/app/components/owner/tag_modal.component";
 import useFetchRestaurant from '@/app/hooks/useFetchRestaurant';
 import useFetchTagTree from '@/app/hooks/useFetchTagTree';
 import MenuItemModal, { MenuItemFormData } from "./menu_item_modal.component";
-import { ServerAPIClient } from "@/app/api/APIClient";
+import APIClient, { ServerAPIClient } from "@/app/api/APIClient";
 
 interface ImageUploadResponse {
   menu_item: MenuItemType;
@@ -20,7 +21,7 @@ interface ImageUploadResponse {
 
 export default function Restaurant() {
   const searchParams = useSearchParams();
-  const { restaurantData, fetchRestaurant } = useFetchRestaurant(searchParams.get('id') ?? '0');
+  const { restaurantData, fetchRestaurantData } = useFetchRestaurant(searchParams.get('id') ?? '0');
   const { rootTag, fetchTagTree } = useFetchTagTree();
 
   const { restaurant_name = "", menu_items = [] } = restaurantData || {};
@@ -30,7 +31,8 @@ export default function Restaurant() {
 
   const [showNewTagModal, setShowNewTagModal] = useState<boolean>(false);
   const [showEditTagModal, setShowEditTagModal] = useState<boolean>(false);
-  const [showMenuItemModal, setShowMenuItemModal] = useState<boolean>(false);
+  const [showEditMenuItemModal, setShowEditMenuItemModal] = useState<boolean>(false);
+  const [showAddMenuItemModal, setShowAddMenuItemModal] = useState<boolean>(false);
 
   function Backdrop(onClick: () => void) {
     return (
@@ -71,25 +73,6 @@ export default function Restaurant() {
     setShowEditTagModal(true);
   }
 
-  async function handleMenuItemEditModalConfirm({ id, image }: MenuItemFormData) {
-    if (!image) {
-      console.log("Empty image");
-      return;
-    }
-
-    const updatedMenuItem = await ServerAPIClient.MenuItem.update(id, image);
-
-    if (!updatedMenuItem) {
-      console.error('An error occurred while updating a menu item');
-      return;
-    }
-    
-    // Update menu items.
-    fetchRestaurant();
-    // Close the modal after successful update.
-    setShowMenuItemModal(false);
-  }
-
   async function handleDeleteTag(tag: TagType) {
     const result = await ServerAPIClient.Tag.delete(tag.id);
 
@@ -118,9 +101,61 @@ export default function Restaurant() {
     setShowEditTagModal(false);
   }
 
+  async function handleEditMenuItemModalConfirm({ menu_item, image }: MenuItemFormData) {
+    // If new image is added, upload it to the server and update the image_path on the item.
+    if (image) {
+      const imageUrl = (await ServerAPIClient.MenuItem.uploadImage(image)).image_url;
+
+      if (!imageUrl) {
+        console.log("Could not upload image");
+        return;
+      }
+
+      menu_item.image_path = imageUrl
+    }
+  
+    const updatedMenuItem = await ServerAPIClient.MenuItem.update(menu_item);
+
+    if (!updatedMenuItem) {
+      console.error('An error occurred while updating a menu item');
+      return;
+    }
+    
+    // Update menu items.
+    fetchRestaurantData();
+    // Close the modal after successful update.
+    setShowEditMenuItemModal(false);
+  }
+
+  async function handleAddMenuItemModalConfirm({ menu_item, image }: MenuItemFormData) {
+    // If new image is added, upload it to the server and update the image_path on the item.
+    if (image) {
+      const imageUrl = (await ServerAPIClient.MenuItem.uploadImage(image)).image_url;
+
+      if (!imageUrl) {
+        console.log("Could not upload image");
+        return;
+      }
+
+      menu_item.image_path = imageUrl
+    }
+
+    const createdMenuItem = await ServerAPIClient.MenuItem.create(menu_item);
+
+    if (!createdMenuItem) {
+      console.error('An error occurred while creating a tag');
+      return;
+    }
+
+    // Update menu items.
+    fetchRestaurantData();
+    // Close the modal after successful update.
+    setShowAddMenuItemModal(false);
+  }
+
   function handleMenuItemEditClick(menu_item: MenuItemType) {
     setSelectedMenuItem(menu_item);
-    setShowMenuItemModal(true);
+    setShowEditMenuItemModal(true);
   }
 
   return (
@@ -142,6 +177,12 @@ export default function Restaurant() {
                 />
               ))
             }
+            <button
+              className={sharedStyles.addButton}
+              onClick={() => setShowAddMenuItemModal(true)}
+            >
+              +
+            </button>
           </div>
         </div>
         <div className={styles.tags}>
@@ -173,15 +214,28 @@ export default function Restaurant() {
         </Modal>
         <Modal
           className={styles.modal}
-          show={showMenuItemModal}
-          onHide={() => setShowMenuItemModal(false)}
-          renderBackdrop={() => Backdrop(() => setShowMenuItemModal(false))}
+          show={showEditMenuItemModal}
+          onHide={() => setShowEditMenuItemModal(false)}
+          renderBackdrop={() => Backdrop(() => setShowEditMenuItemModal(false))}
         >
           <MenuItemModal
-            onCancel={() => setShowMenuItemModal(false)}
-            onConfirm={handleMenuItemEditModalConfirm}
+            onCancel={() => setShowEditMenuItemModal(false)}
+            onConfirm={handleEditMenuItemModalConfirm}
             menu_item={selectedMenuItem!}
             edit={true}
+          />
+        </Modal>
+        <Modal
+          className={styles.modal}
+          show={showAddMenuItemModal}
+          onHide={() => setShowAddMenuItemModal(false)}
+          renderBackdrop={() => Backdrop(() => setShowAddMenuItemModal(false))}
+        >
+          <MenuItemModal
+            onCancel={() => setShowAddMenuItemModal(false)}
+            onConfirm={handleAddMenuItemModalConfirm}
+            menu_item={MenuItemType.new(restaurantData?.id!)}
+            edit={false}
           />
         </Modal>
       </div>

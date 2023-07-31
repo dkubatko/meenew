@@ -14,62 +14,65 @@ interface MenuItemModalProps {
 }
 
 export interface MenuItemFormData {
-  id: number;
-  name: string;
+  menu_item: MenuItem;
   image: File | null;
 }
 
 export default function MenuItemModal({ onCancel, onConfirm, menu_item, edit }: MenuItemModalProps) {
   const [imageUrl, setImageUrl] = useState<string | null>(menu_item?.image_path!);
-  const [formData, setFormData] = useState<MenuItemFormData>({ 
-    id: menu_item.id,
-    name: menu_item?.item_name!,
-    image: null 
+  const [formData, setFormData] = useState<MenuItemFormData>({
+    menu_item: menu_item,
+    image: null
   });
 
   function onImageUpload(event: React.ChangeEvent<HTMLInputElement>) {
     const image = event.target.files![0];
 
-    setImageUrl(URL.createObjectURL(image));
+    // Update image_path to display the temporary image
+    // and preserve the image object for further upload.
     setFormData(formData => ({
       ...formData,
-      image: image
+      image: image,
+      menu_item: {
+        ...formData.menu_item,
+        image_path: URL.createObjectURL(image),
+      }
     }));
   }
 
   function onImageClear() {
-    setImageUrl(null);
+    setFormData(formData => ({
+      ...formData,
+      menu_item: {
+        ...formData.menu_item,
+        image_path: ""
+      }
+    }));
   }
 
   return (
     <div className={styles.container}>
       <div className={styles.formContainer}>
         <div className={styles.imageContainer}>
-          {
-            edit ?
-              (
-                <ImageUpload 
-                  onImageUpload={onImageUpload}
-                  imageUrl={imageUrl}
-                  onImageClear={onImageClear}
-                />
-              ) :
-              (
-                <div>
-                  Image
-                </div>
-              )
-          }
+          <ImageUpload
+            onImageUpload={onImageUpload}
+            imageUrl={formData.menu_item.image_path}
+            onImageClear={onImageClear}
+          />
         </div>
         <div className={styles.inputsContainer}>
           <label style={{ 'flex': '1' }}>
             Item name:<br />
             <input
-              type="text"
-              name="item_name"
+              value={formData.menu_item.item_name}
+              onInput={
+                (e: React.ChangeEvent<HTMLInputElement>) => {
+                  const updatedItem = { ...formData.menu_item, item_name: e.target.value };
+                  setFormData({ ...formData, menu_item: updatedItem });
+                }
+              }
               className={styles.textInput}
-              value={menu_item?.item_name}
-              readOnly
+              autoComplete="off"
             />
           </label>
           <label style={{ 'flex': '2' }}>
@@ -85,17 +88,17 @@ export default function MenuItemModal({ onCancel, onConfirm, menu_item, edit }: 
         </div>
       </div>
       <div className={styles.footer}>
-        <div 
+        <div
           className={sharedStyles.cancelButton}
           onClick={onCancel}
         >
           Cancel
         </div>
-        <div 
+        <div
           className={sharedStyles.confirmButton}
           onClick={() => onConfirm(formData)}
         >
-            Update
+          {edit ? "Update" : "Add"}
         </div>
       </div>
     </div>

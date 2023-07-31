@@ -27,6 +27,7 @@
   align-items: center;
   justify-content: flex-start;
   flex-grow: 0;
+  width: 80%;
   height: 100%;
 }
 
@@ -40,7 +41,7 @@
  flex: 3;
  display: flex;
  flex-direction: column;
- align-items: stretch;
+ align-items: center;
  justify-content: flex-start;
  height: 100%;
 }

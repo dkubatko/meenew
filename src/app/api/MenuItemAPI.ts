@@ -20,10 +20,27 @@ export default class MenuItemAPIClient {
     }
   }
 
-  public async update(id: number, image: File): Promise<MenuItemType> {
+  public async create(menuItem: MenuItemType): Promise<MenuItemType> {
+    const data = await this.fetcher('menu_item', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(menuItem),
+    });
+    return MenuItemType.fromObject(data);
+  }
+
+  public async update(menuItem: MenuItemType): Promise<MenuItemType> {
+    const data = await this.fetcher('menu_item', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(menuItem),
+    });
+    return MenuItemType.fromObject(data);
+  }
+
+  public async uploadImage(image: File): Promise<{ image_url: string }> {
     const formData = new FormData();
     formData.append("image", image);
-    formData.append("menu_item_id", id.toString());
   
     return this.fetcher('menu_item_image_upload', {
       method: 'POST',

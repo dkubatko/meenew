@@ -26,19 +26,21 @@ export default class TagAPIClient {
   }
 
   public async create(tag: TagCreate): Promise<TagType> {
-    return this.fetcher('tag', {
+    const data = await this.fetcher('tag', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(tag),
     });
+    return TagType.fromObject(data);
   }
 
   public async update(tag: TagCreate): Promise<TagType> {
-    return this.fetcher('tag', {
+    const data = await this.fetcher('tag', {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(tag),
     });
+    return TagType.fromObject(data);
   }
 
   public delete(id: number): Promise<{ok: boolean}> {

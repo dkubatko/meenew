@@ -53,7 +53,6 @@ def create_tag(tag: models.TagCreate, db: Session = Depends(get_session)):
 
 @app.put('/api/tag', response_model=models.TagRead)
 def update_tag(tag: models.TagRead, db: Session = Depends(get_session)):
-    print(tag)
     return crud.update_tag(db=db, tag=tag)
 
 @app.delete('/api/tag/{tag_id}')
@@ -76,14 +75,18 @@ def create_menu_item(menu_item: models.MenuItemCreate, db: Session = Depends(get
 def add_tag_for_menu_item(menu_item_id: int, tag_id: int, db: Session = Depends(get_session)):
     return crud.add_tag_for_menu_item(db, menu_item_id, tag_id)
 
-@app.post("/api/menu_item_image_upload", response_model=models.MenuItemRead)
-def create_upload_file(menu_item_id: int = Form(...), image: UploadFile = File(...), db: Session = Depends(get_session)):
+@app.post("/api/menu_item_image_upload")
+def create_upload_file(image: UploadFile = File(...), db: Session = Depends(get_session)):
     gcs_url = gcs.upload_file(image)
     
     if gcs_url is None:
         raise HTTPException(status_code=400, detail="File upload failed.")
     
-    return crud.add_image_url_to_menu_item(db, menu_item_id, gcs_url)
+    return { "image_url": gcs_url }
+
+@app.put('/api/menu_item', response_model=models.MenuItemRead)
+def update_menu_item(menu_item: models.MenuItemRead, db: Session = Depends(get_session)):
+    return crud.update_menu_item(db = db, menu_item = menu_item)
 
 @app.get("/api/{restaurant}/stub")
 def stub_data(restaurant: str):
