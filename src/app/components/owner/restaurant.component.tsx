@@ -52,7 +52,7 @@ export default function Restaurant() {
       return;
     }
   
-    const createdTag = await ServerAPIClient.createTag(tag);
+    const createdTag = await ServerAPIClient.Tag.create(tag);
   
     if (!createdTag) {
       console.error('An error occurred while creating a tag');
@@ -77,7 +77,7 @@ export default function Restaurant() {
       return;
     }
 
-    const updatedMenuItem = await ServerAPIClient.updateMenuItem(id, image);
+    const updatedMenuItem = await ServerAPIClient.MenuItem.update(id, image);
 
     if (!updatedMenuItem) {
       console.error('An error occurred while updating a menu item');
@@ -91,7 +91,7 @@ export default function Restaurant() {
   }
 
   async function handleDeleteTag(tag: TagType) {
-    const result = await ServerAPIClient.deleteTag(tag.id);
+    const result = await ServerAPIClient.Tag.delete(tag.id);
 
     if (!result || !result.ok) {
       console.error('An error occurred while deleting a tag');
@@ -105,7 +105,7 @@ export default function Restaurant() {
   }
 
   async function handleEditTag(tag: TagType) {
-    const updatedTag = await ServerAPIClient.updateTag(tag);
+    const updatedTag = await ServerAPIClient.Tag.update(tag);
   
     if (!updatedTag) {
       console.error('An error occurred while updating a tag');

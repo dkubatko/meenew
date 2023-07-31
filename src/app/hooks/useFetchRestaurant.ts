@@ -6,7 +6,7 @@ const useFetchRestaurant = (restaurantId: string) => {
   const [restaurantData, setRestaurantData] = useState<RestaurantType | null>(null);
 
   const fetchRestaurant = useCallback(async () => {
-    const restaurant = await ServerAPIClient.getRestaurant(restaurantId);
+    const restaurant = await ServerAPIClient.Restaurant.get(restaurantId);
     setRestaurantData(restaurant);
   }, [restaurantId]);
 

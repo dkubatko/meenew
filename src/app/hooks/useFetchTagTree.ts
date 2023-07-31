@@ -6,7 +6,7 @@ const useFetchTagTree = () => {
   const [rootTag, setRootTag] = useState<TagTreeType | null>(null);
 
   const fetchTagTree = useCallback(async () => {
-    const tagTree = await ServerAPIClient.getTagTree();
+    const tagTree = await ServerAPIClient.Tag.getTree();
     setRootTag(tagTree);
   }, []);
 
