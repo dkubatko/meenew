@@ -1,5 +1,4 @@
-import styles from '@/app/components/shared/image_upload.module.css';
-import { useState } from 'react';
+import styles from '@/app/components/shared/imageUpload.module.css';
 import Image from 'next/image';
 
 interface ImageUploadProps {

@@ -1,7 +1,7 @@
 import { useState } from "react";
-import styles from "@/app/components/owner/new_tag_form.module.css";
+import styles from "@/app/components/owner/newTagForm.module.css";
 import { ThreeDots } from "react-loader-spinner";
-import { TagCreate, Tag as TagType } from "@/app/types/menu";
+import { TagCreate, Tag as TagType } from "@/app/types/tag";
 
 type TagData = {
   name: string

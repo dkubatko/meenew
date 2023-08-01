@@ -1,8 +1,8 @@
-import { MenuItem } from "@/app/types/menu"
-import ImageUpload from "../shared/image_upload.component";
-import styles from './menu_item_modal.module.css';
+import ImageUpload from "../shared/imageUpload.component";
+import styles from './menuItemModal.module.css';
 import sharedStyles from '@/app/components/shared/shared.module.css';
-import { Tag as TagType } from "@/app/types/menu";
+import MenuItem from "@/app/types/menuItem";
+import { Tag as TagType } from "@/app/types/tag";
 import Tag from "../shared/tag.component";
 import { useState } from "react";
 

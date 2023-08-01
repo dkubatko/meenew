@@ -1,4 +1,4 @@
-import { Tag as TagType } from "@/app/types/menu";
+import { Tag as TagType } from "@/app/types/tag";
 import styles from "@/app/components/shared/tag.module.css";
 import { motion } from "framer-motion";
 import editIcon from "@/assets/icons/pencil-edit.svg";

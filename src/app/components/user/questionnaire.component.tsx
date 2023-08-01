@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import meenew from '@/assets/character/meenew.png';
 import styles from '@/app/components/user/questionnaire.module.css';
-import ProgressBar from '@/app/components/progress_bar.component';
+import ProgressBar from '@/app/components/progressBar.component';
 import Results from '@/app/components/results.component';
 import { useState, useEffect, useRef } from 'react';
 import { useSearchParams } from 'next/navigation';

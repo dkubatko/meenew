@@ -2,22 +2,19 @@
 
 import { useState, useEffect } from "react";
 import { useSearchParams } from 'next/navigation';
-import { Tag as TagType, TagTree as TagTreeType, Restaurant as RestaurantType, MenuItem as MenuItemType, TagCreate } from "@/app/types/menu";
-import TagCategory from "../shared/tag_category.component";
+import { Tag as TagType, TagCreate } from "@/app/types/tag";
+import MenuItemType from "@/app/types/menuItem";
+import TagCategory from "../shared/tagCategory.component";
 import styles from "@/app/components/owner/restaurant.module.css";
 import sharedStyles from "@/app/components/shared/shared.module.css";
-import MenuItem from "@/app/components/shared/menu_item.component";
+import MenuItem from "@/app/components/shared/menuItem.component";
 import Modal from 'react-overlays/Modal';
-import NewTagForm from "./new_tag_form.component";
-import TagModal from "@/app/components/owner/tag_modal.component";
+import NewTagForm from "./newTagForm.component";
+import TagModal from "@/app/components/owner/tagModal.component";
 import useFetchRestaurant from '@/app/hooks/useFetchRestaurant';
 import useFetchTagTree from '@/app/hooks/useFetchTagTree';
-import MenuItemModal, { MenuItemFormData } from "./menu_item_modal.component";
+import MenuItemModal, { MenuItemFormData } from "./menuItemModal.component";
 import APIClient, { ServerAPIClient } from "@/app/api/APIClient";
-
-interface ImageUploadResponse {
-  menu_item: MenuItemType;
-}
 
 export default function Restaurant() {
   const searchParams = useSearchParams();

@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from 'react';
-import { Restaurant as RestaurantType } from '@/app/types/menu';
+import RestaurantType from '@/app/types/restaurant';
 import { ServerAPIClient } from '@/app/api/APIClient';
 
 const useFetchRestaurant = (restaurantId: string) => {

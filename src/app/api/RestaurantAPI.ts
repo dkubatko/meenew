@@ -1,4 +1,4 @@
-import { Restaurant as RestaurantType } from "@/app/types/menu";
+import RestaurantType from "@/app/types/restaurant";
 
 export default class RestaurantAPI {
   private baseURL: string;

@@ -1,4 +1,4 @@
-import { MenuItem as MenuItemType } from "../types/menu";
+import MenuItemType from "@/app/types/menuItem";
 
 export default class MenuItemAPIClient {
   private baseURL: string;

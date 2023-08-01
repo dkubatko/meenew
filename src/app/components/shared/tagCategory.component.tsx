@@ -1,5 +1,5 @@
-import { TagTree, Tag as TagType } from "@/app/types/menu";
-import styles from "@/app/components/shared/tag_category.module.css";
+import { TagTree, Tag as TagType } from "@/app/types/tag";
+import styles from "@/app/components/shared/tagCategory.module.css";
 import sharedStyles from "@/app/components/shared/shared.module.css";
 import { useState } from "react";
 import Tag from "./tag.component";

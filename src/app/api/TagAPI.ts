@@ -1,4 +1,4 @@
-import { TagTree as TagTreeType, Tag as TagType, TagCreate } from "../types/menu";
+import { Tag as TagType, TagTree as TagTreeType, TagCreate } from "@/app/types/tag";
 
 export default class TagAPIClient {
   private baseURL: string;

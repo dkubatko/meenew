@@ -1,6 +1,6 @@
-import styles from "@/app/components/owner/tag_modal.module.css";
+import styles from "@/app/components/owner/tagModal.module.css";
 import sharedStyles from "@/app/components/shared/shared.module.css";
-import { Tag } from "@/app/types/menu";
+import { Tag } from "@/app/types/tag";
 import { useState } from "react";
 import { ThreeDots } from "react-loader-spinner";
 
