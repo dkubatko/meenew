@@ -52,7 +52,14 @@ def update_menu_item(db: Session, menu_item: models.MenuItemRead):
    
    db_menu_item.item_name = menu_item.item_name
    db_menu_item.image_path = menu_item.image_path
-   # TODO: Update tags as well
+
+   db_menu_item.tags.clear()  # Clear current tags - appropriate if replacing entirely
+
+   for tag in menu_item.tags:
+       # Retrieve the tag instance from the db
+       db_tag = get_tag(db, tag.id)  # I'm assuming get_tag is a function you've defined to get a tag by id
+       if db_tag is not None:  # Only add if tag exists in db
+           db_menu_item.tags.append(db_tag)
 
    db.commit()
    db.refresh(db_menu_item)

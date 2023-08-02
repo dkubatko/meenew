@@ -77,3 +77,19 @@
   background-color: antiquewhite;
   scale: 1.1;
 }
+
+.smallButton {
+  position: relative;
+  width: 45%;
+  font-size: smaller;
+  margin: auto;
+  background-color: rgb(169, 169, 169);
+  border-radius: 15%;
+  padding: 0.3vh 0.3vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0.2vh 0.2vw;
+  font-weight: bold;
+  white-space: nowrap;
+}

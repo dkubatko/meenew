@@ -110,7 +110,7 @@ export default function Restaurant() {
 
       menu_item.image_path = imageUrl
     }
-  
+
     const updatedMenuItem = await ServerAPIClient.MenuItem.update(menu_item);
 
     if (!updatedMenuItem) {
@@ -219,6 +219,7 @@ export default function Restaurant() {
             onCancel={() => setShowEditMenuItemModal(false)}
             onConfirm={handleEditMenuItemModalConfirm}
             menu_item={selectedMenuItem!}
+            tagList={rootTag?.toTagLeafList()!}
             edit={true}
           />
         </Modal>
@@ -232,6 +233,7 @@ export default function Restaurant() {
             onCancel={() => setShowAddMenuItemModal(false)}
             onConfirm={handleAddMenuItemModalConfirm}
             menu_item={MenuItemType.new(restaurantData?.id!)}
+            tagList={rootTag?.toTagLeafList()!}
             edit={false}
           />
         </Modal>

@@ -28,6 +28,18 @@
   justify-content: center;
 }
 
+.sectionTitle {
+  font-weight: bold;
+}
+
+.nameSection {
+  width: 100%;
+}
+
+.tagSection {
+  width: 100%;
+}
+
 .tagsContainer {
   display: flex;
   flex-direction: row;

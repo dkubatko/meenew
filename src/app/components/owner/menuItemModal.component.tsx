@@ -5,11 +5,13 @@ import MenuItem from "@/app/types/menuItem";
 import { Tag as TagType } from "@/app/types/tag";
 import Tag from "../shared/tag.component";
 import { useState } from "react";
+import AddInputButton from "../shared/addInputButton.component";
 
 interface MenuItemModalProps {
   onCancel: () => void;
   onConfirm: (formData: MenuItemFormData) => void;
   menu_item: MenuItem;
+  tagList: TagType[];
   edit?: boolean;
 }
 
@@ -18,8 +20,7 @@ export interface MenuItemFormData {
   image: File | null;
 }
 
-export default function MenuItemModal({ onCancel, onConfirm, menu_item, edit }: MenuItemModalProps) {
-  const [imageUrl, setImageUrl] = useState<string | null>(menu_item?.image_path!);
+export default function MenuItemModal({ onCancel, onConfirm, menu_item, edit, tagList }: MenuItemModalProps) {
   const [formData, setFormData] = useState<MenuItemFormData>({
     menu_item: menu_item,
     image: null
@@ -50,6 +51,32 @@ export default function MenuItemModal({ onCancel, onConfirm, menu_item, edit }: 
     }));
   }
 
+  const handleNewTagSubmit = (tagId: number) => {
+    const selectedTag = tagList.find(tag => tag.id === tagId);
+
+    if (selectedTag) {
+      setFormData(formData => ({
+        ...formData,
+        menu_item: {
+          ...formData.menu_item,
+          tags: [...formData.menu_item.tags, selectedTag],
+        },
+      }));
+    } else {
+      console.log("Tag doesn't exist.");
+    }
+  };
+
+  const handleDeleteTag = (tagToDelete: TagType) => {
+    setFormData(formData => ({
+      ...formData,
+      menu_item: {
+        ...formData.menu_item,
+        tags: formData.menu_item.tags.filter(tag => tag.id !== tagToDelete.id),
+      },
+    }));
+  };
+
   return (
     <div className={styles.container}>
       <div className={styles.formContainer}>
@@ -61,8 +88,8 @@ export default function MenuItemModal({ onCancel, onConfirm, menu_item, edit }: 
           />
         </div>
         <div className={styles.inputsContainer}>
-          <label style={{ 'flex': '1' }}>
-            Item name:<br />
+          <div className={styles.nameSection}>
+            <div className={styles.sectionTitle}>Item name:</div>
             <input
               value={formData.menu_item.item_name}
               onInput={
@@ -74,17 +101,27 @@ export default function MenuItemModal({ onCancel, onConfirm, menu_item, edit }: 
               className={styles.textInput}
               autoComplete="off"
             />
-          </label>
-          <label style={{ 'flex': '2' }}>
-            Tags:
+          </div>
+          <div className={styles.tagSection}>
+            <div className={styles.sectionTitle}>Tags:</div>
             <div className={styles.tagsContainer}>
               {
-                menu_item?.tags.map(
-                  (tag: TagType) => <Tag key={tag.id} tag={tag} className={sharedStyles.smallTag} />
+                formData.menu_item.tags.map(
+                  (tag: TagType) =>
+                    <Tag
+                      key={tag.id}
+                      tag={tag}
+                      onEdit={handleDeleteTag}
+                      className={sharedStyles.smallTag}
+                    />
                 )
               }
+              <AddInputButton
+                onSubmit={handleNewTagSubmit}
+                options={tagList.map((tag: TagType) => ({ id: tag.id, value: tag.name }))}
+              />
             </div>
-          </label>
+          </div>
         </div>
       </div>
       <div className={styles.footer}>

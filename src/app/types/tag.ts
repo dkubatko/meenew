@@ -38,6 +38,29 @@ export class TagTree {
       children ? children.map(TagTree.fromObject) : undefined,
       is_leaf);
   }
+
+  toTagLeafList(): Tag[] {
+    // Initialize the queue with the root node.
+    const queue: TagTree[] = [this];
+    const tags: Tag[] = [];
+  
+    while(queue.length > 0) {
+      // Dequeue a node from the queue.
+      const current = queue.shift()!;
+  
+      // Convert current TagTree node to Tag and push it to tags array if it's a leaf.
+      if (current.is_leaf) {
+        tags.push(current.toTagType());
+      }
+  
+      // If the current node has children, enqueue them.
+      if(current.children) {
+        queue.push(...current.children);
+      }
+    }
+  
+    return tags;
+  }
 }
 
 export class TagCreate {
