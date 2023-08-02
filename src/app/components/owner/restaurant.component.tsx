@@ -124,6 +124,20 @@ export default function Restaurant() {
     setShowEditMenuItemModal(false);
   }
 
+  async function handleEditMenuItemModalDelete(menuItem: MenuItemType) {
+    const result = await ServerAPIClient.MenuItem.delete(menuItem.id);
+
+    if (!result || !result.ok) {
+      console.error('An error occurred while deleting a menu item');
+      return;
+    }
+
+    // Update menu items.
+    fetchRestaurantData();
+    // Close the modal after successful update.
+    setShowEditMenuItemModal(false);
+  }
+
   async function handleAddMenuItemModalConfirm({ menu_item, image }: MenuItemFormData) {
     // If new image is added, upload it to the server and update the image_path on the item.
     if (image) {
@@ -218,6 +232,7 @@ export default function Restaurant() {
           <MenuItemModal
             onCancel={() => setShowEditMenuItemModal(false)}
             onConfirm={handleEditMenuItemModalConfirm}
+            onDelete={handleEditMenuItemModalDelete}
             menu_item={selectedMenuItem!}
             tagList={rootTag?.toTagLeafList()!}
             edit={true}

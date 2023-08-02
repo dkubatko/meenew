@@ -88,6 +88,10 @@ def create_upload_file(image: UploadFile = File(...), db: Session = Depends(get_
 def update_menu_item(menu_item: models.MenuItemRead, db: Session = Depends(get_session)):
     return crud.update_menu_item(db = db, menu_item = menu_item)
 
+@app.delete('/api/menu_item/{menu_item_id}')
+def delete_menu_item(menu_item_id: int, db: Session = Depends(get_session)):
+    return crud.delete_menu_item(db = db, menu_item_id = menu_item_id)
+
 @app.get("/api/{restaurant}/stub")
 def stub_data(restaurant: str):
     with open(join('api', 'data', 'sample_data.json'), 'r') as file:

@@ -65,6 +65,17 @@ def update_menu_item(db: Session, menu_item: models.MenuItemRead):
    db.refresh(db_menu_item)
    return db_menu_item
 
+def delete_menu_item(db: Session, menu_item_id: int):
+    menu_item = db.get(models.MenuItem, menu_item_id)
+
+    if not menu_item:
+      raise HTTPException(status_code=404, detail=f"Menu item w/ id = {menu_item_id} not found.")
+    
+    db.delete(menu_item)
+    db.commit()
+    
+    return { "ok": True }
+
 def create_menu_item(db: Session, menu_item: models.MenuItemCreate):
     db_menu_item = models.MenuItem.from_orm(menu_item)
     db_menu_item.tags = [get_tag(db, tag.id) for tag in menu_item.tags]

@@ -47,4 +47,11 @@ export default class MenuItemAPIClient {
       body: formData
     });
   }
+
+  public async delete(id: number): Promise<{ok: boolean}> {
+    return this.fetcher(`menu_item/${id}`, {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
 }

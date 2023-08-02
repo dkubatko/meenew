@@ -43,7 +43,7 @@ export default class TagAPIClient {
     return TagType.fromObject(data);
   }
 
-  public delete(id: number): Promise<{ok: boolean}> {
+  public async delete(id: number): Promise<{ok: boolean}> {
     return this.fetcher(`tag/${id}`, {
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' },

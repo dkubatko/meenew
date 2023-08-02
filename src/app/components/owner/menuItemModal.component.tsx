@@ -10,6 +10,7 @@ import AddInputButton from "../shared/addInputButton.component";
 interface MenuItemModalProps {
   onCancel: () => void;
   onConfirm: (formData: MenuItemFormData) => void;
+  onDelete?: (menuItem: MenuItem) => void;
   menu_item: MenuItem;
   tagList: TagType[];
   edit?: boolean;
@@ -20,7 +21,7 @@ export interface MenuItemFormData {
   image: File | null;
 }
 
-export default function MenuItemModal({ onCancel, onConfirm, menu_item, edit, tagList }: MenuItemModalProps) {
+export default function MenuItemModal({ onCancel, onConfirm, menu_item, edit, tagList, onDelete }: MenuItemModalProps) {
   const [formData, setFormData] = useState<MenuItemFormData>({
     menu_item: menu_item,
     image: null
@@ -124,7 +125,12 @@ export default function MenuItemModal({ onCancel, onConfirm, menu_item, edit, ta
           </div>
         </div>
       </div>
-      <div className={styles.footer}>
+      <div className={styles.control}>
+        {edit && <button
+          className={sharedStyles.deleteButton}
+          onClick={() => onDelete!(menu_item)}>
+          Delete
+        </button>}
         <div
           className={sharedStyles.cancelButton}
           onClick={onCancel}
