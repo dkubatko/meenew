@@ -32,12 +32,19 @@ def delete_tag(db: Session, tag_id: int):
     tag = db.get(models.Tag, tag_id)
 
     if not tag:
-      raise HTTPException(status_code=404, detail=f"Tag w/ id = {tag_id} not found.")
-    
+        raise HTTPException(status_code=404, detail=f"Tag w/ id = {tag_id} not found.")
+
+    # If the tag is not a leaf, delete all its children
+    if not tag.is_leaf:
+        children_tags = db.query(models.Tag).filter(models.Tag.parent_id == tag_id).all()
+        for child_tag in children_tags:
+            delete_tag(db, child_tag.id)
+
+    # Delete the tag itself
     db.delete(tag)
     db.commit()
-    
-    return { "ok": True }
+
+    return {"ok": True}
 
 def get_menu_item(db: Session, menu_item_id: int):
   menu_item = db.get(models.MenuItem, menu_item_id)

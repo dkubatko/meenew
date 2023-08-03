@@ -43,3 +43,7 @@
   align-items: flex-start;
 }
 
+.icon {
+  height: 60%;
+  width: 60%;
+}

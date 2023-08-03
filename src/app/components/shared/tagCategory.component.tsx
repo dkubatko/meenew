@@ -1,8 +1,10 @@
 import { TagTree, Tag as TagType } from "@/app/types/tag";
 import styles from "@/app/components/shared/tagCategory.module.css";
 import sharedStyles from "@/app/components/shared/shared.module.css";
+import editIcon from "@/assets/icons/pencil-edit.svg";
 import { useState } from "react";
 import Tag from "./tag.component";
+import Image from "next/image";
 
 interface TagCategoryProps {
   rootTag: TagTree;
@@ -23,6 +25,18 @@ export default function TagCategory({ rootTag, onAddTag, onEditTag }: TagCategor
         <div className={styles.title}>
           {rootTag.name}
         </div>
+        {
+            onEditTag &&
+            <div
+              className={sharedStyles.cornerControl}
+              onClick={(event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+                event.stopPropagation();
+                onEditTag(rootTag.toTagType());
+              }}
+            >
+              <Image src={editIcon} alt={"edit"} className={styles.icon}></Image>
+            </div>
+          }
       </div>
       <div className={styles.items}>
         <div className={styles.separator} />

@@ -78,6 +78,8 @@ export default function Restaurant() {
       return;
     }
 
+    // Update menu items.
+    fetchRestaurantData();
     // Update the tag list with new data.
     fetchTagTree();
     // Close the modal after successful deletion.
