@@ -93,7 +93,9 @@ export default function Restaurant() {
       console.error('An error occurred while updating a tag');
       return;
     }
-  
+    
+    // Update menu items.
+    fetchRestaurantData();
     // Update the tag list with new data.
     fetchTagTree();
     // Close the modal after successful update.
