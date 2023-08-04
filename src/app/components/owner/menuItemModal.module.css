@@ -1,31 +1,38 @@
 .container {
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
   width: 100%;
   height: 100%;
-  justify-content: space-between;
 }
 
 .formContainer {
   display: flex;
   flex-direction: row;
-  flex: 5;
+  align-items: stretch;
+  justify-content: center;
+  width: 100%;
+  margin: auto 0;
 }
 
 .imageContainer {
-  flex: 1;
+  height: auto;
+  flex: 3;
 }
 
 .textInput {
-  border: 2px solid rgb(212, 139, 14);
+  width: 100%;
+  border: 2px solid var(--accent-color);
+  padding: 0.1vh 0.5vw;
 }
 
 .inputsContainer {
-  flex: 1;
+  flex: 2;
+  height: 100%;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  justify-content: center;
+  align-items: center;
+  height: 100%;
 }
 
 .sectionTitle {
@@ -34,10 +41,12 @@
 
 .nameSection {
   width: 100%;
+  flex: 1;
 }
 
 .tagSection {
   width: 100%;
+  flex: 1;
 }
 
 .tagsContainer {
@@ -51,7 +60,6 @@
 }
 
 .control {
-  flex: 1;
   display: flex;
   flex-direction: row;
   align-items: center;

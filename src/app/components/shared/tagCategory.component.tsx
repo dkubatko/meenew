@@ -45,7 +45,7 @@ export default function TagCategory({ rootTag, onAddTag, onEditTag }: TagCategor
             expand &&
             rootTag.children?.map((subTag: TagTree) =>
               subTag.is_leaf ?
-                <Tag key={subTag.id} tag={subTag.toTagType()} onEdit={onEditTag} />
+                <Tag key={subTag.id} tag={subTag.toTagType()} onEdit={onEditTag} className={sharedStyles.largeTag}/>
                 :
                 <TagCategory key={subTag.id} rootTag={subTag} onEditTag={onEditTag} onAddTag={onAddTag} />)
           }

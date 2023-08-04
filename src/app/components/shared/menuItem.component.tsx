@@ -4,6 +4,7 @@ import { Tag as TagType } from "@/app/types/tag";
 import MenuItemType from "@/app/types/menuItem";
 import Tag from "./tag.component";
 import Image from 'next/image';
+import editIcon from "@/assets/icons/pencil-edit.svg";
 
 interface MenuItemProps {
   menu_item: MenuItemType;
@@ -37,7 +38,9 @@ export default function MenuItem({menu_item: { item_name, tags, image_path }, ed
         </div>
       </div>
       {
-        editable && <div className={styles.edit} onClick={onEdit}>Edit</div>
+        editable && <div className={`${sharedStyles.cornerControl} ${styles.small}`} onClick={onEdit}>
+          <Image src={editIcon} alt={"edit"} className={styles.icon}></Image>
+        </div>
       }
     </div>
   )

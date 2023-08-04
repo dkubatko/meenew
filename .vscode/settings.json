@@ -2,5 +2,9 @@
   "editor.tabSize": 2,
   "css.lint.validProperties": [
     "composes"
-  ]
+  ],
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "cssModules.pathAlias": {
+    "@": "${workspaceFolder}/src"
+  }
 }
