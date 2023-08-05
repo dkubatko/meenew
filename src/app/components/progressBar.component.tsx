@@ -1,4 +1,4 @@
-import styles from './progress_bar.module.css';
+import styles from './progressBar.module.css';
 import { motion } from 'framer-motion';
 
 type ProgressBarProps = {

@@ -32,16 +32,29 @@ class MenuItem(MenuItemBase, table = True):
 
 class TagBase(SQLModel):
     name: str = Field(unique=True, index=True)
+    is_leaf: bool = Field(default = True)
 
 class Tag(TagBase, table = True):
     __tablename__: str = "tags"
 
     id: Optional[int] = Field(default=None, primary_key=True, index=True)
+    parent_id: Optional[int] = Field(default=None, foreign_key="tags.id", nullable=True)
 
+    parent: Optional["Tag"] = Relationship(
+        back_populates="children",
+        sa_relationship_kwargs=dict(remote_side="Tag.id")
+    )
+    children: List["Tag"] = Relationship(back_populates="parent")
     menu_items: List["MenuItem"] = Relationship(back_populates="tags", link_model=ItemTagLink)
 
 class TagRead(TagBase):
     id: int
+    parent_id: Optional[int]
+
+class TagTreeRead(TagBase):
+    id: int
+    parent_id: Optional[int]
+    children: List["TagTreeRead"] = []
 
 class MenuItemRead(MenuItemBase):
     id: int
@@ -56,17 +69,9 @@ class RestaurantCreate(RestaurantBase):
     pass
 
 class TagCreate(TagBase):
-    pass
+    parent_id: int
 
 class MenuItemCreate(MenuItemBase):
     restaurant_id: int
+    image_path: Optional[str]
     tags: List["TagRead"]
-
-
-
-
-
-
-
-
-

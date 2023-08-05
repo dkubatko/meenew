@@ -4,6 +4,7 @@
   width: 100%;
   height: 100%;
   align-items: center;
+  padding: 1vh 1vw;
 }
 
 .restaurantName {
@@ -20,6 +21,17 @@
   justify-content: space-around;
 }
 
+.itemlist {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  flex-grow: 0;
+  width: 90%;
+  margin: auto;
+  height: 100%;
+}
+
 .title {
   font-weight: bold;
   align-self: center;
@@ -27,16 +39,16 @@
 }
 
 .menu {
- flex: 3;
+ flex: 5;
  display: flex;
  flex-direction: column;
- align-items: stretch;
+ align-items: center;
  justify-content: flex-start;
  height: 100%;
 }
 
 .tags {
-  flex: 1;
+  flex: 2;
   display: flex;
   flex-direction: column;
   align-items: stretch;
@@ -44,24 +56,14 @@
   height: 100%;
 }
 
-.add {
-  width: 80%;
-  margin: auto;
-  background-color: lavender; 
-  border-radius: 25%;
-  padding: 8px;
+.taglist {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  margin-top: 10%;
-  cursor: pointer;
-  transition: 0.3s;
-  font-weight: bold;
-}
-
-.add:hover {
-  background-color: antiquewhite;
-  scale: 1.1;
+  justify-content: flex-start;
+  width: 90%;
+  margin: auto;
+  height: 100%;
 }
 
 .backdrop {
@@ -80,14 +82,13 @@
 
 .modal {
   position: fixed;
-  width: 50%;
-  height: 20%;
+  width: 60%;
   z-index: 1040;
-  top: 20%;
+  top: 30%;
   left: 50%;
   transform: translate(-50%, -50%);
   border: 1px solid #e5e5e5;
   background-color: white;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
-  padding: 20px;
+  box-shadow: 0 0.3vh 0.5vw rgba(0, 0, 0, 0.5);
+  padding: 1vh 1vw;
 }

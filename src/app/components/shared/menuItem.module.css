@@ -4,10 +4,14 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  width: 80%;
-  height: 10vh;
-  margin: auto;
-  margin-top: 3%;
+  width: 100%;
+  height: 13vh;
+  margin: 2% 0;
+
+  background-color: var(--secondary-color);
+  padding: 1vh 1vw;
+  border-radius: 5% 5%;
+  box-shadow: 0.45vw 0.3vh 0.5vw grey;
 }
 
 .item {
@@ -20,10 +24,12 @@
 }
 
 .image {
-  border: 1px solid black;
+  position: relative;
+  flex-grow: 0;
+  aspect-ratio: 16 / 9;
   height: 100%;
-  width: 100%;
-  flex: 1;
+  overflow: hidden;
+  border-radius: 5%;
 }
 
 .content {
@@ -57,14 +63,13 @@
   text-align: center;
   font-size: smaller;
   transform: translate(20%, -20%);
-  background-color: rgb(113, 214, 222);
+  background-color: var(--accent-color);
   color: black;
   cursor: pointer;
 }
 
 .edit:hover {
-  border: 1px solid black;
-  background-color: rgb(213, 122, 43);
+  border: 2px solid black;
   color: black;
 }
 
@@ -73,23 +78,17 @@
   flex: 3;
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
+  align-content: flex-start;
+  gap: 0.5vh;
   justify-content: center;
   width: 100%;
 }
 
-.tag {
-  position: relative;
-  width: 30%;
-  font-size: smaller;
-  margin: auto;
-  background-color: violet;
-  border-radius: 35% 15%;
-  padding: 0.5vh 0.5vw;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0.3vh 0.3vw;
-  transition: 0.3s;
-  font-weight: bold;
+.icon {
+  height: 60%;
+  width: 60%;
+}
+
+.small {
+  height: 25%;
 }
