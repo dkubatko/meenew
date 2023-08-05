@@ -4,12 +4,11 @@ import { useState, useEffect } from "react";
 import { useSearchParams } from 'next/navigation';
 import { Tag as TagType, TagCreate } from "@/app/types/tag";
 import MenuItemType from "@/app/types/menuItem";
-import TagCategory from "../shared/tagCategory.component";
+import TagCategory from "@/app/components/shared/tagCategory.component";
 import styles from "@/app/components/owner/restaurant.module.css";
 import sharedStyles from "@/app/components/shared/shared.module.css";
 import MenuItem from "@/app/components/shared/menuItem.component";
 import Modal from 'react-overlays/Modal';
-import NewTagForm from "./newTagForm.component";
 import TagModal from "@/app/components/owner/tagModal.component";
 import useFetchRestaurant from '@/app/hooks/useFetchRestaurant';
 import useFetchTagTree from '@/app/hooks/useFetchTagTree';
@@ -45,7 +44,7 @@ export default function Restaurant() {
     setShowNewTagModal(true);
   }
 
-  async function handleTagSubmit(tag: TagCreate) {
+  async function handleTagSubmit(tag: TagType) {
     if (!tag) {
       console.log("Empty tag");
       return;
@@ -212,7 +211,12 @@ export default function Restaurant() {
           onHide={() => setShowNewTagModal(false)}
           renderBackdrop={() => Backdrop(() => setShowNewTagModal(false))}
         >
-          <NewTagForm handlePostSubmit={handleTagSubmit} parentTag={selectedTag!} />
+          <TagModal
+            tag={TagType.new(selectedTag?.id || 0)}
+            onConfirm={handleTagSubmit}
+            onCancel={() => setShowNewTagModal(false)}
+            isAdd={true}
+          />
         </Modal>
         <Modal
           className={styles.modal}
@@ -222,8 +226,8 @@ export default function Restaurant() {
         >
           <TagModal
             tag={selectedTag!}
-            onConfirm={() => handleEditTag(selectedTag!)}
-            onDelete={() => handleDeleteTag(selectedTag!)}
+            onConfirm={handleEditTag}
+            onDelete={handleDeleteTag}
             onCancel={() => setShowEditTagModal(false)}
           />
         </Modal>

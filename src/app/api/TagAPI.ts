@@ -25,7 +25,7 @@ export default class TagAPIClient {
     return TagTreeType.fromObject(data);
   }
 
-  public async create(tag: TagCreate): Promise<TagType> {
+  public async create(tag: TagType): Promise<TagType> {
     const data = await this.fetcher('tag', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

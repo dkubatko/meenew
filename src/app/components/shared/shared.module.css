@@ -64,14 +64,15 @@
   font-size: small;
   padding: 0.5vh 1.5vw;
   margin: 0.2vh 0.2vw;
+  min-width: 30%;
 }
 
 .addButton {
   width: 100%;
   background-color: var(--neutral-color); 
   border-radius: 25%;
-  padding: 0.7vh 0.7vw;
-  margin: 1.5vh 0;
+  padding: 0.6vh 0.7vw;
+  margin: 0.3vh 0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -129,4 +130,10 @@
 .cornerControl:hover {
   border: 1px solid black;
   color: black;
+}
+
+.textInput {
+  width: 100%;
+  border: 2px solid var(--accent-color);
+  padding: 0.1vw 0.5vh;
 }

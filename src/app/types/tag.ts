@@ -1,9 +1,10 @@
 export class Tag {
   constructor(
-    public id: number,
-    public name: string,
-    public parent_id: number,
-    public is_leaf: boolean = false
+    public id: number = 0,
+    public name: string = "",
+    public parent_id: number = 0,
+    public is_leaf: boolean = true,
+    public num_children: number = 0
   ) { }
 
   static fromObject(object: any): Tag {
@@ -13,6 +14,10 @@ export class Tag {
       name,
       parent_id,
       is_leaf);
+  }
+
+  static new(parent_id: number): Tag {
+    return new Tag(undefined, undefined, parent_id);
   }
 }
 
@@ -26,7 +31,7 @@ export class TagTree {
   ) { }
 
   toTagType(): Tag {
-    return new Tag(this.id, this.name, this.parent_id, this.is_leaf);
+    return new Tag(this.id, this.name, this.parent_id, this.is_leaf, this.children?.length);
   }
 
   static fromObject(object: any): TagTree {
@@ -66,6 +71,7 @@ export class TagTree {
 export class TagCreate {
   constructor(
     public name: string,
-    public parent_id: number
+    public parent_id: number,
+    public is_leaf: boolean
   ) { }
 }

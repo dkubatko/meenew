@@ -99,7 +99,7 @@ export default function MenuItemModal({ onCancel, onConfirm, menu_item, edit, ta
                   setFormData({ ...formData, menu_item: updatedItem });
                 }
               }
-              className={styles.textInput}
+              className={sharedStyles.textInput}
               autoComplete="off"
             />
           </div>

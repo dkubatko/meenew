@@ -27,7 +27,8 @@
   align-items: center;
   justify-content: flex-start;
   flex-grow: 0;
-  width: 80%;
+  width: 90%;
+  margin: auto;
   height: 100%;
 }
 
@@ -38,7 +39,7 @@
 }
 
 .menu {
- flex: 3;
+ flex: 5;
  display: flex;
  flex-direction: column;
  align-items: center;
@@ -47,7 +48,7 @@
 }
 
 .tags {
-  flex: 1;
+  flex: 2;
   display: flex;
   flex-direction: column;
   align-items: stretch;
@@ -60,6 +61,8 @@
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
+  width: 90%;
+  margin: auto;
   height: 100%;
 }
 
@@ -79,8 +82,7 @@
 
 .modal {
   position: fixed;
-  width: 70%;
-  height: 30vh;
+  width: 60%;
   z-index: 1040;
   top: 30%;
   left: 50%;
