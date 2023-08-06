@@ -7,6 +7,7 @@ from .database import models, crud
 from .database.database import create_db_and_tables, engine
 from sqlmodel import Session, SQLModel
 from .database.gcs import GCS
+from .core.compute import Compute
 
 app = FastAPI()
 gcs = GCS()
@@ -94,6 +95,14 @@ def update_menu_item(menu_item: models.MenuItemRead, db: Session = Depends(get_s
 @app.delete('/api/menu_item/{menu_item_id}')
 def delete_menu_item(menu_item_id: int, db: Session = Depends(get_session)):
     return crud.delete_menu_item(db = db, menu_item_id = menu_item_id)
+
+@app.get("/api/{restaurant_id}/questionnaire")
+def get_questionnaire(restaurant_id: int, db: Session = Depends(get_session)):
+    restaurant = models.RestaurantRead.from_orm(crud.get_restaurant(db = db, restaurant_id = restaurant_id))
+    tag_tree = models.TagTreeRead.from_orm(crud.get_root_tag(db = db))
+
+    compute = Compute(restaurant, tag_tree)
+    return compute.filteredTagTree
 
 @app.get("/api/{restaurant}/stub")
 def stub_data(restaurant: str):
