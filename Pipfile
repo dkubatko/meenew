@@ -11,6 +11,7 @@ typing-extensions = "~=4.5.0"
 alembic = "*"
 google-cloud-storage = "*"
 python-multipart = "*"
+psycopg2 = "*"
 
 [dev-packages]
 

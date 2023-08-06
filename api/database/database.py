@@ -1,11 +1,12 @@
 from sqlmodel import SQLModel, create_engine
+from ..configs import get_db_credentaials
 
-sqlite_file_name = "sql_app.db"
-sqlite_url = f"sqlite:///{sqlite_file_name}"
+creds = get_db_credentaials()
 
-connect_args = {"check_same_thread": False}
+# Form the connection string for PostgreSQL using the creds directly
+database_url = f"postgresql://{creds['MEENEW_DB_USER']}:{creds['MEENEW_DB_PASSWORD']}@{creds['MEENEW_DB_HOST']}/meenew-dev"  # assuming your DB name is meenew-dev
 
-engine = create_engine(sqlite_url, connect_args=connect_args)
+engine = create_engine(database_url)
 
 def create_db_and_tables():
     SQLModel.metadata.create_all(engine)

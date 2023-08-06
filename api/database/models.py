@@ -37,7 +37,7 @@ class TagBase(SQLModel):
 class Tag(TagBase, table = True):
     __tablename__: str = "tags"
 
-    id: Optional[int] = Field(default=None, primary_key=True, index=True)
+    id: Optional[int] = Field(default=None, primary_key=True, index=True, nullable=False)
     parent_id: Optional[int] = Field(default=None, foreign_key="tags.id", nullable=True)
 
     parent: Optional["Tag"] = Relationship(

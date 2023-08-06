@@ -12,5 +12,15 @@ def get_gcs_credentials():
 
     return credentials_dict
 
+def get_db_credentaials():
+    db_keys = ['MEENEW_DB_USER', 'MEENEW_DB_PASSWORD', "MEENEW_DB_HOST"]
+    env_vars = {key: os.environ.get(key) for key in db_keys}
+
+    for key, value in env_vars.items():
+        if value is None:
+            raise ValueError(f"{key} environment vairable is not set")
+
+    return env_vars
+
 GCS_CREDENTIALS = get_gcs_credentials()
 GCS_BUCKET = 'meenew-menu-item-images'
