@@ -12,6 +12,7 @@ alembic = "*"
 google-cloud-storage = "*"
 python-multipart = "*"
 psycopg2-binary = "*"
+filetype = "*"
 
 [dev-packages]
 
