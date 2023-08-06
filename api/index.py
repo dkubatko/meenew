@@ -77,6 +77,9 @@ def add_tag_for_menu_item(menu_item_id: int, tag_id: int, db: Session = Depends(
 
 @app.post("/api/menu_item_image_upload")
 def create_upload_file(image: UploadFile = File(...), db: Session = Depends(get_session)):
+    # Throws error if image is too large or not in the correct format
+    gcs.check_image(image)
+
     gcs_url = gcs.upload_file(image)
     
     if gcs_url is None:
