@@ -1,11 +1,12 @@
-from fastapi import FastAPI, Depends, Form, HTTPException, UploadFile, File
+from fastapi import FastAPI, Depends, HTTPException, UploadFile, File
 import json
 from os.path import join
-from typing import List, Optional
+from typing import List
 from fastapi.middleware.cors import CORSMiddleware
 from .database import models, crud
+from .database import dtos
 from .database.database import create_db_and_tables, engine
-from sqlmodel import Session, SQLModel
+from sqlmodel import Session
 from .database.gcs import GCS
 from .core.compute import Compute
 
@@ -96,13 +97,13 @@ def update_menu_item(menu_item: models.MenuItemRead, db: Session = Depends(get_s
 def delete_menu_item(menu_item_id: int, db: Session = Depends(get_session)):
     return crud.delete_menu_item(db = db, menu_item_id = menu_item_id)
 
-@app.get("/api/{restaurant_id}/questionnaire")
+@app.get("/api/{restaurant_id}/questionnaire", response_model=dtos.Question)
 def get_questionnaire(restaurant_id: int, db: Session = Depends(get_session)):
     restaurant = models.RestaurantRead.from_orm(crud.get_restaurant(db = db, restaurant_id = restaurant_id))
     tag_tree = models.TagTreeRead.from_orm(crud.get_root_tag(db = db))
 
     compute = Compute(restaurant, tag_tree)
-    return compute.filteredTagTree
+    return compute.questionnaire()
 
 @app.get("/api/{restaurant}/stub")
 def stub_data(restaurant: str):

@@ -57,6 +57,15 @@ class TagTreeRead(TagBase):
     parent_id: Optional[int]
     children: List["TagTreeRead"] = []
 
+    def toTagRead(self) -> TagRead:
+        return TagRead(
+            name=self.name,
+            is_leaf=self.is_leaf,
+            required=self.required,
+            id=self.id,
+            parent_id=self.parent_id
+        )
+
 class MenuItemRead(MenuItemBase):
     id: int
     image_path: Optional[str]
