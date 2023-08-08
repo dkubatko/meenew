@@ -1,13 +1,21 @@
+import os
 from logging.config import fileConfig
 
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
+from sqlmodel import SQLModel
+from api.database.models import Restaurant, MenuItem, Tag, ItemTagLink
 
 from alembic import context
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
+
+db_keys = ['MEENEW_DB_USER', 'MEENEW_DB_PASSWORD', "MEENEW_DB_HOST"]
+creds = {key: os.environ.get(key) for key in db_keys}
+database_url = f"postgresql://{creds['MEENEW_DB_USER']}:{creds['MEENEW_DB_PASSWORD']}@{creds['MEENEW_DB_HOST']}/meenew-dev" 
+config.set_main_option('sqlalchemy.url', database_url)
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
@@ -18,7 +26,7 @@ if config.config_file_name is not None:
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
-target_metadata = None
+target_metadata = SQLModel.metadata
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
