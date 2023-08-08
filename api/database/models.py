@@ -33,6 +33,7 @@ class MenuItem(MenuItemBase, table = True):
 class TagBase(SQLModel):
     name: str = Field(unique=True, index=True)
     is_leaf: bool = Field(default = True)
+    required: bool = Field(default = False, nullable=False)
 
 class Tag(TagBase, table = True):
     __tablename__: str = "tags"
