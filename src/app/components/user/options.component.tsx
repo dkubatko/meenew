@@ -2,6 +2,8 @@ import { motion } from "framer-motion";
 import styles from '@/app/components/user/options.module.css';
 import { ThreeDots } from "react-loader-spinner";
 import { useRef } from 'react';
+import { Question } from "@/app/types/questionnaire";
+import { Tag } from "@/app/types/tag";
 
 const containerVariants = {
   hidden: { scale: 1 },
@@ -22,10 +24,14 @@ const optionVariants = {
   hover: { scale: 1.3 }
 };
 
+interface OptionsProps {
+  question: Question;
+  handleAnswerClick: (question: Question) => void;
+}
 // TODO: Type props properly.
 type ClickHandler = (option: string) => void;
 
-export default function Options({ question, handleAnswerClick} : { question: any, handleAnswerClick: ClickHandler}) {
+export default function Options({ question, handleAnswerClick} : OptionsProps) {
   const optionsDiv = useRef<HTMLDivElement>(null);
 
   function circularTranslate(index: number, total: number) {
@@ -44,7 +50,6 @@ export default function Options({ question, handleAnswerClick} : { question: any
           initial="hidden"
           animate="show"
           variants={containerVariants}
-          key={question?.id ?? 0}
         >
           {
             !question ?
@@ -58,20 +63,20 @@ export default function Options({ question, handleAnswerClick} : { question: any
               wrapperClass=""
               visible={true}
             /> :
-            (question.answer_options.map(
-              (option: any, index: number) => (
+            (question.children.map(
+              (option: Question, index: number) => (
                 <motion.div
                   variants={optionVariants}
                   whileTap={{ scale: 0.97 }}
                   className={styles.option}
                   style={
                     {
-                      marginTop: `${circularTranslate(index, question.answer_options.length)}px`
+                      marginTop: `${circularTranslate(index, question.children.length)}px`
                     }
                   }
                   onClick={_ => handleAnswerClick(option)}
-                  key={option.id}>
-                  {option.text}
+                  key={option.tag.id}>
+                  {option.tag.name}
                 </motion.div>
               )
             ))

@@ -1,4 +1,5 @@
 import RestaurantType from "@/app/types/restaurant";
+import { Question } from "@/app/types/questionnaire";
 
 export default class RestaurantAPI {
   private baseURL: string;
@@ -23,5 +24,10 @@ export default class RestaurantAPI {
   public async get(id: string): Promise<RestaurantType> {
     const data = await this.fetcher(`restaurant/${id}`);
     return RestaurantType.fromObject(data);
+  }
+
+  public async getQuestionnaire(id: string): Promise<Question> {
+    const data = await this.fetcher(`${id}/questionnaire`);
+    return Question.fromObject(data);
   }
 }

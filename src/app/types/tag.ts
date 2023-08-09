@@ -40,7 +40,7 @@ export class TagTree {
       id,
       name,
       parent_id,
-      children ? children.map(TagTree.fromObject) : undefined,
+      children ? children.map(TagTree.fromObject) : [],
       is_leaf);
   }
 
