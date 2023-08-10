@@ -17,7 +17,7 @@ export default function Questionnaire() {
   const searchParams = useSearchParams();
   const { restaurantData } = useFetchRestaurant(searchParams.get('id') ?? '0');
   const { questionnaire, isLoading } = useFetchQuestionnaire(searchParams.get('id') ?? '0');
-  const [ questionStack, setQuestionStack ] = useState<Question[]>([]);
+  const [questionStack, setQuestionStack] = useState<Question[]>([]);
   const [isInitialized, setIsInitialized] = useState(false);
 
   // Update question stack upon initalization of the questionnaire.
@@ -44,49 +44,67 @@ export default function Questionnaire() {
     }
   }, [questionStack, isInitialized]);
 
+  // Updates the current question whenever the questionStack is changed.
   useEffect(() => {
     getNextQuestion();
   }, [questionStack, getNextQuestion]);
 
-  // TODO: Handle option click pops current question and updates the stack.
-
   const [questionNumber, setQuestionNumber] = useState(0);
   const [complete, setComplete] = useState(false);
+  const [selectedOptions, setSelectedOptions] = useState<Question[]>([]);
 
-  const recordedAnswers = useRef<(string | null)[]>([]);
+  const handleOptionClick = useCallback((option: Question) => {
+    setSelectedOptions(prevSelectedOptions => {
+      if (prevSelectedOptions.includes(option)) {
+        return prevSelectedOptions.filter(opt => opt !== option);
+      } else {
+        return [...prevSelectedOptions, option];
+      }
+    });
+  }, []);
 
-  const { restaurant_name = "" } = restaurantData || {};
-
-  const handleAnswerClick = (selectedOption: Question) => {
-    // Remove the current question from the stack.
+  function handleAnswerClick() {
+    // Start by removing the current question from the stack.
     const updatedStack = [...questionStack].slice(1);
-  
-    // Check if the option selected is associated with a leaf tag.
-    if (selectedOption.tag && selectedOption.tag.is_leaf) {
-      // If it is, add the tag to the selected tags.
-      setSelectedTags(prevTags => [...prevTags, selectedOption.tag]);
-    } else if (!selectedOption.tag.is_leaf) {
-      // If it isn't, push the selected question to the stack.
-      updatedStack.unshift(selectedOption);
+    // Tags to be added as final preferences.
+    const newTags: Tag[] = [];
+
+    selectedOptions.forEach(selectedOption => {
+      if (selectedOption.tag && selectedOption.tag.is_leaf) {
+        // If an option is a leaf, add it to the final preferences.
+        newTags.push(selectedOption.tag);
+      } else if (!selectedOption.tag.is_leaf) {
+        // Otherwise, add the question related to this option
+        // to the stack of questions.
+        updatedStack.unshift(selectedOption);
+      }
+    });
+
+    // Add new tags to the state
+    if (newTags.length > 0) {
+      setSelectedTags(prevTags => [...prevTags, ...newTags]);
     }
-  
+
     // Update the question stack
     setQuestionStack(updatedStack);
+    // Update the question number
+    setQuestionNumber(questionNumber + 1);
+    // You might also want to reset the selected options after handling them
+    setSelectedOptions([]);
   }
-  
 
   function handleBack() {
     alert("To be implemented.");
   }
 
-  function handleSkip() {
-    alert("To be implemented.");
-  }
-
   return (
     <div className={`${styles.vflex} ${styles.container}`}>
-      <div className={styles.header}><b>{restaurant_name ? `Welcome to ${restaurant_name}!` : "Loading..."}</b></div>
-      { (currentQuestion && !complete) && (<div className={styles.control}>
+      <div className={styles.header}>
+        <b>
+          {restaurantData?.restaurant_name ? `Welcome to ${restaurantData.restaurant_name}!` : "Loading..."}
+        </b>
+      </div>
+      {(currentQuestion && !complete) && (<div className={styles.control}>
         <div className={styles.vflex}>
           {questionNumber != 0 && <button
             className={`${styles.cbtn} ${styles.left}`}
@@ -98,18 +116,29 @@ export default function Questionnaire() {
           {!complete && currentQuestion.question_text}
         </div>
         <div className={styles.vflex}>
-          <button
+          {selectedOptions.length > 0 && <button
             className={`${styles.cbtn} ${styles.right}`}
-            onClick={handleSkip}
+            onClick={handleAnswerClick}
           >
-          </button>
+          </button>}
         </div>
-      </div>) }
-      { (currentQuestion && !complete) && <ProgressBar progressPercent={questionNumber / questionStack.length * 100} /> }
+      </div>)}
       {
-        complete ? 
-        <Results /> :
-        (currentQuestion && <Options question={currentQuestion} handleAnswerClick={handleAnswerClick}></Options>)
+        (currentQuestion && !complete) && 
+        <ProgressBar progressPercent={questionNumber / (questionStack.length + questionNumber) * 100} />
+      }
+      {
+        complete ?
+          <Results /> :
+          (currentQuestion &&
+            <Options
+              // Assign key to cause a re-render of the Options component
+              // triggering initial animation.
+              key={currentQuestion.tag.id}
+              question={currentQuestion}
+              handleOptionClick={handleOptionClick}
+              selectedOptions={selectedOptions}
+            />)
       }
       <div className={styles.bottom}>
         <Image src={meenew} alt='meenew' className={styles.mascot}></Image>

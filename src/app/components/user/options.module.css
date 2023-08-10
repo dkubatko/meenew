@@ -29,11 +29,16 @@
   color: white;
   text-shadow: 2px 2px 1px black;
   font-weight: 500;
-  background: linear-gradient(170deg, #e3a63d 25%, #ed7b4a 75%);
   cursor: pointer;
-  transition: 0.3s;
+  user-select: none;
 }
 
-.option:hover {
-  scale: 1.25;
+.selectedOption {
+  composes: option;
+  background: linear-gradient(170deg, #ff8800 20%, #ff4400 80%);
+}
+
+.unselectedOption {
+  composes: option;
+  background: linear-gradient(170deg, #ffc085 20%, #ff9466 80%);
 }
