@@ -105,6 +105,14 @@ def get_questionnaire(restaurant_id: int, db: Session = Depends(get_session)):
     compute = Compute(restaurant, tag_tree)
     return compute.questionnaire()
 
+@app.post("/api/{restaurant_id}/best-match-item", response_model=models.MenuItemRead)
+def get_best_match_item(restaurant_id: int, tags: List[models.TagRead], db: Session = Depends(get_session)):
+    restaurant = models.RestaurantRead.from_orm(crud.get_restaurant(db = db, restaurant_id = restaurant_id))
+    tag_tree = models.TagTreeRead.from_orm(crud.get_root_tag(db = db))
+
+    compute = Compute(restaurant, tag_tree)
+    return compute.get_best_match(tags)
+
 @app.get("/api/{restaurant}/stub")
 def stub_data(restaurant: str):
     with open(join('api', 'data', 'sample_data.json'), 'r') as file:

@@ -60,17 +60,7 @@ export default function Options({ question, handleOptionClick, selectedOptions }
       ref={optionsDiv}
     >
       {
-        !question ?
-          <ThreeDots
-            height="10vh"
-            width="200"
-            radius="7"
-            color="#ff9d1b"
-            ariaLabel="three-dots-loading"
-            wrapperStyle={{}}
-            wrapperClass=""
-            visible={true}
-          /> :
+        question ?
           (question.children.map(
             (option: Question, index: number) => (
               <motion.div
@@ -91,7 +81,17 @@ export default function Options({ question, handleOptionClick, selectedOptions }
                 {option.tag.name}
               </motion.div>
             )
-          ))
+          )) :
+          <ThreeDots
+            height="10vh"
+            width="200"
+            radius="7"
+            color="#ff9d1b"
+            ariaLabel="three-dots-loading"
+            wrapperStyle={{}}
+            wrapperClass=""
+            visible={true}
+          />
       }
     </div>
   )

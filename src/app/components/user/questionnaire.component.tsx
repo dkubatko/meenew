@@ -129,7 +129,10 @@ export default function Questionnaire() {
       }
       {
         complete ?
-          <Results /> :
+          <Results
+            restaurantId={restaurantData?.id.toString()!}
+            selectedTags={selectedTags}
+          /> :
           (currentQuestion &&
             <Options
               // Assign key to cause a re-render of the Options component
