@@ -15,4 +15,4 @@ class TagLabel(TagLabelBase, table=True):
     category_id: Optional[int] = Field(default=None, foreign_key="categories.id", nullable=True)
 
     category: Optional['Category'] = Relationship(back_populates="tag_labels")
-    tags: List['Tag'] = Relationship(back_populates="taglabel")
+    tags: List['Tag'] = Relationship(back_populates="label")

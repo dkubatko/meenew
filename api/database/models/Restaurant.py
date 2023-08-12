@@ -16,13 +16,14 @@ class Restaurant(RestaurantBase, table = True):
 
     root_category: Optional['Category'] = Relationship(
         back_populates="restaurant",
-        sa_relationship_args={ 'uselist': False }
+        sa_relationship_kwargs={ 'uselist': False }
     )
     menu_items: List['MenuItem'] = Relationship(back_populates="restaurant")
 
 class RestaurantRead(RestaurantBase):
     id: int
     menu_items: List['MenuItemRead'] = []
+    root_category: Optional['Category'] = None
 
 class RestaurantCreate(RestaurantBase):
     pass

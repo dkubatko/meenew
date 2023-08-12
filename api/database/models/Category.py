@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from .TagLabel import TagLabel
     from .MenuItem import MenuItem
+    from .Restaurant import Restaurant
 
 class CategoryBase(SQLModel):
     name: str = Field(unique=True, index=True)
@@ -21,9 +22,11 @@ class Category(CategoryBase, table=True):
         back_populates="children",
         sa_relationship_kwargs=dict(remote_side="Category.id")
     )
+
     children: List["Category"] = Relationship(back_populates="parent")
     menu_items: List['MenuItem'] = Relationship(back_populates="category")
     tag_labels: List['TagLabel'] = Relationship(back_populates="category")
+    restaurant: Optional['Restaurant'] = Relationship(back_populates="root_category")
 
 class CategoryRead(CategoryBase):
     id: int
