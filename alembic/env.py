@@ -4,7 +4,7 @@ from logging.config import fileConfig
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 from sqlmodel import SQLModel
-from api.database.models import Restaurant, MenuItem, Tag, ItemTagLink
+import api.database.models
 
 from alembic import context
 
