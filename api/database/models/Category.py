@@ -14,6 +14,8 @@ class Category(CategoryBase, table=True):
 
     id: Optional[int] = Field(default=None, primary_key=True, index=True, nullable=False)
     parent_id: Optional[int] = Field(default=None, foreign_key="categories.id", nullable=True)
+    # Only used on the root category to define entry point to the tree.
+    restaurant_id: Optional[int] = Field(default=None, foreign_key="restaurants.id", index=True)
 
     parent: Optional["Category"] = Relationship(
         back_populates="children",
