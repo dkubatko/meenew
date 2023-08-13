@@ -23,4 +23,4 @@ class TagRead(TagBase):
     id: int
 
 class TagCreate(TagBase):
-    parent_id: int
+    pass

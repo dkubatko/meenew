@@ -16,3 +16,8 @@ class TagLabel(TagLabelBase, table=True):
 
     category: Optional['Category'] = Relationship(back_populates="tag_labels")
     tags: List['Tag'] = Relationship(back_populates="label")
+
+class TagLabelRead(TagLabelBase):
+   id: Optional[int] = None
+   category_id: Optional[int] = None
+   tags: List['Tag'] = []
