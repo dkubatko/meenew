@@ -1,32 +1,48 @@
 'use client';
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useSearchParams } from 'next/navigation';
-import { Tag as TagType, TagCreate } from "@/app/types/tag";
+import { Tag as TagType, TagCreate, TagLabel as TagLabelType } from "@/app/types/tag";
 import MenuItemType from "@/app/types/menuItem";
-import TagCategory from "@/app/components/shared/tagCategory.component";
+import TagLabel from "@/app/components/shared/tagLabel.component";
 import styles from "@/app/components/owner/restaurant.module.css";
 import sharedStyles from "@/app/components/shared/shared.module.css";
-import MenuItem from "@/app/components/shared/menuItem.component";
 import Modal from 'react-overlays/Modal';
 import TagModal from "@/app/components/owner/tagModal.component";
 import useFetchRestaurant from '@/app/hooks/useFetchRestaurant';
-import useFetchTagTree from '@/app/hooks/useFetchTagTree';
 import MenuItemModal, { MenuItemFormData } from "./menuItemModal.component";
-import APIClient, { ServerAPIClient } from "@/app/api/APIClient";
+import { ServerAPIClient } from "@/app/api/APIClient";
+import { CategoryTree } from "@/app/types/category";
+import CategoryView from "./categoryView.component";
 
 export default function Restaurant() {
   const searchParams = useSearchParams();
   const { restaurantData, fetchRestaurantData } = useFetchRestaurant(searchParams.get('id') ?? '0');
-  const { rootTag, fetchTagTree } = useFetchTagTree();
+  const [currentCategory, setCurrentCategory] = useState<CategoryTree>();
+  const hasSetInitialCategory = useRef(false);
 
-  const { restaurant_name = "", menu_items = [] } = restaurantData || {};
+  const [currentTagLabels, setCurrentTagLabels] = useState<TagLabelType[]>([]);
+
+  // Instnatiate currentCategory on restaurant data first retrieval.
+  useEffect(() => {
+    if (restaurantData && !hasSetInitialCategory.current) {
+      setCurrentCategory(restaurantData.root_category);
+      hasSetInitialCategory.current = true;
+    }
+  }, [restaurantData]);
+
+  // Update current tags to be displayed based on retrieved category.
+  useEffect(() => {
+    setCurrentTagLabels(currentCategory?.tag_labels || []);
+  }, [currentCategory]);
 
   const [selectedTag, setSelectedTag] = useState<TagType>();
+  const [selectedTagLabel, setSelectedTagLabel] = useState<TagLabelType>();
   const [selectedMenuItem, setSelectedMenuItem] = useState<MenuItemType>();
 
   const [showNewTagModal, setShowNewTagModal] = useState<boolean>(false);
   const [showEditTagModal, setShowEditTagModal] = useState<boolean>(false);
+  const [showEditTagLabelModal, setShowEditTagLabelModal] = useState<boolean>(false);
   const [showEditMenuItemModal, setShowEditMenuItemModal] = useState<boolean>(false);
   const [showAddMenuItemModal, setShowAddMenuItemModal] = useState<boolean>(false);
 
@@ -39,8 +55,8 @@ export default function Restaurant() {
     )
   }
 
-  function handleAddTag(parentTag: TagType) {
-    setSelectedTag(parentTag);
+  function handleAddTag(parentTag: TagLabelType) {
+    setSelectedTagLabel(parentTag);
     setShowNewTagModal(true);
   }
 
@@ -49,17 +65,14 @@ export default function Restaurant() {
       console.log("Empty tag");
       return;
     }
-  
+
     const createdTag = await ServerAPIClient.Tag.create(tag);
-  
+
     if (!createdTag) {
       console.error('An error occurred while creating a tag');
       return;
     }
-  
-    // Update the tag list with new data.
-    fetchTagTree();
-  
+
     // Close the modal after successful update.
     setShowNewTagModal(false);
   }
@@ -67,6 +80,11 @@ export default function Restaurant() {
   function handleEditTagClick(tag: TagType) {
     setSelectedTag(tag);
     setShowEditTagModal(true);
+  }
+
+  function handleEditTagLabelClick(tagLabel: TagLabelType) {
+    setSelectedTagLabel(tagLabel);
+    setShowEditTagLabelModal(true);
   }
 
   async function handleDeleteTag(tag: TagType) {
@@ -77,26 +95,22 @@ export default function Restaurant() {
       return;
     }
 
-    // Update menu items.
+    // TODO!: This should instead only update the current category.
     fetchRestaurantData();
-    // Update the tag list with new data.
-    fetchTagTree();
     // Close the modal after successful deletion.
     setShowEditTagModal(false);
   }
 
   async function handleEditTag(tag: TagType) {
     const updatedTag = await ServerAPIClient.Tag.update(tag);
-  
+
     if (!updatedTag) {
       console.error('An error occurred while updating a tag');
       return;
     }
-    
+
     // Update menu items.
     fetchRestaurantData();
-    // Update the tag list with new data.
-    fetchTagTree();
     // Close the modal after successful update.
     setShowEditTagModal(false);
   }
@@ -120,7 +134,7 @@ export default function Restaurant() {
       console.error('An error occurred while updating a menu item');
       return;
     }
-    
+
     // Update menu items.
     fetchRestaurantData();
     // Close the modal after successful update.
@@ -175,34 +189,35 @@ export default function Restaurant() {
   return (
     <div className={styles.restaurantView}>
       <div className={styles.restaurantName}>
-        {restaurant_name}
+        {restaurantData?.restaurant_name}
       </div>
       <div className={styles.container}>
         <div className={styles.menu}>
           <div className={styles.title}>Menu</div>
           <div className={styles.itemlist}>
-            {
-              menu_items.map((menu_item: MenuItemType) => (
-                <MenuItem
-                  key={menu_item.id}
-                  menu_item={menu_item}
-                  editable={true}
-                  onEdit={() => handleMenuItemEditClick(menu_item)}
-                />
-              ))
+            {currentCategory && 
+              <CategoryView 
+                categoryTree={currentCategory}
+                handleCategoryClick={(category: CategoryTree) => setCurrentCategory(category)}
+              />
             }
-            <button
-              className={sharedStyles.addButton}
-              onClick={() => setShowAddMenuItemModal(true)}
-            >
-              +
-            </button>
           </div>
         </div>
         <div className={styles.tags}>
           <div className={styles.title}>Tags</div>
           <div className={styles.taglist}>
-            {rootTag && <TagCategory rootTag={rootTag} onAddTag={handleAddTag} onEditTag={handleEditTagClick} />}
+            {
+              currentTagLabels && currentTagLabels.map(
+                (tagLabel: TagLabelType) =>
+                  <TagLabel
+                    key={tagLabel.id}
+                    tagLabel={tagLabel}
+                    onAddTag={handleAddTag}
+                    onEditTagLabel={handleEditTagLabelClick}
+                    onEditTag={handleEditTagClick}
+                  />
+              )
+            }
           </div>
         </div>
         <Modal
@@ -212,7 +227,7 @@ export default function Restaurant() {
           renderBackdrop={() => Backdrop(() => setShowNewTagModal(false))}
         >
           <TagModal
-            tag={TagType.new(selectedTag?.id || 0)}
+            tag={TagType.new(selectedTagLabel?.id || 0)}
             onConfirm={handleTagSubmit}
             onCancel={() => setShowNewTagModal(false)}
             isAdd={true}
@@ -242,7 +257,11 @@ export default function Restaurant() {
             onConfirm={handleEditMenuItemModalConfirm}
             onDelete={handleEditMenuItemModalDelete}
             menu_item={selectedMenuItem!}
-            tagList={rootTag?.toTagLeafList()!}
+            // Expand current tag labels into a list of tags that belong to these labels.
+            tagList={currentTagLabels.reduce((tagsList: TagType[], tagLabel: TagLabelType) => {
+              return tagsList.concat(tagLabel.tags || []);
+            }, [])}
+            
             edit={true}
           />
         </Modal>
@@ -256,7 +275,10 @@ export default function Restaurant() {
             onCancel={() => setShowAddMenuItemModal(false)}
             onConfirm={handleAddMenuItemModalConfirm}
             menu_item={MenuItemType.new(restaurantData?.id!)}
-            tagList={rootTag?.toTagLeafList()!}
+            // Expand current tag labels into a list of tags that belong to these labels.
+            tagList={currentTagLabels.reduce((tagsList: TagType[], tagLabel: TagLabelType) => {
+              return tagsList.concat(tagLabel.tags || []);
+            }, [])}
             edit={false}
           />
         </Modal>

@@ -1,0 +1,52 @@
+.container {
+  position: relative;
+  width: 90%;
+  margin: 0.5vh auto;
+  padding: 0.3vh 0.3vw;
+  display: flex;
+  flex-direction: column;
+}
+
+.title {
+  font-size: 1.5rem;
+  text-align: center;
+  margin: 1vh 0;
+}
+
+.subcategories {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin: 1vh 0;
+}
+
+.subcategoryTitle {
+  font-size: 1.2rem;
+  margin: 0.5vh 0;
+  cursor: pointer;
+}
+
+.subcategoryPreview {
+  display: flex;
+  flex-direction: row;
+  overflow-x: auto;
+  width: 100%;
+  white-space: nowrap; /* Ensures items don't wrap to the next line */
+}
+
+.items {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+}
+
+@media screen and (max-width: 768px) {
+  .title {
+    font-size: 1.2rem;
+  }
+
+  .subcategoryTitle {
+    font-size: 1rem;
+  }
+}

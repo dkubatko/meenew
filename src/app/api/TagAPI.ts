@@ -1,4 +1,4 @@
-import { Tag as TagType, TagTree as TagTreeType, TagCreate } from "@/app/types/tag";
+import { Tag as TagType, TagCreate } from "@/app/types/tag";
 
 export default class TagAPIClient {
   private baseURL: string;
@@ -18,11 +18,6 @@ export default class TagAPIClient {
       console.log(error);
       return null;
     }
-  }
-
-  public async getTree(): Promise<TagTreeType> {
-    const data = await this.fetcher('tag_tree');
-    return TagTreeType.fromObject(data);
   }
 
   public async create(tag: TagType): Promise<TagType> {

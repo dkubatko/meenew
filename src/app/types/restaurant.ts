@@ -1,12 +1,12 @@
 import MenuItem from "@/app/types/menuItem";
-import { Category } from "@/app/types/category";
+import { CategoryTree } from "@/app/types/category";
 
 export default class Restaurant {
   constructor(
     public id: number,
     public restaurant_name: string,
     public menu_items: MenuItem[],
-    public root_category?: Category
+    public root_category?: CategoryTree
   ) { }
 
   static fromObject(object: any): Restaurant {

@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from .MenuItem import MenuItem, MenuItemRead
-    from .Category import Category
+    from .Category import Category, CategoryTreeRead
 
 class RestaurantBase(SQLModel):
     restaurant_name: str = Field(unique=True, index=True)
@@ -23,7 +23,7 @@ class Restaurant(RestaurantBase, table = True):
 class RestaurantRead(RestaurantBase):
     id: int
     menu_items: List['MenuItemRead'] = []
-    root_category: Optional['Category'] = None
+    root_category: Optional['CategoryTreeRead'] = None
 
 class RestaurantCreate(RestaurantBase):
     pass

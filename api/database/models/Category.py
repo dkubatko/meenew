@@ -3,8 +3,8 @@ from sqlmodel import SQLModel, Field, Relationship
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from .TagLabel import TagLabelRead
-    from .MenuItem import MenuItem
+    from .TagLabel import TagLabel, TagLabelRead
+    from .MenuItem import MenuItem, MenuItemRead
     from .Restaurant import Restaurant
 
 class CategoryBase(SQLModel):
@@ -25,20 +25,21 @@ class Category(CategoryBase, table=True):
 
     children: List["Category"] = Relationship(back_populates="parent")
     menu_items: List['MenuItem'] = Relationship(back_populates="category")
-    tag_labels: List['TagLabelRead'] = Relationship(back_populates="category")
+    tag_labels: List['TagLabel'] = Relationship(back_populates="category")
     restaurant: Optional['Restaurant'] = Relationship(back_populates="root_category")
 
 class CategoryRead(CategoryBase):
     id: int
     parent_id: Optional[int]
-    menu_items: List['MenuItem'] = []
+    menu_items: List['MenuItemRead'] = []
     tag_labels: List['TagLabelRead'] = []
 
 class CategoryTreeRead(CategoryBase):
     id: int
     parent_id: Optional[int]
     children: List["CategoryTreeRead"] = []
-    menu_items: List['MenuItem']
+    menu_items: List['MenuItemRead'] = []
+    tag_labels: List['TagLabelRead'] = []
 
     def toCategoryRead(self) -> CategoryRead:
         return CategoryRead(
