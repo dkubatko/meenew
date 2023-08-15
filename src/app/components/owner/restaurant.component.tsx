@@ -12,7 +12,8 @@ import TagModal from "@/app/components/owner/tagModal.component";
 import useFetchRestaurant from '@/app/hooks/useFetchRestaurant';
 import MenuItemModal, { MenuItemFormData } from "./menuItemModal.component";
 import { ServerAPIClient } from "@/app/api/APIClient";
-import { CategoryTree } from "@/app/types/category";
+import { CategoryTree, Category } from "@/app/types/category";
+import { getCategoryTreeByPath, getPathToRoot } from "@/app/util/categoryUtil";
 import CategoryView from "./categoryView.component";
 
 export default function Restaurant() {
@@ -28,8 +29,15 @@ export default function Restaurant() {
     if (restaurantData && !hasSetInitialCategory.current) {
       setCurrentCategory(restaurantData.root_category);
       hasSetInitialCategory.current = true;
+    } else if (restaurantData && currentCategory) {
+      const pathToCurrentCategory = getPathToRoot(currentCategory);
+      const newCurrentCategory = getCategoryTreeByPath(restaurantData.root_category, pathToCurrentCategory);
+      if (newCurrentCategory) {
+        setCurrentCategory(newCurrentCategory);
+      }
     }
-  }, [restaurantData]);
+  }, [restaurantData, currentCategory]);
+  
 
   // Update current tags to be displayed based on retrieved category.
   useEffect(() => {
@@ -186,6 +194,20 @@ export default function Restaurant() {
     setShowEditMenuItemModal(true);
   }
 
+  const handleCategoryClick = (category: CategoryTree | Category) => {
+    if ((category as CategoryTree).children) {
+      // It's a CategoryTree, just set it
+      setCurrentCategory(category as CategoryTree);
+    } else {
+      // It's a Category, find the CategoryTree object
+      const path = getPathToRoot(category as Category);
+      const categoryTree = getCategoryTreeByPath(restaurantData!.root_category, path);
+      if (categoryTree) {
+        setCurrentCategory(categoryTree);
+      }
+    }
+  };
+
   return (
     <div className={styles.restaurantView}>
       <div className={styles.restaurantName}>
@@ -196,9 +218,11 @@ export default function Restaurant() {
           <div className={styles.title}>Menu</div>
           <div className={styles.itemlist}>
             {currentCategory && 
-              <CategoryView 
+              <CategoryView
                 categoryTree={currentCategory}
-                handleCategoryClick={(category: CategoryTree) => setCurrentCategory(category)}
+                handleCategoryClick={handleCategoryClick}
+                handleMenuItemEdit={handleMenuItemEditClick}
+                handleAddMenuItem={() => setShowAddMenuItemModal(true)}
               />
             }
           </div>

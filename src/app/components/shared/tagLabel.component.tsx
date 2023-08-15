@@ -15,7 +15,6 @@ interface TagLabelProps {
 
 export default function TagLabel({ tagLabel, onAddTag, onEditTagLabel, onEditTag }: TagLabelProps) {
   const [expand, setExpand] = useState<Boolean>();
-  console.log(tagLabel);
 
   return (
     <>

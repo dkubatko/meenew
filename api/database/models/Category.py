@@ -30,13 +30,13 @@ class Category(CategoryBase, table=True):
 
 class CategoryRead(CategoryBase):
     id: int
-    parent_id: Optional[int]
+    parent: Optional['CategoryRead'] = None
     menu_items: List['MenuItemRead'] = []
     tag_labels: List['TagLabelRead'] = []
 
 class CategoryTreeRead(CategoryBase):
     id: int
-    parent_id: Optional[int]
+    parent: Optional['CategoryRead'] = None
     children: List["CategoryTreeRead"] = []
     menu_items: List['MenuItemRead'] = []
     tag_labels: List['TagLabelRead'] = []

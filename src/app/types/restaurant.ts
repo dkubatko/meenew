@@ -6,7 +6,7 @@ export default class Restaurant {
     public id: number,
     public restaurant_name: string,
     public menu_items: MenuItem[],
-    public root_category?: CategoryTree
+    public root_category: CategoryTree
   ) { }
 
   static fromObject(object: any): Restaurant {
