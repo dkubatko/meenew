@@ -9,14 +9,13 @@ if TYPE_CHECKING:
 
 class CategoryBase(SQLModel):
     name: str = Field(unique=True, index=True)
+    restaurant_id: int = Field(foreign_key="restaurants.id", index=True)  # Link to a specific restaurant
 
 class Category(CategoryBase, table=True):
     __tablename__: str = "categories"
 
     id: Optional[int] = Field(default=None, primary_key=True, index=True, nullable=False)
     parent_id: Optional[int] = Field(default=None, foreign_key="categories.id", nullable=True)
-    # Only used on the root category to define entry point to the tree.
-    restaurant_id: Optional[int] = Field(default=None, foreign_key="restaurants.id", index=True)
 
     parent: Optional["Category"] = Relationship(
         back_populates="children",
@@ -26,18 +25,21 @@ class Category(CategoryBase, table=True):
     children: List["Category"] = Relationship(back_populates="parent")
     menu_items: List['MenuItem'] = Relationship(back_populates="category")
     tag_labels: List['TagLabel'] = Relationship(back_populates="category")
-    restaurant: Optional['Restaurant'] = Relationship(back_populates="root_category")
+
+class CategoryLite(CategoryBase):
+    id: int
+    parent: Optional['CategoryLite'] = None
 
 class CategoryRead(CategoryBase):
     id: int
-    parent: Optional['CategoryRead'] = None
+    parent: Optional['CategoryLite'] = None
     menu_items: List['MenuItemRead'] = []
     tag_labels: List['TagLabelRead'] = []
 
 class CategoryTreeRead(CategoryBase):
     id: int
-    parent: Optional['CategoryRead'] = None
-    children: List["CategoryTreeRead"] = []
+    parent: Optional['CategoryLite'] = None
+    children: List["CategoryRead"] = []
     menu_items: List['MenuItemRead'] = []
     tag_labels: List['TagLabelRead'] = []
 
@@ -50,4 +52,5 @@ class CategoryTreeRead(CategoryBase):
         )
 
 class CategoryCreate(CategoryBase):
+    restaurant_id: int
     parent_id: int
