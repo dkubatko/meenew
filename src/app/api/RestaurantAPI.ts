@@ -28,6 +28,10 @@ export default class RestaurantAPI {
     return RestaurantType.fromObject(data);
   }
 
+  public async get_raw(id: string): Promise<any> {
+    return await this.fetcher(`restaurant/${id}`);
+  }
+
   public async getQuestionnaire(id: string): Promise<Question> {
     const data = await this.fetcher(`${id}/questionnaire`);
     return Question.fromObject(data);

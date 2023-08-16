@@ -1,6 +1,5 @@
-'use client'
-
 import Restaurant from '@/app/components/owner/restaurant.component';
+import { ServerAPIClient } from '@/app/api/APIClient';
 
 interface RestaurantPageProps {
   params: {
@@ -9,10 +8,13 @@ interface RestaurantPageProps {
   }
 }
 
-export default function RestaurantPage({ params: { restaurant_id, category_id } }: RestaurantPageProps) {
+export default async function RestaurantPage({ params: { restaurant_id, category_id } }: RestaurantPageProps) {
+  const restaurant = await ServerAPIClient.Restaurant.get_raw(restaurant_id);
+  const category = await ServerAPIClient.Category.get_raw(restaurant_id, category_id);
+
   return (
     <>
-      <Restaurant restaurant_id={restaurant_id} category_id={category_id} />
+      <Restaurant restaurant={restaurant} category={category} />
     </>
   );
 }

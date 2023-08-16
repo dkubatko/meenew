@@ -9,22 +9,22 @@ import styles from "@/app/components/owner/restaurant.module.css";
 import sharedStyles from "@/app/components/shared/shared.module.css";
 import Modal from 'react-overlays/Modal';
 import TagModal from "@/app/components/owner/tagModal.component";
-import useFetchRestaurant from '@/app/hooks/useFetchRestaurant';
-import useFetchCategory from '@/app/hooks/useFetchCategory';
 import MenuItemModal, { MenuItemFormData } from "./menuItemModal.component";
 import { ServerAPIClient } from "@/app/api/APIClient";
-import { CategoryLite } from "@/app/types/category";
+import { CategoryLite, CategoryTree } from "@/app/types/category";
 import CategoryView from "./categoryView.component";
+import RestaurantType from '@/app/types/restaurant';
 
 interface RestaurantViewProps {
-  restaurant_id: string,
-  category_id: string
+  restaurant: any,
+  category: any
 }
 
-export default function RestaurantView({ restaurant_id, category_id }: RestaurantViewProps) {
+export default function RestaurantView({ restaurant, category }: RestaurantViewProps) {
   const router = useRouter();
-  const { restaurantData, fetchRestaurantData } = useFetchRestaurant(restaurant_id);
-  const { categoryData } = useFetchCategory(restaurant_id, category_id);
+
+  const restaurantData: RestaurantType = RestaurantType.fromObject(restaurant);
+  const categoryData: CategoryTree = CategoryTree.fromObject(category);
 
   const [currentTagLabels, setCurrentTagLabels] = useState<TagLabelType[]>([]);
 
@@ -93,7 +93,7 @@ export default function RestaurantView({ restaurant_id, category_id }: Restauran
     }
 
     // TODO!: This should instead only update the current category.
-    fetchRestaurantData();
+    // fetchRestaurantData();
     // Close the modal after successful deletion.
     setShowEditTagModal(false);
   }
@@ -106,8 +106,7 @@ export default function RestaurantView({ restaurant_id, category_id }: Restauran
       return;
     }
 
-    // Update menu items.
-    fetchRestaurantData();
+    // TODO: Update menu items.
     // Close the modal after successful update.
     setShowEditTagModal(false);
   }
@@ -132,8 +131,6 @@ export default function RestaurantView({ restaurant_id, category_id }: Restauran
       return;
     }
 
-    // Update menu items.
-    fetchRestaurantData();
     // Close the modal after successful update.
     setShowEditMenuItemModal(false);
   }
@@ -146,8 +143,6 @@ export default function RestaurantView({ restaurant_id, category_id }: Restauran
       return;
     }
 
-    // Update menu items.
-    fetchRestaurantData();
     // Close the modal after successful update.
     setShowEditMenuItemModal(false);
   }
@@ -172,8 +167,6 @@ export default function RestaurantView({ restaurant_id, category_id }: Restauran
       return;
     }
 
-    // Update menu items.
-    fetchRestaurantData();
     // Close the modal after successful update.
     setShowAddMenuItemModal(false);
   }
@@ -184,7 +177,7 @@ export default function RestaurantView({ restaurant_id, category_id }: Restauran
   }
 
   const handleCategoryClick = (category: CategoryLite) => {
-    router.push(`/restaurant/${restaurant_id}/category/${category.id}`);
+    router.push(`/restaurant/${restaurant.id}/category/${category.id}`);
   };
 
   return (

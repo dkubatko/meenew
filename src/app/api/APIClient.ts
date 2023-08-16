@@ -9,7 +9,7 @@ class APIClient {
   public readonly MenuItem: MenuItemAPIClient;
   public readonly Category: CategoryAPIClient;
 
-  constructor(baseURL: string = "/api") {
+  constructor(baseURL: string = "http://127.0.0.1:8000/api") {
     this.Restaurant = new RestaurantAPIClient(baseURL);
     this.Tag = new TagAPIClient(baseURL);
     this.MenuItem = new MenuItemAPIClient(baseURL);
