@@ -132,3 +132,14 @@ def get_all_tags(db: Session):
 
 def get_root_tag(db: Session):
    return get_tag(db, 0)
+
+def get_category(db: Session, restaurant_id: int, category_id: int):
+    category = db.query(models.Category).filter(
+        models.Category.id == category_id,
+        models.Category.restaurant_id == restaurant_id
+    ).first()
+
+    if not category:
+        raise HTTPException(status_code=404, detail=f"Category w/ id = {category_id} and restaurant_id = {restaurant_id} not found.")
+
+    return category

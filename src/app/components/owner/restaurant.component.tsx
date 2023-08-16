@@ -1,7 +1,7 @@
 'use client';
 
+import { useRouter } from 'next/navigation'
 import { useState, useEffect, useRef } from "react";
-import { useSearchParams } from 'next/navigation';
 import { Tag as TagType, TagCreate, TagLabel as TagLabelType } from "@/app/types/tag";
 import MenuItemType from "@/app/types/menuItem";
 import TagLabel from "@/app/components/shared/tagLabel.component";
@@ -10,39 +10,28 @@ import sharedStyles from "@/app/components/shared/shared.module.css";
 import Modal from 'react-overlays/Modal';
 import TagModal from "@/app/components/owner/tagModal.component";
 import useFetchRestaurant from '@/app/hooks/useFetchRestaurant';
+import useFetchCategory from '@/app/hooks/useFetchCategory';
 import MenuItemModal, { MenuItemFormData } from "./menuItemModal.component";
 import { ServerAPIClient } from "@/app/api/APIClient";
-import { CategoryTree, Category } from "@/app/types/category";
-import { getCategoryTreeByPath, getPathToRoot } from "@/app/util/categoryUtil";
+import { CategoryLite } from "@/app/types/category";
 import CategoryView from "./categoryView.component";
 
-export default function Restaurant() {
-  const searchParams = useSearchParams();
-  const { restaurantData, fetchRestaurantData } = useFetchRestaurant(searchParams.get('id') ?? '0');
-  const [currentCategory, setCurrentCategory] = useState<CategoryTree>();
-  const hasSetInitialCategory = useRef(false);
+interface RestaurantViewProps {
+  restaurant_id: string,
+  category_id: string
+}
+
+export default function RestaurantView({ restaurant_id, category_id }: RestaurantViewProps) {
+  const router = useRouter();
+  const { restaurantData, fetchRestaurantData } = useFetchRestaurant(restaurant_id);
+  const { categoryData } = useFetchCategory(restaurant_id, category_id);
 
   const [currentTagLabels, setCurrentTagLabels] = useState<TagLabelType[]>([]);
 
-  // Instnatiate currentCategory on restaurant data first retrieval.
-  useEffect(() => {
-    if (restaurantData && !hasSetInitialCategory.current) {
-      setCurrentCategory(restaurantData.root_category);
-      hasSetInitialCategory.current = true;
-    } else if (restaurantData && currentCategory) {
-      const pathToCurrentCategory = getPathToRoot(currentCategory);
-      const newCurrentCategory = getCategoryTreeByPath(restaurantData.root_category, pathToCurrentCategory);
-      if (newCurrentCategory) {
-        setCurrentCategory(newCurrentCategory);
-      }
-    }
-  }, [restaurantData, currentCategory]);
-  
-
   // Update current tags to be displayed based on retrieved category.
   useEffect(() => {
-    setCurrentTagLabels(currentCategory?.tag_labels || []);
-  }, [currentCategory]);
+    setCurrentTagLabels(categoryData?.tag_labels || []);
+  }, [categoryData]);
 
   const [selectedTag, setSelectedTag] = useState<TagType>();
   const [selectedTagLabel, setSelectedTagLabel] = useState<TagLabelType>();
@@ -194,18 +183,8 @@ export default function Restaurant() {
     setShowEditMenuItemModal(true);
   }
 
-  const handleCategoryClick = (category: CategoryTree | Category) => {
-    if ((category as CategoryTree).children) {
-      // It's a CategoryTree, just set it
-      setCurrentCategory(category as CategoryTree);
-    } else {
-      // It's a Category, find the CategoryTree object
-      const path = getPathToRoot(category as Category);
-      const categoryTree = getCategoryTreeByPath(restaurantData!.root_category, path);
-      if (categoryTree) {
-        setCurrentCategory(categoryTree);
-      }
-    }
+  const handleCategoryClick = (category: CategoryLite) => {
+    router.push(`/restaurant/${restaurant_id}/category/${category.id}`);
   };
 
   return (
@@ -217,9 +196,9 @@ export default function Restaurant() {
         <div className={styles.menu}>
           <div className={styles.title}>Menu</div>
           <div className={styles.itemlist}>
-            {currentCategory && 
+            {categoryData && 
               <CategoryView
-                categoryTree={currentCategory}
+                categoryTree={categoryData}
                 handleCategoryClick={handleCategoryClick}
                 handleMenuItemEdit={handleMenuItemEditClick}
                 handleAddMenuItem={() => setShowAddMenuItemModal(true)}

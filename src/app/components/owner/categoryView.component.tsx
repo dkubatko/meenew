@@ -1,4 +1,4 @@
-import { CategoryTree, Category } from '@/app/types/category';
+import { CategoryTree, Category, CategoryLite } from '@/app/types/category';
 import MenuItem from '@/app/components/shared/menuItem.component';
 import styles from '@/app/components/owner/categoryView.module.css';
 import sharedStyles from '@/app/components/shared/shared.module.css';
@@ -6,7 +6,7 @@ import MenuItemType from '@/app/types/menuItem';
 
 interface CategoryViewProps {
   categoryTree: CategoryTree;
-  handleCategoryClick: (category: CategoryTree | Category) => void;
+  handleCategoryClick: (category: CategoryLite) => void;
   handleAddMenuItem?: (category: CategoryTree) => void;
   handleAddSubcategory?: (category: CategoryTree) => void;
   handleMenuItemEdit?: (menuItem: MenuItemType) => void;
@@ -19,19 +19,9 @@ export default function CategoryView({
   handleAddSubcategory,
   handleMenuItemEdit
 }: CategoryViewProps) {
-  const allMenuItemsInBranch = (category: CategoryTree): any[] => {
-    const items = category.menu_items || [];
-    if (category.children) {
-      category.children.forEach(child => {
-        items.push(...allMenuItemsInBranch(child));
-      });
-    }
-    return items;
-  };
-
-  const renderCategoryPath = (category: Category) => {
+  const renderCategoryPath = (category: CategoryLite) => {
     let pathElements: React.ReactNode[] = [];
-    let currentCategory: Category | undefined = category;
+    let currentCategory: CategoryLite | null = category;
     
     // Traverse up the tree to diplay path to current category.
     while (currentCategory) {
@@ -61,7 +51,7 @@ export default function CategoryView({
     <div className={styles.container}>
       <div className={styles.categoryNav}>{renderCategoryPath(categoryTree)}</div>
       {categoryTree.children.length > 0 && <div className={styles.subcategories}>
-        {categoryTree.children?.map((childCategory: CategoryTree) => (
+        {categoryTree.children?.map((childCategory: Category) => (
           <div className={styles.subcategory} key={childCategory.id}>
             <div
               onClick={() => handleCategoryClick(childCategory)}
@@ -70,7 +60,7 @@ export default function CategoryView({
                 {childCategory.name}
             </div>
             <div className={styles.subcategoryPreview}>
-              {allMenuItemsInBranch(childCategory).map((menuItem: any) => (
+              {childCategory.menu_items.map((menuItem: any) => (
                 <MenuItem key={menuItem.id} menu_item={menuItem} /> 
               ))}
             </div>
@@ -85,7 +75,6 @@ export default function CategoryView({
       </div>}
       <div className={styles.items}>
         {categoryTree.menu_items?.map((menuItem: any) => (
-          // TODO: make editable
           <MenuItem 
             key={menuItem.id} 
             menu_item={menuItem}
