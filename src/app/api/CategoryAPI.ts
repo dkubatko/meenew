@@ -21,11 +21,19 @@ export default class CategoryAPI {
   }
 
   public async get(restaurantId: string, categoryId: string): Promise<CategoryTreeType> {
-    const data = await this.fetcher(`restaurant/${restaurantId}/category/${categoryId}`);
+    const options: RequestInit = {
+      cache: 'no-store',
+    }
+  
+    const data = await this.fetcher(`restaurant/${restaurantId}/category/${categoryId}`, options);
     return CategoryTreeType.fromObject(data);
   }
 
   public async get_raw(restaurantId: string, categoryId: string): Promise<any> {
-    return await this.fetcher(`restaurant/${restaurantId}/category/${categoryId}`);
+    const options: RequestInit = {
+      cache: 'no-store',
+    }
+
+    return await this.fetcher(`restaurant/${restaurantId}/category/${categoryId}`, options);
   }
 }

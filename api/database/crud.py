@@ -34,12 +34,6 @@ def delete_tag(db: Session, tag_id: int):
     if not tag:
         raise HTTPException(status_code=404, detail=f"Tag w/ id = {tag_id} not found.")
 
-    # If the tag is not a leaf, delete all its children
-    if not tag.is_leaf:
-        children_tags = db.query(models.Tag).filter(models.Tag.parent_id == tag_id).all()
-        for child_tag in children_tags:
-            delete_tag(db, child_tag.id)
-
     # Delete the tag itself
     db.delete(tag)
     db.commit()
@@ -121,7 +115,6 @@ def update_tag(db: Session, tag: models.TagRead):
    db_tag = get_tag(db, tag.id)
    
    db_tag.name = tag.name
-   db_tag.is_leaf = tag.is_leaf
 
    db.commit()
    db.refresh(db_tag)

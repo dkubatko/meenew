@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation'
 import { useState, useEffect, useRef } from "react";
-import { Tag as TagType, TagCreate, TagLabel as TagLabelType } from "@/app/types/tag";
+import { Tag as TagType, TagLabel as TagLabelType } from "@/app/types/tag";
 import MenuItemType from "@/app/types/menuItem";
 import TagLabel from "@/app/components/shared/tagLabel.component";
 import styles from "@/app/components/owner/restaurant.module.css";
@@ -23,10 +23,11 @@ interface RestaurantViewProps {
 export default function RestaurantView({ restaurant, category }: RestaurantViewProps) {
   const router = useRouter();
 
-  const restaurantData: RestaurantType = RestaurantType.fromObject(restaurant);
-  const categoryData: CategoryTree = CategoryTree.fromObject(category);
+  const [restaurantData, setRestaurantData] = useState<RestaurantType>(RestaurantType.fromObject(restaurant));
+  const [categoryData, setCategoryData] = useState<CategoryTree>(CategoryTree.fromObject(category));
 
-  const [currentTagLabels, setCurrentTagLabels] = useState<TagLabelType[]>([]);
+  const [currentTagLabels, setCurrentTagLabels] = useState<TagLabelType[]>(categoryData?.tag_labels || []);
+  const [menuItems, setMenuItems] = useState<MenuItemType[]>(categoryData?.menu_items || []);
 
   // Update current tags to be displayed based on retrieved category.
   useEffect(() => {
@@ -52,8 +53,8 @@ export default function RestaurantView({ restaurant, category }: RestaurantViewP
     )
   }
 
-  function handleAddTag(parentTag: TagLabelType) {
-    setSelectedTagLabel(parentTag);
+  function handleAddTag(tagLabel: TagLabelType) {
+    setSelectedTagLabel(tagLabel);
     setShowNewTagModal(true);
   }
 
@@ -70,9 +71,23 @@ export default function RestaurantView({ restaurant, category }: RestaurantViewP
       return;
     }
 
+    // Update current tag labels.
+    setCurrentTagLabels(currentTagLabels => {
+      return currentTagLabels.map((label: TagLabelType) => {
+        if (label.id === selectedTagLabel!.id) {
+          return {
+            ...label,
+            tags: [...label.tags, createdTag]
+          };
+        }
+        return label;
+      });
+    });
+
     // Close the modal after successful update.
     setShowNewTagModal(false);
   }
+
 
   function handleEditTagClick(tag: TagType) {
     setSelectedTag(tag);
@@ -92,8 +107,32 @@ export default function RestaurantView({ restaurant, category }: RestaurantViewP
       return;
     }
 
-    // TODO!: This should instead only update the current category.
-    // fetchRestaurantData();
+    // Update current tag labels.
+    setCurrentTagLabels(currentTagLabels => {
+      return currentTagLabels.map((label: TagLabelType) => {
+        if (label.id === selectedTagLabel!.id) {
+          return {
+            ...label,
+            tags: label.tags.filter(t => t.id !== tag.id), // Filter out the deleted tag
+          };
+        }
+        return label;
+      });
+    });
+
+    // Update menu items by removing the deleted tag.
+    setCategoryData(categoryData => {
+      return {
+        ...categoryData,
+        menu_items: categoryData.menu_items.map((menuItem) => {
+          return {
+            ...menuItem,
+            tags: menuItem.tags.filter((t: TagType) => t.id !== tag.id), // Filter out the deleted tag
+          };
+        }),
+      };
+    });
+
     // Close the modal after successful deletion.
     setShowEditTagModal(false);
   }
@@ -106,12 +145,37 @@ export default function RestaurantView({ restaurant, category }: RestaurantViewP
       return;
     }
 
-    // TODO: Update menu items.
+    // Update tag labels.
+    setCurrentTagLabels(currentTagLabels => {
+      return currentTagLabels.map((label: TagLabelType) => {
+        if (label.id === updatedTag.label_id) {
+          return {
+            ...label,
+            tags: label.tags.map(tag => tag.id === updatedTag.id ? updatedTag : tag),
+          };
+        }
+        return label;
+      });
+    });
+
+    // Update menu items by replacing the edited tag.
+    setCategoryData(categoryData => {
+      return {
+        ...categoryData,
+        menu_items: categoryData.menu_items.map((menuItem) => {
+          return {
+            ...menuItem,
+            tags: menuItem.tags.map((tag: TagType) => tag.id === updatedTag.id ? updatedTag : tag),
+          };
+        }),
+      };
+    });
+
     // Close the modal after successful update.
     setShowEditTagModal(false);
   }
 
-  async function handleEditMenuItemModalConfirm({ menu_item, image }: MenuItemFormData) {
+  async function handleEditMenuItemConfirm({ menu_item, image }: MenuItemFormData) {
     // If new image is added, upload it to the server and update the image_path on the item.
     if (image) {
       const imageUrl = (await ServerAPIClient.MenuItem.uploadImage(image)).image_url;
@@ -135,7 +199,7 @@ export default function RestaurantView({ restaurant, category }: RestaurantViewP
     setShowEditMenuItemModal(false);
   }
 
-  async function handleEditMenuItemModalDelete(menuItem: MenuItemType) {
+  async function handleEditMenuItemDelete(menuItem: MenuItemType) {
     const result = await ServerAPIClient.MenuItem.delete(menuItem.id);
 
     if (!result || !result.ok) {
@@ -189,7 +253,7 @@ export default function RestaurantView({ restaurant, category }: RestaurantViewP
         <div className={styles.menu}>
           <div className={styles.title}>Menu</div>
           <div className={styles.itemlist}>
-            {categoryData && 
+            {categoryData &&
               <CategoryView
                 categoryTree={categoryData}
                 handleCategoryClick={handleCategoryClick}
@@ -250,14 +314,13 @@ export default function RestaurantView({ restaurant, category }: RestaurantViewP
         >
           <MenuItemModal
             onCancel={() => setShowEditMenuItemModal(false)}
-            onConfirm={handleEditMenuItemModalConfirm}
-            onDelete={handleEditMenuItemModalDelete}
+            onConfirm={handleEditMenuItemConfirm}
+            onDelete={handleEditMenuItemDelete}
             menu_item={selectedMenuItem!}
             // Expand current tag labels into a list of tags that belong to these labels.
             tagList={currentTagLabels.reduce((tagsList: TagType[], tagLabel: TagLabelType) => {
               return tagsList.concat(tagLabel.tags || []);
             }, [])}
-            
             edit={true}
           />
         </Modal>

@@ -26,8 +26,8 @@ export class TagLabel {
   constructor(
     public id: number | null = null,
     public name: string,
+    public tags: Tag[],
     public category_id?: number,
-    public tags?: Tag[]
   ) { }
 
   static fromObject(object: any): TagLabel {
@@ -36,7 +36,7 @@ export class TagLabel {
       id,
       name,
       category_id,
-      tags ? tags.map(Tag.fromObject) : undefined
+      tags ? tags.map(Tag.fromObject) : []
     );
   }
 }

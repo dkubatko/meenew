@@ -1,6 +1,6 @@
 import styles from "@/app/components/owner/tagModal.module.css";
 import sharedStyles from "@/app/components/shared/shared.module.css";
-import { Tag, TagCreate } from "@/app/types/tag";
+import { Tag } from "@/app/types/tag";
 import { useState } from "react";
 import { ThreeDots } from "react-loader-spinner";
 
@@ -40,15 +40,6 @@ export default function TagModal({ tag, onConfirm, onCancel, onDelete, isAdd = f
             }
             className={sharedStyles.textInput} 
             autoComplete="off"
-          />
-        </div>
-        <div className={styles.inputSection}>
-          <div className={styles.inputLabel}>Category:</div>
-          <input
-            type="checkbox"
-            checked={!formData.is_leaf}
-            onChange={() => setFormData((formData: Tag) => ({...formData, is_leaf: !formData.is_leaf}))}
-            disabled={tag.num_children > 0}
           />
         </div>
       </div>

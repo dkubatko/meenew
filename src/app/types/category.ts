@@ -39,8 +39,12 @@ export class CategoryTree {
     public tag_labels: any[] = []
   ) { }
 
-  toCategoryType(): Category {
-    return new Category(this.id, this.name, this.parent, this.menu_items, this.tag_labels);
+  static toCategoryType(categoryTree: CategoryTree): Category {
+    return new Category(categoryTree.id, 
+      categoryTree.name, 
+      categoryTree.parent, 
+      categoryTree.menu_items, 
+      categoryTree.tag_labels);
   }
 
   static fromObject(object: any): CategoryTree {
