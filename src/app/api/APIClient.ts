@@ -9,7 +9,7 @@ class APIClient {
   public readonly MenuItem: MenuItemAPIClient;
   public readonly Category: CategoryAPIClient;
 
-  constructor(baseURL: string = "http://127.0.0.1:8000/api") {
+  constructor(baseURL: string = "/api") {
     this.Restaurant = new RestaurantAPIClient(baseURL);
     this.Tag = new TagAPIClient(baseURL);
     this.MenuItem = new MenuItemAPIClient(baseURL);
@@ -20,4 +20,4 @@ class APIClient {
 export default APIClient;
 
 // Exporting an instance of APIClient which can be used across the application
-export const ServerAPIClient = new APIClient();
+export const ServerAPIClient = new APIClient(process.env.NEXT_PUBLIC_API_BASE_URL);
