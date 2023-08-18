@@ -5,7 +5,7 @@
   align-items: center;
   justify-content: center;
   min-width: 33vw;
-  height: 15vh;
+  min-height: 15vh;
   margin: 1vw 1vw;
 
   background-color: var(--secondary-color);

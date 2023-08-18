@@ -10,13 +10,14 @@ if TYPE_CHECKING:
 
 
 class MenuItemBase(SQLModel):
+    # TODO: Remove as it can be accessed from category
+    restaurant_id: Optional[int] = Field(default = None, foreign_key="restaurants.id")
     item_name: str = Field(unique=True, index=True)
 
 class MenuItem(MenuItemBase, table = True):
     __tablename__: str = "menuitems"
 
     id: Optional[int] = Field(default=None, primary_key=True, index=True)
-    restaurant_id: Optional[int] = Field(default = None, foreign_key="restaurants.id")
     image_path: Optional[str] = Field(default = None)
     category_id: Optional[int] = Field(default=None, foreign_key="categories.id")
 
@@ -25,7 +26,7 @@ class MenuItem(MenuItemBase, table = True):
     tags: List['Tag'] = Relationship(back_populates="menu_items", link_model=ItemTagLink)
 
 class MenuItemCreate(MenuItemBase):
-    restaurant_id: int
+    category_id: int
     image_path: Optional[str]
     tags: List['TagRead']
 

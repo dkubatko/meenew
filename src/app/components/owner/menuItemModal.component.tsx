@@ -112,7 +112,8 @@ export default function MenuItemModal({ onCancel, onConfirm, menu_item, edit, ta
                     <Tag
                       key={tag.id}
                       tag={tag}
-                      onEdit={handleDeleteTag}
+                      removable={true}
+                      handleRemove={handleDeleteTag}
                       className={sharedStyles.smallTag}
                     />
                 )

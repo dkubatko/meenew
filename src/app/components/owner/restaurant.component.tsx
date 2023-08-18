@@ -53,70 +53,37 @@ export default function RestaurantView({ restaurant, category }: RestaurantViewP
     )
   }
 
-  function handleAddTag(tagLabel: TagLabelType) {
-    setSelectedTagLabel(tagLabel);
-    setShowNewTagModal(true);
-  }
-
-  async function handleTagSubmit(tag: TagType) {
-    if (!tag) {
-      console.log("Empty tag");
-      return;
-    }
-
-    const createdTag = await ServerAPIClient.Tag.create(tag);
-
-    if (!createdTag) {
-      console.error('An error occurred while creating a tag');
-      return;
-    }
-
-    // Update current tag labels.
-    setCurrentTagLabels(currentTagLabels => {
-      return currentTagLabels.map((label: TagLabelType) => {
-        if (label.id === selectedTagLabel!.id) {
-          return {
-            ...label,
-            tags: [...label.tags, createdTag]
-          };
-        }
-        return label;
-      });
-    });
-
-    // Close the modal after successful update.
-    setShowNewTagModal(false);
-  }
-
-
-  function handleEditTagClick(tag: TagType) {
-    setSelectedTag(tag);
-    setShowEditTagModal(true);
-  }
-
   function handleEditTagLabelClick(tagLabel: TagLabelType) {
     setSelectedTagLabel(tagLabel);
     setShowEditTagLabelModal(true);
   }
 
-  async function handleDeleteTag(tag: TagType) {
-    const result = await ServerAPIClient.Tag.delete(tag.id);
-
-    if (!result || !result.ok) {
-      console.error('An error occurred while deleting a tag');
-      return;
-    }
-
-    // Update current tag labels.
-    setCurrentTagLabels(currentTagLabels => {
-      return currentTagLabels.map((label: TagLabelType) => {
-        if (label.id === selectedTagLabel!.id) {
+  function handleAddTag(newTag: TagType) {
+    setCurrentTagLabels(prevTagLabels => {
+      return prevTagLabels.map(tagLabel => {
+        if (tagLabel.id === newTag.label_id) {
           return {
-            ...label,
-            tags: label.tags.filter(t => t.id !== tag.id), // Filter out the deleted tag
+            ...tagLabel,
+            tags: [...tagLabel.tags, newTag], // Add the new tag to the tags array of the matching tagLabel
           };
         }
-        return label;
+        return tagLabel; // Return other tagLabels unmodified
+      });
+    });
+  }
+  
+
+  async function handleDeleteTag(deletedTag: TagType) {
+    // Update tag labels
+    setCurrentTagLabels(prevTagLabels => {
+      return prevTagLabels.map(tagLabel => {
+        if (tagLabel.id === deletedTag.label_id) {
+          return {
+            ...tagLabel,
+            tags: tagLabel.tags.filter(tag => tag.id !== deletedTag.id), // Remove the deleted tag
+          };
+        }
+        return tagLabel; // Return other tagLabels unmodified
       });
     });
 
@@ -127,34 +94,26 @@ export default function RestaurantView({ restaurant, category }: RestaurantViewP
         menu_items: categoryData.menu_items.map((menuItem) => {
           return {
             ...menuItem,
-            tags: menuItem.tags.filter((t: TagType) => t.id !== tag.id), // Filter out the deleted tag
+            tags: menuItem.tags.filter((t: TagType) => t.id !== deletedTag.id), // Filter out the deleted tag
           };
         }),
       };
     });
-
-    // Close the modal after successful deletion.
-    setShowEditTagModal(false);
   }
 
-  async function handleEditTag(tag: TagType) {
-    const updatedTag = await ServerAPIClient.Tag.update(tag);
-
-    if (!updatedTag) {
-      console.error('An error occurred while updating a tag');
-      return;
-    }
-
-    // Update tag labels.
-    setCurrentTagLabels(currentTagLabels => {
-      return currentTagLabels.map((label: TagLabelType) => {
-        if (label.id === updatedTag.label_id) {
+  async function handleEditTag(updatedTag: TagType) {
+    // Update tag labels
+    setCurrentTagLabels(prevTagLabels => {
+      return prevTagLabels.map(tagLabel => {
+        if (tagLabel.id === updatedTag.label_id) {
           return {
-            ...label,
-            tags: label.tags.map(tag => tag.id === updatedTag.id ? updatedTag : tag),
+            ...tagLabel,
+            tags: tagLabel.tags.map(tag => 
+              tag.id === updatedTag.id ? updatedTag : tag // Replace the edited tag
+            ),
           };
         }
-        return label;
+        return tagLabel; // Return other tagLabels unmodified
       });
     });
 
@@ -170,45 +129,6 @@ export default function RestaurantView({ restaurant, category }: RestaurantViewP
         }),
       };
     });
-
-    // Close the modal after successful update.
-    setShowEditTagModal(false);
-  }
-
-  async function handleEditMenuItemConfirm({ menu_item, image }: MenuItemFormData) {
-    // If new image is added, upload it to the server and update the image_path on the item.
-    if (image) {
-      const imageUrl = (await ServerAPIClient.MenuItem.uploadImage(image)).image_url;
-
-      if (!imageUrl) {
-        console.log("Could not upload image");
-        return;
-      }
-
-      menu_item.image_path = imageUrl
-    }
-
-    const updatedMenuItem = await ServerAPIClient.MenuItem.update(menu_item);
-
-    if (!updatedMenuItem) {
-      console.error('An error occurred while updating a menu item');
-      return;
-    }
-
-    // Close the modal after successful update.
-    setShowEditMenuItemModal(false);
-  }
-
-  async function handleEditMenuItemDelete(menuItem: MenuItemType) {
-    const result = await ServerAPIClient.MenuItem.delete(menuItem.id);
-
-    if (!result || !result.ok) {
-      console.error('An error occurred while deleting a menu item');
-      return;
-    }
-
-    // Close the modal after successful update.
-    setShowEditMenuItemModal(false);
   }
 
   async function handleAddMenuItemModalConfirm({ menu_item, image }: MenuItemFormData) {
@@ -235,11 +155,6 @@ export default function RestaurantView({ restaurant, category }: RestaurantViewP
     setShowAddMenuItemModal(false);
   }
 
-  function handleMenuItemEditClick(menu_item: MenuItemType) {
-    setSelectedMenuItem(menu_item);
-    setShowEditMenuItemModal(true);
-  }
-
   const handleCategoryClick = (category: CategoryLite) => {
     router.push(`/restaurant/${restaurant.id}/category/${category.id}`);
   };
@@ -256,9 +171,8 @@ export default function RestaurantView({ restaurant, category }: RestaurantViewP
             {categoryData &&
               <CategoryView
                 categoryTree={categoryData}
+                tagLabels={currentTagLabels}
                 handleCategoryClick={handleCategoryClick}
-                handleMenuItemEdit={handleMenuItemEditClick}
-                handleAddMenuItem={() => setShowAddMenuItemModal(true)}
               />
             }
           </div>
@@ -272,75 +186,15 @@ export default function RestaurantView({ restaurant, category }: RestaurantViewP
                   <TagLabel
                     key={tagLabel.id}
                     tagLabel={tagLabel}
-                    onAddTag={handleAddTag}
+                    postAddTag={handleAddTag}
                     onEditTagLabel={handleEditTagLabelClick}
-                    onEditTag={handleEditTagClick}
+                    postEditTag={handleEditTag}
+                    postDeleteTag={handleDeleteTag}
                   />
               )
             }
           </div>
         </div>
-        <Modal
-          className={styles.modal}
-          show={showNewTagModal}
-          onHide={() => setShowNewTagModal(false)}
-          renderBackdrop={() => Backdrop(() => setShowNewTagModal(false))}
-        >
-          <TagModal
-            tag={TagType.new(selectedTagLabel?.id || 0)}
-            onConfirm={handleTagSubmit}
-            onCancel={() => setShowNewTagModal(false)}
-            isAdd={true}
-          />
-        </Modal>
-        <Modal
-          className={styles.modal}
-          show={showEditTagModal}
-          onHide={() => setShowEditTagModal(false)}
-          renderBackdrop={() => Backdrop(() => setShowEditTagModal(false))}
-        >
-          <TagModal
-            tag={selectedTag!}
-            onConfirm={handleEditTag}
-            onDelete={handleDeleteTag}
-            onCancel={() => setShowEditTagModal(false)}
-          />
-        </Modal>
-        <Modal
-          className={styles.modal}
-          show={showEditMenuItemModal}
-          onHide={() => setShowEditMenuItemModal(false)}
-          renderBackdrop={() => Backdrop(() => setShowEditMenuItemModal(false))}
-        >
-          <MenuItemModal
-            onCancel={() => setShowEditMenuItemModal(false)}
-            onConfirm={handleEditMenuItemConfirm}
-            onDelete={handleEditMenuItemDelete}
-            menu_item={selectedMenuItem!}
-            // Expand current tag labels into a list of tags that belong to these labels.
-            tagList={currentTagLabels.reduce((tagsList: TagType[], tagLabel: TagLabelType) => {
-              return tagsList.concat(tagLabel.tags || []);
-            }, [])}
-            edit={true}
-          />
-        </Modal>
-        <Modal
-          className={styles.modal}
-          show={showAddMenuItemModal}
-          onHide={() => setShowAddMenuItemModal(false)}
-          renderBackdrop={() => Backdrop(() => setShowAddMenuItemModal(false))}
-        >
-          <MenuItemModal
-            onCancel={() => setShowAddMenuItemModal(false)}
-            onConfirm={handleAddMenuItemModalConfirm}
-            menu_item={MenuItemType.new(restaurantData?.id!)}
-            // Expand current tag labels into a list of tags that belong to these labels.
-            tagList={currentTagLabels.reduce((tagsList: TagType[], tagLabel: TagLabelType) => {
-              return tagsList.concat(tagLabel.tags || []);
-            }, [])}
-            edit={false}
-          />
-        </Modal>
       </div>
     </div>
   )
