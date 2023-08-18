@@ -13,7 +13,6 @@
   align-items: center;
   justify-content: center;
   width: 100%;
-  margin: 1vh 0;
 }
 
 .category {
@@ -62,7 +61,6 @@
   flex-direction: column;
   align-items: center;
   width: 100%;
-  overflow-y: auto;
 }
 
 @media screen and (max-width: 768px) {

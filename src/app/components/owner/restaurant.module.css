@@ -4,19 +4,19 @@
   width: 100%;
   height: 100%;
   align-items: center;
-  padding: 1vh 1vw;
+  padding: 0.3vh 1vw;
 }
 
 .restaurantName {
-  margin: 2vh 0;
   font-size: 3vh;
+  min-height: 5%;
   font-weight: bold;
 }
 
 .container {
   display: flex;
   flex-direction: row;
-  height: 100%;
+  height: 95%;
   width: 100%;
 }
 
@@ -28,13 +28,14 @@
   flex-grow: 0;
   width: 90%;
   margin: auto;
-  height: 100%;
+  height: 95%;
 }
 
 .title {
   font-weight: bold;
   align-self: center;
   font-size: 2vh;
+  min-height: 5%;
 }
 
 .menu {
@@ -44,6 +45,7 @@
   align-items: center;
   justify-content: flex-start;
   height: 100%;
+  overflow-y: scroll;
 }
 
 .tags {
