@@ -5,10 +5,11 @@ import editIcon from "@/assets/icons/pencil-edit.svg";
 import { useState } from "react";
 import Tag from "./tag.component";
 import Modal from 'react-overlays/Modal';
-import TagModal from "@/app/components/owner/tagModal.component";
+import TagModal from "@/app/components/owner/tagOrLabelModal.component";
 import Image from "next/image";
 import Backdrop from "@/app/util/backdrop";
 import { ServerAPIClient } from "@/app/api/APIClient";
+import InlineInputButton from "./inlineInputButton.component";
 
 interface TagLabelProps {
   tagLabel: TagLabelType;
@@ -113,12 +114,16 @@ export default function TagLabel({
           }
           {
             expand && postAddTag &&
-            <button
-              className={sharedStyles.addButton}
-              onClick={() => setShowAddTagModal(true)}
+            <InlineInputButton
+              onSubmit={(name: string) => {
+                const tag = TagType.new(currentTagLabel.id!);
+                tag.name = name;
+                handleAddTag(tag);
+              }}
+              className={sharedStyles.inputButton}
             >
-              +
-            </button>
+              Add tag
+            </InlineInputButton>
           }
         </div>
       </div>
@@ -128,12 +133,11 @@ export default function TagLabel({
         onHide={() => setShowEditTagLabelModal(false)}
         renderBackdrop={() => Backdrop(() => setShowEditTagLabelModal(false))}
       >
-        {/* TagLabelModal */}
-        <TagModal
-          tag={TagType.new(tagLabel.id || 0)}
+        <TagModal<TagLabelType>
+          tagOrLabel={currentTagLabel}
           onConfirm={() => alert('Edit Tag Label Modal')}
           onCancel={() => setShowEditTagLabelModal(false)}
-          isAdd={true}
+          isAdd={false}
         />
       </Modal>
       <Modal
@@ -142,8 +146,8 @@ export default function TagLabel({
         onHide={() => setShowAddTagModal(false)}
         renderBackdrop={() => Backdrop(() => setShowAddTagModal(false))}
       >
-        <TagModal
-          tag={TagType.new(currentTagLabel.id!)}
+        <TagModal<TagType>
+          tagOrLabel={TagType.new(currentTagLabel.id!)}
           onConfirm={handleAddTag}
           onCancel={() => setShowAddTagModal(false)}
           isAdd={true}

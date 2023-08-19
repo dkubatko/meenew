@@ -53,6 +53,10 @@ def get_restaurant(restaurant_id: int, db: Session = Depends(get_session)):
 def get_category(restaurant_id: int, category_id: int, db: Session = Depends(get_session)):
     return crud.get_category(db = db, restaurant_id = restaurant_id, category_id = category_id)
 
+@app.post("/api/tag_label", response_model=models.TagLabelRead)
+def create_tag(tagLabel: models.TagLabelCreate, db: Session = Depends(get_session)):
+    return crud.create_tag_label(db = db, tagLabel = tagLabel)
+
 @app.post("/api/tag", response_model=models.TagRead)
 def create_tag(tag: models.TagCreate, db: Session = Depends(get_session)):
     return crud.create_tag(db = db, tag = tag)

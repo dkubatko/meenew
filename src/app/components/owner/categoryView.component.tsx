@@ -120,7 +120,7 @@ export default function CategoryView({
           ))}
           {handleAddSubcategory && <button
             onClick={() => handleAddSubcategory(categoryTree)}
-            className={sharedStyles.addButton}
+            className={sharedStyles.bigButton}
           >
             Add Subcategory
           </button>}
@@ -141,7 +141,7 @@ export default function CategoryView({
           ))}
           {<button
             onClick={() => setShowAddMenuItemModal(true)}
-            className={sharedStyles.addButton}
+            className={sharedStyles.bigButton}
           >
             Add Item
           </button>}

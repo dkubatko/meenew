@@ -6,7 +6,7 @@ import editIcon from "@/assets/icons/pencil-edit.svg";
 import Image from "next/image";
 import { useState } from "react";
 import Modal from 'react-overlays/Modal';
-import TagModal from "@/app/components/owner/tagModal.component";
+import TagModal from "@/app/components/owner/tagOrLabelModal.component";
 import Backdrop from "@/app/util/backdrop";
 import { ServerAPIClient } from "@/app/api/APIClient";
 
@@ -96,8 +96,8 @@ export default function Tag({
         onHide={() => setShowEditTagModal(false)}
         renderBackdrop={() => Backdrop(() => setShowEditTagModal(false))}
       >
-        <TagModal
-          tag={tag}
+        <TagModal<TagType>
+          tagOrLabel={tag}
           onConfirm={handleEditTag}
           onDelete={handleDeleteTag}
           onCancel={() => setShowEditTagModal(false)}

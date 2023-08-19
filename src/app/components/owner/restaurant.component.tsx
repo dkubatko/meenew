@@ -8,12 +8,13 @@ import TagLabel from "@/app/components/shared/tagLabel.component";
 import styles from "@/app/components/owner/restaurant.module.css";
 import sharedStyles from "@/app/components/shared/shared.module.css";
 import Modal from 'react-overlays/Modal';
-import TagModal from "@/app/components/owner/tagModal.component";
+import TagModal from "@/app/components/owner/tagOrLabelModal.component";
 import MenuItemModal, { MenuItemFormData } from "./menuItemModal.component";
 import { ServerAPIClient } from "@/app/api/APIClient";
 import { CategoryLite, CategoryTree } from "@/app/types/category";
 import CategoryView from "./categoryView.component";
 import RestaurantType from '@/app/types/restaurant';
+import InlineInputButton from '../shared/inlineInputButton.component';
 
 interface RestaurantViewProps {
   restaurant: any,
@@ -131,28 +132,16 @@ export default function RestaurantView({ restaurant, category }: RestaurantViewP
     });
   }
 
-  async function handleAddMenuItemModalConfirm({ menu_item, image }: MenuItemFormData) {
-    // If new image is added, upload it to the server and update the image_path on the item.
-    if (image) {
-      const imageUrl = (await ServerAPIClient.MenuItem.uploadImage(image)).image_url;
+  async function handleAddTagLabel(tagLabel: TagLabelType) {
+    const createdTagLabel = await ServerAPIClient.Tag.createLabel(tagLabel);
 
-      if (!imageUrl) {
-        console.log("Could not upload image");
-        return;
-      }
-
-      menu_item.image_path = imageUrl
-    }
-
-    const createdMenuItem = await ServerAPIClient.MenuItem.create(menu_item);
-
-    if (!createdMenuItem) {
+    if (!createdTagLabel) {
       console.error('An error occurred while creating a tag');
       return;
     }
 
-    // Close the modal after successful update.
-    setShowAddMenuItemModal(false);
+    // Update tag labels
+    setCurrentTagLabels([...currentTagLabels, createdTagLabel]);
   }
 
   const handleCategoryClick = (category: CategoryLite) => {
@@ -180,6 +169,7 @@ export default function RestaurantView({ restaurant, category }: RestaurantViewP
         <div className={styles.tags}>
           <div className={styles.title}>Tags</div>
           <div className={styles.taglist}>
+            {/* TODO: Separate into a standalone component */}
             {
               currentTagLabels && currentTagLabels.map(
                 (tagLabel: TagLabelType) =>
@@ -193,6 +183,16 @@ export default function RestaurantView({ restaurant, category }: RestaurantViewP
                   />
               )
             }
+            <InlineInputButton
+              onSubmit={(name: string) => {
+                const tagLabel = TagLabelType.new(categoryData.id);
+                tagLabel.name = name;
+                handleAddTagLabel(tagLabel);
+              }}
+              className={sharedStyles.inputButton}
+            >
+              Add tag label
+            </InlineInputButton>
           </div>
         </div>
       </div>

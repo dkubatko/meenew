@@ -21,3 +21,6 @@ class TagLabelRead(TagLabelBase):
    id: Optional[int] = None
    category_id: Optional[int] = None
    tags: List['Tag'] = []
+
+class TagLabelCreate(TagLabelBase):
+   category_id: int

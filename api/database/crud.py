@@ -104,6 +104,13 @@ def add_image_url_to_menu_item(db: Session, menu_item_id: int, image_url: str):
   db.refresh(db_menu_item)
   return db_menu_item
 
+def create_tag_label(db: Session, tagLabel: models.TagLabelCreate):
+    db_tag_label = models.TagLabel.from_orm(tagLabel)
+    db.add(db_tag_label)
+    db.commit()
+    db.refresh(db_tag_label)
+    return db_tag_label
+
 def create_tag(db: Session, tag: models.TagCreate):
     db_tag = models.Tag.from_orm(tag)
     db.add(db_tag)
