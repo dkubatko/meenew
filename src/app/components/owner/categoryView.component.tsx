@@ -9,6 +9,7 @@ import Backdrop from "@/app/util/backdrop";
 import { TagLabel as TagLabelType, Tag as TagType } from '@/app/types/tag';
 import MenuItemModal, { MenuItemFormData } from '@/app/components/owner/menuItemModal.component';
 import { ServerAPIClient } from '@/app/api/APIClient';
+import InlineInputWithButton from '../shared/inlineInputWithButton.component';
 
 interface CategoryViewProps {
   categoryTree: CategoryTree;
@@ -23,6 +24,7 @@ export default function CategoryView({
   handleCategoryClick,
   handleAddSubcategory,
 }: CategoryViewProps) {
+  const [currentCategoryTree, setCurrentCategoryTree] = useState<CategoryTree>(categoryTree);
   const [currentMenuItems, setCurrentMenuItems] = useState<MenuItemType[]>(categoryTree.menu_items);
 
   const [showAddMenuItemModal, setShowAddMenuItemModal] = useState<boolean>(false);
@@ -94,20 +96,43 @@ export default function CategoryView({
     });
   }
 
+  async function handleCategoryEdit(category: CategoryLite) {
+    const updatedCategory = await ServerAPIClient.Category.update(category);
+  
+    if (!updatedCategory) {
+      console.error('An error occurred while updating category.');
+      return;
+    }
+  
+    const updatedChildren = currentCategoryTree.children.map(child =>
+      child.id === updatedCategory.id ? { ...child, name: updatedCategory.name } : child
+    );
+  
+    setCurrentCategoryTree({
+      ...currentCategoryTree,
+      children: updatedChildren,
+    });
+  }
 
   return (
     <>
       <div className={styles.container}>
-        <div className={styles.categoryNav}>{renderCategoryPath(categoryTree)}</div>
-        {categoryTree.children.length > 0 && <div className={styles.subcategories}>
-          {categoryTree.children?.map((childCategory: Category) => (
+        <div className={styles.categoryNav}>
+          {renderCategoryPath(currentCategoryTree)}
+        </div>
+        {currentCategoryTree.children.length > 0 && <div className={styles.subcategories}>
+          {currentCategoryTree.children?.map((childCategory: Category) => (
             <div className={styles.subcategory} key={childCategory.id}>
-              <div
-                onClick={() => handleCategoryClick(childCategory)}
-                className={styles.subcategoryTitle}
-              >
-                {childCategory.name}
-              </div>
+              <InlineInputWithButton
+                  onClick={() => handleCategoryClick(childCategory)}
+                  onSubmit={(name: string) => {
+                    const categoryToUpdate = Category.toCategoryLite(childCategory);
+                    categoryToUpdate.name = name;
+                    handleCategoryEdit(categoryToUpdate);
+                  }}
+                  initialValue={childCategory.name}
+                  styles={styles}
+              />
               <div className={styles.subcategoryPreview}>
                 {childCategory.menu_items.map((menuItem: any) => (
                   <MenuItem
@@ -119,7 +144,7 @@ export default function CategoryView({
             </div>
           ))}
           {handleAddSubcategory && <button
-            onClick={() => handleAddSubcategory(categoryTree)}
+            onClick={() => handleAddSubcategory(currentCategoryTree)}
             className={sharedStyles.bigButton}
           >
             Add Subcategory
@@ -156,7 +181,7 @@ export default function CategoryView({
         <MenuItemModal
           onCancel={() => setShowAddMenuItemModal(false)}
           onConfirm={handleAddMenuItem}
-          menu_item={MenuItemType.new(categoryTree.restaurant_id, categoryTree.id)}
+          menu_item={MenuItemType.new(currentCategoryTree.restaurant_id, currentCategoryTree.id)}
           // Expand current tag labels into a list of tags that belong to these labels.
           tagList={tagLabels.reduce((tagsList: TagType[], tagLabel: TagLabelType) => {
             return tagsList.concat(tagLabel.tags || []);

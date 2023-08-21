@@ -3,12 +3,13 @@ import React, { useState, useRef, useEffect } from 'react';
 type InlineInputButtonProps = {
   onSubmit: (input: string) => void;
   className: string;
+  initialValue?: string;
   children?: React.ReactNode;
 };
 
-export default function InlineInputButton({ onSubmit, className, children }: InlineInputButtonProps) {
+export default function InlineInputButton({ onSubmit, className, initialValue, children }: InlineInputButtonProps) {
   const [isEditing, setIsEditing] = useState(false);
-  const [value, setValue] = useState('');
+  const [value, setValue] = useState(initialValue || '');
 
   const inputRef = useRef<HTMLInputElement>(null);
 

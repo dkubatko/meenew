@@ -34,6 +34,15 @@ export class Category {
       menu_items,
       tag_labels);
   }
+
+  static toCategoryLite(category: Category) {
+    return new CategoryLite(
+      category.id,
+      category.restaurant_id,
+      category.name,
+      category.parent
+    )
+  }
 }
 
 export class CategoryTree {

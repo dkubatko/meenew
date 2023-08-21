@@ -1,4 +1,4 @@
-import { CategoryTree as CategoryTreeType } from "@/app/types/category";
+import { Category as CategoryType, CategoryTree as CategoryTreeType, CategoryLite as CategoryLiteType } from "@/app/types/category";
 
 export default class CategoryAPI {
   private baseURL: string;
@@ -36,4 +36,14 @@ export default class CategoryAPI {
 
     return await this.fetcher(`restaurant/${restaurantId}/category/${categoryId}`, options);
   }
+
+  public async update(category: CategoryLiteType): Promise<CategoryLiteType> {
+    const data = await this.fetcher('category', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(category),
+    });
+    return CategoryLiteType.fromObject(data);
+  }
+
 }

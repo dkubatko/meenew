@@ -52,6 +52,10 @@ def get_restaurant(restaurant_id: int, db: Session = Depends(get_session)):
 def get_category(restaurant_id: int, category_id: int, db: Session = Depends(get_session)):
     return CRUD(db).Category.get(restaurant_id = restaurant_id, category_id = category_id)
 
+@app.put('/api/category', response_model=models.CategoryLite)
+def update_category(category: models.CategoryLite, db: Session = Depends(get_session)):
+    return CRUD(db).Category.update(category = category)
+
 @app.post("/api/tag_label", response_model=models.TagLabelRead)
 def create_tag(tagLabel: models.TagLabelCreate, db: Session = Depends(get_session)):
     return CRUD(db).TagLabel.create(tagLabel = tagLabel)

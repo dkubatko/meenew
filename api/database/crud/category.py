@@ -55,4 +55,19 @@ class CategoryCRUD(CRUDBase):
             children=children,
             tag_labels=get_all_tag_labels(category)
         )
+      
+      def update(self, category: CategoryLite):
+          db_category = self.db.query(Category).filter(
+            Category.id == category.id,
+              Category.restaurant_id == category.restaurant_id
+          ).first()
 
+          if not db_category:
+              raise HTTPException(status_code=404, detail=f"Category w/ id = {category.id} and restaurant_id = {category.restaurant_id} not found.")
+          
+          db_category.name = category.name
+
+          self.db.commit()
+          self.db.refresh(db_category)
+
+          return db_category
