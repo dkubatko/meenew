@@ -21,6 +21,7 @@
   --error-color: #f44336;
   --warning-color: #fdd835;
   --neutral-color: #cccccc;
+  --neutral-background-color: #ffe8daff;
 }
 
 :root {
