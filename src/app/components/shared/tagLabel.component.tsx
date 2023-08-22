@@ -14,17 +14,17 @@ import InlineInputButton from "./inlineInputButton.component";
 interface TagLabelProps {
   tagLabel: TagLabelType;
   onAddTag?: (tagLabel: TagLabelType) => void;
-  onEditTagLabel?: (tagLabel: TagLabelType) => void;
+  postDeleteTagLabel?: (tagLabel: TagLabelType) => void;
   postAddTag?: (tag: TagType) => void;
   postEditTag?: (tag: TagType) => void;
   postDeleteTag?: (tag: TagType) => void;
 }
 
-export default function TagLabel({ 
-  tagLabel, 
-  onEditTagLabel, 
+export default function TagLabel({
+  tagLabel,
+  postDeleteTagLabel,
   postAddTag,
-  postEditTag, 
+  postEditTag,
   postDeleteTag }: TagLabelProps) {
   const [expand, setExpand] = useState<Boolean>();
   const [currentTagLabel, setCurrentTagLabel] = useState<TagLabelType>(tagLabel);
@@ -35,7 +35,7 @@ export default function TagLabel({
   function handleEditTag(updatedTag: TagType) {
     setCurrentTagLabel(prevTagLabel => ({
       ...prevTagLabel,
-      tags: prevTagLabel.tags.map(tag => 
+      tags: prevTagLabel.tags.map(tag =>
         tag.id === updatedTag.id ? updatedTag : tag
       )
     }));
@@ -77,25 +77,50 @@ export default function TagLabel({
     setShowAddTagModal(false);
   }
 
+  async function handleEditTagLabel(tagLabel: TagLabelType) {
+    const updatedTagLabel = await ServerAPIClient.TagLabel.update(tagLabel);
+
+    if (!updatedTagLabel) {
+      console.error('An error occurred while updating a tag label');
+      return;
+    }
+
+    setCurrentTagLabel(updatedTagLabel);
+
+    // TODO: Propagate up to update menu items.
+
+    setShowEditTagLabelModal(false);
+  }
+
+  async function handleDeleteTagLabel(tagLabel: TagLabelType) {
+    const result = await ServerAPIClient.TagLabel.delete(tagLabel.id!);
+
+    if (!result || !result.ok) {
+      console.error('An error occurred while deleting a tag');
+      return;
+    }
+
+    postDeleteTagLabel && postDeleteTagLabel(currentTagLabel);
+
+    setShowEditTagLabelModal(false);
+  }
+
   return (
     <>
       <div className={styles.container} onClick={() => setExpand(!expand)}>
         <div className={styles.triangle} />
         <div className={styles.title}>
-          {tagLabel.name}
+          {currentTagLabel.name}
         </div>
-        {
-          onEditTagLabel &&
-          <div
-            className={sharedStyles.cornerControl}
-            onClick={(event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-              event.stopPropagation();
-              setShowEditTagLabelModal(true);
-            }}
-          >
-            <Image src={editIcon} alt={"edit"} className={styles.icon}></Image>
-          </div>
-        }
+        <div
+          className={sharedStyles.cornerControl}
+          onClick={(event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+            event.stopPropagation();
+            setShowEditTagLabelModal(true);
+          }}
+        >
+          <Image src={editIcon} alt={"edit"} className={styles.icon}></Image>
+        </div>
       </div>
       <div className={styles.items}>
         <div className={styles.separator} />
@@ -103,10 +128,10 @@ export default function TagLabel({
           {
             expand &&
             currentTagLabel.tags?.map((subTag: TagType) =>
-              <Tag 
-                key={subTag.id} 
-                tag={subTag} 
-                postEditTag={handleEditTag} 
+              <Tag
+                key={subTag.id}
+                tag={subTag}
+                postEditTag={handleEditTag}
                 postDeleteTag={handleDeleteTag}
                 className={sharedStyles.largeTag}
                 editable={true}
@@ -135,7 +160,8 @@ export default function TagLabel({
       >
         <TagModal<TagLabelType>
           tagOrLabel={currentTagLabel}
-          onConfirm={() => alert('Edit Tag Label Modal')}
+          onConfirm={handleEditTagLabel}
+          onDelete={handleDeleteTagLabel}
           onCancel={() => setShowEditTagLabelModal(false)}
           isAdd={false}
         />

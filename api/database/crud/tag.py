@@ -14,12 +14,12 @@ class TagCRUD(CRUDBase):
         return db_tag
     
     def get(self, tag_id: int):
-        tag = self.db.get(Tag, tag_id)
+        db_tag = self.db.get(Tag, tag_id)
 
-        if not tag:
+        if not db_tag:
           raise HTTPException(status_code=404, detail=f"Tag w/ id = {tag_id} not found.")
         
-        return tag
+        return db_tag
     
     def update(self, tag: TagRead):
         db_tag = self.get(tag.id)
@@ -32,13 +32,13 @@ class TagCRUD(CRUDBase):
         return db_tag
 
     def delete(self, tag_id: int):
-        tag = self.db.get(Tag, tag_id)
+        db_tag = self.db.get(Tag, tag_id)
 
-        if not tag:
+        if not db_tag:
             raise HTTPException(status_code=404, detail=f"Tag w/ id = {tag_id} not found.")
 
         # Delete the tag itself
-        self.db.delete(tag)
+        self.db.delete(db_tag)
         self.db.commit()
 
         return {"ok": True}

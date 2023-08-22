@@ -35,28 +35,8 @@ export default function RestaurantView({ restaurant, category }: RestaurantViewP
     setCurrentTagLabels(categoryData?.tag_labels || []);
   }, [categoryData]);
 
-  const [selectedTag, setSelectedTag] = useState<TagType>();
-  const [selectedTagLabel, setSelectedTagLabel] = useState<TagLabelType>();
-  const [selectedMenuItem, setSelectedMenuItem] = useState<MenuItemType>();
-
-  const [showNewTagModal, setShowNewTagModal] = useState<boolean>(false);
-  const [showEditTagModal, setShowEditTagModal] = useState<boolean>(false);
-  const [showEditTagLabelModal, setShowEditTagLabelModal] = useState<boolean>(false);
-  const [showEditMenuItemModal, setShowEditMenuItemModal] = useState<boolean>(false);
-  const [showAddMenuItemModal, setShowAddMenuItemModal] = useState<boolean>(false);
-
-  function Backdrop(onClick: () => void) {
-    return (
-      <div
-        className={styles.backdrop}
-        onClick={onClick}
-      />
-    )
-  }
-
-  function handleEditTagLabelClick(tagLabel: TagLabelType) {
-    setSelectedTagLabel(tagLabel);
-    setShowEditTagLabelModal(true);
+  function handleDeleteTagLabel(deletedTagLabel: TagLabelType) {
+    setCurrentTagLabels(currentTagLabels.filter(tagLabel => tagLabel.id !== deletedTagLabel.id));
   }
 
   function handleAddTag(newTag: TagType) {
@@ -177,7 +157,7 @@ export default function RestaurantView({ restaurant, category }: RestaurantViewP
                     key={tagLabel.id}
                     tagLabel={tagLabel}
                     postAddTag={handleAddTag}
-                    onEditTagLabel={handleEditTagLabelClick}
+                    postDeleteTagLabel={handleDeleteTagLabel}
                     postEditTag={handleEditTag}
                     postDeleteTag={handleDeleteTag}
                   />

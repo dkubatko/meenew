@@ -1,17 +1,20 @@
 import RestaurantAPIClient from './RestaurantAPI';
 import TagAPIClient from './TagAPI';
+import TagLabelAPIClient from './TagLabelAPI';
 import MenuItemAPIClient from './MenuItemAPI';
 import CategoryAPIClient from './CategoryAPI';
 
 class APIClient {
   public readonly Restaurant: RestaurantAPIClient;
   public readonly Tag: TagAPIClient;
+  public readonly TagLabel: TagLabelAPIClient;
   public readonly MenuItem: MenuItemAPIClient;
   public readonly Category: CategoryAPIClient;
 
   constructor(baseURL: string = "/api") {
     this.Restaurant = new RestaurantAPIClient(baseURL);
     this.Tag = new TagAPIClient(baseURL);
+    this.TagLabel = new TagLabelAPIClient(baseURL);
     this.MenuItem = new MenuItemAPIClient(baseURL);
     this.Category = new CategoryAPIClient(baseURL);
   }

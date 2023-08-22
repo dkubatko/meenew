@@ -12,3 +12,33 @@ class TagLabelCRUD(CRUDBase):
         self.db.refresh(db_tag_label)
 
         return db_tag_label
+    
+    def get(self, tag_label_id: int):
+        db_tag_label = self.db.get(TagLabel, tag_label_id)
+
+        if not db_tag_label:
+          raise HTTPException(status_code=404, detail=f"Tag label w/ id = {tag_label_id} not found.")
+        
+        return db_tag_label
+    
+    def update(self, tagLabel: TagLabelCreate):
+        db_tag_label = self.get(tagLabel.id)
+   
+        db_tag_label.name = tagLabel.name
+
+        self.db.commit()
+        self.db.refresh(db_tag_label)
+
+        return db_tag_label
+
+    def delete(self, tag_label_id: int):
+        db_tag_label = self.db.get(TagLabel, tag_label_id)
+
+        if not db_tag_label:
+            raise HTTPException(status_code=404, detail=f"Tag label w/ id = {tag_label_id} not found.")
+
+        # Delete the tag label itself
+        self.db.delete(db_tag_label)
+        self.db.commit()
+
+        return {"ok": True}

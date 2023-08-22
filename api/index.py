@@ -61,8 +61,16 @@ def create_category(category: models.CategoryCreate, db: Session = Depends(get_s
     return CRUD(db).Category.create(category = category)
 
 @app.post("/api/tag_label", response_model=models.TagLabelRead)
-def create_tag(tagLabel: models.TagLabelCreate, db: Session = Depends(get_session)):
+def create_tag_label(tagLabel: models.TagLabelCreate, db: Session = Depends(get_session)):
     return CRUD(db).TagLabel.create(tagLabel = tagLabel)
+
+@app.put('/api/tag_label', response_model=models.TagLabelRead)
+def update_tag_label(tagLabel: models.TagLabelRead, db: Session = Depends(get_session)):
+    return CRUD(db).TagLabel.update(tagLabel = tagLabel)
+
+@app.delete('/api/tag_label/{tag_label_id}')
+def delete_tag_label(tag_label_id: int, db: Session = Depends(get_session)):
+    return CRUD(db).TagLabel.delete(tag_label_id = tag_label_id)
 
 @app.post("/api/tag", response_model=models.TagRead)
 def create_tag(tag: models.TagCreate, db: Session = Depends(get_session)):
