@@ -1,4 +1,4 @@
-import { Category as CategoryType, CategoryTree as CategoryTreeType, CategoryLite as CategoryLiteType } from "@/app/types/category";
+import { Category as CategoryType, CategoryTree as CategoryTreeType, CategoryLite as CategoryLiteType, CategoryCreate, Category } from "@/app/types/category";
 
 export default class CategoryAPI {
   private baseURL: string;
@@ -44,6 +44,15 @@ export default class CategoryAPI {
       body: JSON.stringify(category),
     });
     return CategoryLiteType.fromObject(data);
+  }
+
+  public async create(category: CategoryCreate): Promise<Category> {
+    const data = await this.fetcher('category', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(category),
+    });
+    return Category.fromObject(data);
   }
 
 }

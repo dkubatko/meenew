@@ -1,7 +1,7 @@
 from sqlmodel import Session, select
 from fastapi import HTTPException
 from .base import CRUDBase
-from ..models import Category, CategoryTreeRead, CategoryLite, CategoryRead
+from ..models import Category, CategoryTreeRead, CategoryLite, CategoryRead, CategoryCreate
 
 class CategoryCRUD(CRUDBase):
       def get(self, restaurant_id: int, category_id: int):
@@ -71,3 +71,12 @@ class CategoryCRUD(CRUDBase):
           self.db.refresh(db_category)
 
           return db_category
+      
+      def create(self, category: CategoryCreate):
+        db_category = Category.from_orm(category)
+
+        self.db.add(db_category)
+        self.db.commit()
+        self.db.refresh(db_category)
+
+        return db_category

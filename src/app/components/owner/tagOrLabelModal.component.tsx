@@ -41,8 +41,6 @@ export default function TagOrLabelModal<T extends Tag | TagLabel>({
     is_delete ? onDelete!(updatedTagOrLabel) : onConfirm(updatedTagOrLabel);
   }
 
-  console.log(tagOrLabel instanceof TagLabel);
-
   return (
     <div className={styles.container}>
       <div className={styles.prompt}>
