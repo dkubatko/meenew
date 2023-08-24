@@ -1,11 +1,17 @@
 import Restaurant from '@/app/components/owner/restaurant.component';
 import { ServerAPIClient } from '@/app/api/APIClient';
+import { Metadata } from 'next';
 
 interface RestaurantPageProps {
   params: {
     restaurant_id: string,
     category_id: string
   }
+}
+
+export const metadata: Metadata = {
+  title: 'Meenew | Restaurant',
+  description: 'Manage your restaurant.'
 }
 
 export default async function RestaurantPage({ params: { restaurant_id, category_id } }: RestaurantPageProps) {

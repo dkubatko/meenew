@@ -9,40 +9,50 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Options from './options.component';
 import useFetchRestaurant from '@/app/hooks/useFetchRestaurant';
-import { Question } from '@/app/types/questionnaire';
 import useFetchQuestionnaire from '@/app/hooks/useFetchQuestionnaire';
 import { Tag } from '@/app/types/tag';
+import { CategoryTreeLite } from '@/app/types/category';
+import { ServerAPIClient } from '@/app/api/APIClient';
 
-export default function Questionnaire() {
-  const searchParams = useSearchParams();
-  const { restaurantData } = useFetchRestaurant(searchParams.get('id') ?? '0');
-  const { questionnaire, isLoading } = useFetchQuestionnaire(searchParams.get('id') ?? '0');
-  const [questionStack, setQuestionStack] = useState<Question[]>([]);
-  const [isInitialized, setIsInitialized] = useState(false);
+interface Question {
+  id: number;
+  name: string;
+  children: Question[]; // children can also be of type Question
+}
 
-  // Update question stack upon initalization of the questionnaire.
-  useEffect(() => {
-    if (questionnaire) {
-      setQuestionStack([questionnaire]);
-      setIsInitialized(true);
-    }
-  }, [questionnaire]);
+interface QuestionnaireProps {
+  categoryTree: any;
+}
 
+export default function Questionnaire({ categoryTree }: QuestionnaireProps) {
+  const [currentCategoryTree, setCurrentCategoryTree] = useState<CategoryTreeLite>(CategoryTreeLite.fromObject(categoryTree));
+  // Initialize the question stack with the root category.
+  const [questionStack, setQuestionStack] = useState<Question[]>([currentCategoryTree]);
+
+  const [selectedCategoriesIds, setSelectedCategoriesIds] = useState<number[]>([]);
   const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
   const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
 
+  const [selectingTags, setSelectingTags] = useState(false);
+
   // Sets the current question to the top-most element of the question stack upon
   // questionStack update.
-  const getNextQuestion = useCallback(() => {
+  const getNextQuestion = useCallback(async () => {
     if (questionStack.length > 0) {
       const nextQuestion = questionStack[0];
       setCurrentQuestion(nextQuestion);
-    } else if (isInitialized && questionStack.length == 0) {
-      // If no questions are left in the question stack after initialization, 
-      // the questionnaire is complete.
+    } else if (selectedTags.length == 0 && questionStack.length == 0) {
+      // If no questions are left in the question stack and no tags are selected,
+      // then fetch the questions for the selected categories.
+      const tagLabels = await ServerAPIClient.TagLabel.get_by_categories(selectedCategoriesIds);
+      // TODO: Update the question stack with the questions for the selected categories.
+      setSelectingTags(true);
+    } else {
+      // If no questions are left in the question stack and tags are selected,
+      // then the questionnaire is complete.
       setComplete(true);
     }
-  }, [questionStack, isInitialized]);
+  }, [questionStack, selectedTags, selectedCategoriesIds]);
 
   // Updates the current question whenever the questionStack is changed.
   useEffect(() => {

@@ -50,6 +50,10 @@ class CategoryTreeRead(CategoryBase):
             id=self.id,
             parent_id=self.parent_id
         )
+    
+class CategoryTreeLite(CategoryBase):
+    id: int
+    children: List["CategoryTreeLite"] = []
 
 class CategoryCreate(CategoryBase):
     restaurant_id: int

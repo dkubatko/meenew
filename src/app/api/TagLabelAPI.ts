@@ -20,6 +20,15 @@ export default class TagLabelAPIClient {
     }
   }
 
+  public async get_by_categories(categoryIds: number[]): Promise<TagLabelType[]> {
+    const data = await this.fetcher('tag_labels/by_categories', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(categoryIds),
+    });
+    return data ? data.map((item: any) => TagLabelType.fromObject(item)) : [];
+  }  
+
   public async create(tagLabel: TagLabelType): Promise<TagLabelType> {
     const data = await this.fetcher('tag_label', {
       method: 'POST',

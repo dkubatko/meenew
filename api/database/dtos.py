@@ -3,6 +3,6 @@ from typing import List, Optional
 from .models import TagRead
 
 class Question(BaseModel):
-    tag: TagRead
+    category: TagRead
     question_text: Optional[str]
     children: List['Question']

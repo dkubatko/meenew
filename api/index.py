@@ -52,6 +52,11 @@ def get_restaurant(restaurant_id: int, db: Session = Depends(get_session)):
 def get_category(restaurant_id: int, category_id: int, db: Session = Depends(get_session)):
     return CRUD(db).Category.get(restaurant_id = restaurant_id, category_id = category_id)
 
+@app.get("/api/restaurant/{restaurant_id}/category_tree", response_model = models.CategoryTreeLite)
+def get_category_tree(restaurant_id: int, db: Session = Depends(get_session)):
+    root_category_id = CRUD(db).Restaurant.get(restaurant_id = restaurant_id).root_category_id
+    return CRUD(db).Category.get(restaurant_id = restaurant_id, category_id = root_category_id)
+
 @app.put('/api/category', response_model=models.CategoryLite)
 def update_category(category: models.CategoryLite, db: Session = Depends(get_session)):
     return CRUD(db).Category.update(category = category)
@@ -71,6 +76,10 @@ def update_tag_label(tagLabel: models.TagLabelRead, db: Session = Depends(get_se
 @app.delete('/api/tag_label/{tag_label_id}')
 def delete_tag_label(tag_label_id: int, db: Session = Depends(get_session)):
     return CRUD(db).TagLabel.delete(tag_label_id = tag_label_id)
+
+@app.post("/api/tag_labels/by_categories", response_model=List[models.TagLabelRead])
+def get_tag_labels_by_categories(category_ids: List[int], db: Session = Depends(get_session)):
+    return CRUD(db).TagLabel.get_by_categories(category_ids = category_ids)
 
 @app.post("/api/tag", response_model=models.TagRead)
 def create_tag(tag: models.TagCreate, db: Session = Depends(get_session)):

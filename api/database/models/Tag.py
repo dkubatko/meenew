@@ -7,7 +7,6 @@ if TYPE_CHECKING:
     from .TagLabel import TagLabel
     from .MenuItem import MenuItem
 
-
 class TagBase(SQLModel):
     name: str = Field(unique=True, index=True)
     label_id: Optional[int] = Field(default=None, foreign_key="taglabels.id", nullable=True)

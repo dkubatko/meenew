@@ -1,3 +1,4 @@
+from typing import List
 from sqlmodel import Session, select
 from fastapi import HTTPException
 from .base import CRUDBase
@@ -20,6 +21,11 @@ class TagLabelCRUD(CRUDBase):
           raise HTTPException(status_code=404, detail=f"Tag label w/ id = {tag_label_id} not found.")
         
         return db_tag_label
+    
+    def get_by_categories(self, category_ids: List[int]):
+        db_tag_labels = self.db.execute(select(TagLabel).where(TagLabel.category_id.in_(category_ids))).all()
+
+        return db_tag_labels
     
     def update(self, tagLabel: TagLabelCreate):
         db_tag_label = self.get(tagLabel.id)

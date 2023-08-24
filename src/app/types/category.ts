@@ -87,3 +87,22 @@ export class CategoryCreate {
   ) { }
 }
 
+export class CategoryTreeLite {
+  constructor(
+    public id: number,
+    public restaurant_id: number,
+    public name: string,
+    public children: CategoryTreeLite[] = [],
+  ) { }
+
+  static fromObject(object: any): CategoryTreeLite {
+    const { id, restaurant_id, name, children } = object;
+    return new CategoryTreeLite(
+      id,
+      restaurant_id,
+      name,
+      children ? children.map(CategoryTreeLite.fromObject) : [],
+    );
+  }
+}
+
