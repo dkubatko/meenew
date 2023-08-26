@@ -1,3 +1,4 @@
+from typing import List
 from sqlmodel import Session, select
 from fastapi import HTTPException
 from .base import CRUDBase
@@ -20,6 +21,14 @@ class TagCRUD(CRUDBase):
           raise HTTPException(status_code=404, detail=f"Tag w/ id = {tag_id} not found.")
         
         return db_tag
+    
+    def get_by_ids(self, tag_ids: List[int]):
+        db_tags = self.db.exec(select(Tag).where(Tag.id.in_(tag_ids))).all()
+
+        if not db_tags:
+          raise HTTPException(status_code=404, detail=f"Tags w/ id in {tag_ids} not found.")
+        
+        return db_tags
     
     def update(self, tag: TagRead):
         db_tag = self.get(tag.id)

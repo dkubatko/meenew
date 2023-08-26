@@ -50,7 +50,7 @@ def get_restaurant(restaurant_id: int, db: Session = Depends(get_session)):
 
 @app.get("/api/restaurant/{restaurant_id}/category/{category_id}", response_model = models.CategoryTreeRead)
 def get_category(restaurant_id: int, category_id: int, db: Session = Depends(get_session)):
-    return CRUD(db).Category.get(restaurant_id = restaurant_id, category_id = category_id)
+    return CRUD(db).Category.get(restaurant_id = restaurant_id, category_id = category_id, extend = True)
 
 @app.get("/api/restaurant/{restaurant_id}/category_tree", response_model = models.CategoryTreeLite)
 def get_category_tree(restaurant_id: int, db: Session = Depends(get_session)):
@@ -79,7 +79,7 @@ def delete_tag_label(tag_label_id: int, db: Session = Depends(get_session)):
 
 @app.post("/api/tag_labels/by_categories", response_model=List[models.TagLabelRead])
 def get_tag_labels_by_categories(category_ids: List[int], db: Session = Depends(get_session)):
-    return CRUD(db).TagLabel.get_by_categories(category_ids = category_ids)
+    return CRUD(db).TagLabel.get_by_categories(category_ids = category_ids, include_parents = True)
 
 @app.post("/api/tag", response_model=models.TagRead)
 def create_tag(tag: models.TagCreate, db: Session = Depends(get_session)):
@@ -121,18 +121,12 @@ def update_menu_item(menu_item: models.MenuItemRead, db: Session = Depends(get_s
 def delete_menu_item(menu_item_id: int, db: Session = Depends(get_session)):
     return CRUD(db).MenuItem.delete(menu_item_id = menu_item_id)
 
-# @app.get("/api/{restaurant_id}/questionnaire", response_model=dtos.Question)
-# def get_questionnaire(restaurant_id: int, db: Session = Depends(get_session)):
-#     restaurant = models.RestaurantRead.from_orm(crud.get_restaurant(db = db, restaurant_id = restaurant_id))
-#     category_tree = models.CategoryTreeRead.from_orm(crud.get_root_tag(db = db))
+@app.post("/api/{restaurant_id}/best_match_item", response_model=models.MenuItemRead)
+def get_best_match_item(restaurant_id: int, tag_ids: List[int], db: Session = Depends(get_session)):
+    print(tag_ids)
 
-#     compute = Compute(restaurant, category_tree)
-#     return compute.questionnaire()
+    restaurant = models.RestaurantRead.from_orm(CRUD(db).Restaurant.get(restaurant_id = restaurant_id))
+    tags = [models.TagRead.from_orm(tag) for tag in CRUD(db).Tag.get_by_ids(tag_ids = tag_ids)]
 
-# @app.post("/api/{restaurant_id}/best-match-item", response_model=models.MenuItemRead)
-# def get_best_match_item(restaurant_id: int, tags: List[models.TagRead], db: Session = Depends(get_session)):
-#     restaurant = models.RestaurantRead.from_orm(crud.get_restaurant(db = db, restaurant_id = restaurant_id))
-#     tag_tree = models.TagTreeRead.from_orm(crud.get_root_tag(db = db))
-
-#     compute = Compute(restaurant, tag_tree)
-#     return compute.get_best_match(tags)
+    compute = Compute(restaurant)
+    return compute.get_best_match(tags)

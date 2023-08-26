@@ -1,12 +1,10 @@
 from copy import deepcopy
-from ..database.models import RestaurantRead, TagRead, MenuItemRead, CategoryTreeRead
-from ..database.dtos import Question
-from typing import List, Optional
+from ..database.models import RestaurantRead, TagRead, MenuItemRead
+from typing import List
 
 class Compute:
-    def __init__(self, restaurant: RestaurantRead, categoryTree: CategoryTreeRead):
+    def __init__(self, restaurant: RestaurantRead):
         self.restaurant = restaurant
-        self.categoryTree = categoryTree
     
     def get_best_match(self, tags: List[TagRead]) -> MenuItemRead:
         # Fetch all menu items of the restaurant

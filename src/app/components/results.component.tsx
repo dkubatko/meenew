@@ -8,20 +8,20 @@ import { ThreeDots } from "react-loader-spinner";
 
 interface ResultsProps {
   restaurantId: string;
-  selectedTags: TagType[];
+  selectedTagIds: number[];
 }
 
-export default function Results({ restaurantId, selectedTags }: ResultsProps) {
+export default function Results({ restaurantId, selectedTagIds }: ResultsProps) {
   const [menuItem, setMenuItem] = useState<MenuItemType | null>(null);
 
   useEffect(() => {
     async function fetchBestMatch() {
-      const result = await ServerAPIClient.Restaurant.getBestMatchItem(restaurantId, selectedTags);
+      const result = await ServerAPIClient.Restaurant.get_best_match_item(restaurantId, selectedTagIds);
       setMenuItem(result);
     }
 
     fetchBestMatch();
-  }, [selectedTags, restaurantId]);
+  }, [selectedTagIds, restaurantId]);
 
   return (
     <div className={styles.container}>

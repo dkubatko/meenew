@@ -33,7 +33,11 @@ export default class RestaurantAPI {
   }
 
   public async get_raw_category_tree(id: string): Promise<any> {
-    return await this.fetcher(`restaurant/${id}/category_tree`);
+    const options: RequestInit = {
+      cache: 'no-store',
+    }
+  
+    return await this.fetcher(`restaurant/${id}/category_tree`, options);
   }
 
   public async getQuestionnaire(id: string): Promise<Question> {
@@ -41,19 +45,21 @@ export default class RestaurantAPI {
     return Question.fromObject(data);
   }
 
-  public async getBestMatchItem(restaurantId: string, tags: Tag[]): Promise<MenuItem | null> {
+  public async get_best_match_item(restaurantId: string, tag_ids: number[]): Promise<MenuItem | null> {
     const options: RequestInit = {
       method: "POST",
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(tags),
+      body: JSON.stringify(tag_ids),
     };
 
-    const data = await this.fetcher(`${restaurantId}/best-match-item`, options);
+    const data = await this.fetcher(`${restaurantId}/best_match_item`, options);
+  
     if (data) {
       return MenuItem.fromObject(data);
     }
+    
     return null;
   }
 }

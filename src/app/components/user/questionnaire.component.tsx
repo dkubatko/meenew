@@ -6,31 +6,51 @@ import styles from '@/app/components/user/questionnaire.module.css';
 import ProgressBar from '@/app/components/progressBar.component';
 import Results from '@/app/components/results.component';
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { useSearchParams } from 'next/navigation';
 import Options from './options.component';
-import useFetchRestaurant from '@/app/hooks/useFetchRestaurant';
-import useFetchQuestionnaire from '@/app/hooks/useFetchQuestionnaire';
-import { Tag } from '@/app/types/tag';
+import { Tag, TagLabel } from '@/app/types/tag';
 import { CategoryTreeLite } from '@/app/types/category';
 import { ServerAPIClient } from '@/app/api/APIClient';
+import Restaurant from '@/app/types/restaurant';
+import { Question } from '@/app/types/questionnaire';
 
-interface Question {
-  id: number;
-  name: string;
-  children: Question[]; // children can also be of type Question
+function tagToQuestion(tag: Tag): Question {
+  return {
+    id: tag.id!,
+    name: tag.name,
+    children: []
+  }
+}
+
+function tagLabelToQuestion(tagLabel: TagLabel): Question {
+  return {
+    id: tagLabel.id!,
+    name: tagLabel.name,
+    children: tagLabel.tags.map(tagToQuestion)
+  }
+}
+
+function categoryToQuestion(category: CategoryTreeLite): Question {
+  return {
+    id: category.id!,
+    name: category.name,
+    children: category.children.map(categoryToQuestion)
+  }
 }
 
 interface QuestionnaireProps {
+  restaurantData: any;
   categoryTree: any;
 }
 
-export default function Questionnaire({ categoryTree }: QuestionnaireProps) {
+export default function Questionnaire({ restaurantData, categoryTree }: QuestionnaireProps) {
+  const [currentRestaurant, setCurrentRestaurant] = useState<Restaurant>(Restaurant.fromObject(restaurantData));
   const [currentCategoryTree, setCurrentCategoryTree] = useState<CategoryTreeLite>(CategoryTreeLite.fromObject(categoryTree));
+  
   // Initialize the question stack with the root category.
-  const [questionStack, setQuestionStack] = useState<Question[]>([currentCategoryTree]);
+  const [questionStack, setQuestionStack] = useState<Question[]>([categoryToQuestion(currentCategoryTree)]);
 
   const [selectedCategoriesIds, setSelectedCategoriesIds] = useState<number[]>([]);
-  const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
+  const [selectedTagIds, setSelectedTagsIds] = useState<number[]>([]);
   const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
 
   const [selectingTags, setSelectingTags] = useState(false);
@@ -41,18 +61,21 @@ export default function Questionnaire({ categoryTree }: QuestionnaireProps) {
     if (questionStack.length > 0) {
       const nextQuestion = questionStack[0];
       setCurrentQuestion(nextQuestion);
-    } else if (selectedTags.length == 0 && questionStack.length == 0) {
+    } else if (!selectingTags && questionStack.length == 0) {
       // If no questions are left in the question stack and no tags are selected,
       // then fetch the questions for the selected categories.
       const tagLabels = await ServerAPIClient.TagLabel.get_by_categories(selectedCategoriesIds);
-      // TODO: Update the question stack with the questions for the selected categories.
+      setQuestionStack(tagLabels.map(tagLabelToQuestion));
+
+      setCurrentQuestion(questionStack[0]);
+
       setSelectingTags(true);
     } else {
       // If no questions are left in the question stack and tags are selected,
       // then the questionnaire is complete.
       setComplete(true);
     }
-  }, [questionStack, selectedTags, selectedCategoriesIds]);
+  }, [questionStack, selectedCategoriesIds, selectingTags]);
 
   // Updates the current question whenever the questionStack is changed.
   useEffect(() => {
@@ -76,23 +99,25 @@ export default function Questionnaire({ categoryTree }: QuestionnaireProps) {
   function handleAnswerClick() {
     // Start by removing the current question from the stack.
     const updatedStack = [...questionStack].slice(1);
-    // Tags to be added as final preferences.
-    const newTags: Tag[] = [];
+    // Ids to be added as final preferences.
+    const selectedIds: number[] = [];
 
     selectedOptions.forEach(selectedOption => {
-      if (selectedOption.tag && selectedOption.tag.is_leaf) {
+      if (selectedOption.children.length == 0) {
         // If an option is a leaf, add it to the final preferences.
-        newTags.push(selectedOption.tag);
-      } else if (!selectedOption.tag.is_leaf) {
+        selectedIds.push(selectedOption.id);
+      } else {
         // Otherwise, add the question related to this option
         // to the stack of questions.
         updatedStack.unshift(selectedOption);
       }
     });
 
-    // Add new tags to the state
-    if (newTags.length > 0) {
-      setSelectedTags(prevTags => [...prevTags, ...newTags]);
+    // Add new ids to the state
+    if (selectedIds.length > 0) {
+      selectingTags ? 
+      setSelectedTagsIds(prevSelectedTagIds => [...prevSelectedTagIds, ...selectedIds]) : 
+      setSelectedCategoriesIds(prevSelectedCategories => [...prevSelectedCategories, ...selectedIds]);
     }
 
     // Update the question stack
@@ -111,7 +136,7 @@ export default function Questionnaire({ categoryTree }: QuestionnaireProps) {
     <div className={`${styles.vflex} ${styles.container}`}>
       <div className={styles.header}>
         <b>
-          {restaurantData?.restaurant_name ? `Welcome to ${restaurantData.restaurant_name}!` : "Loading..."}
+          {currentRestaurant?.restaurant_name ? `Welcome to ${currentRestaurant.restaurant_name}!` : "Loading..."}
         </b>
       </div>
       {(currentQuestion && !complete) && (<div className={styles.control}>
@@ -123,7 +148,7 @@ export default function Questionnaire({ categoryTree }: QuestionnaireProps) {
           </button>}
         </div>
         <div className={styles.prompt}>
-          {!complete && currentQuestion.question_text}
+          {!complete && (selectingTags ? "As for the preferences..." : "I would like...")}
         </div>
         <div className={styles.vflex}>
           {selectedOptions.length > 0 && <button
@@ -141,13 +166,13 @@ export default function Questionnaire({ categoryTree }: QuestionnaireProps) {
         complete ?
           <Results
             restaurantId={restaurantData?.id.toString()!}
-            selectedTags={selectedTags}
+            selectedTagIds={selectedTagIds}
           /> :
           (currentQuestion &&
             <Options
               // Assign key to cause a re-render of the Options component
               // triggering initial animation.
-              key={currentQuestion.tag.id}
+              key={currentQuestion.id}
               question={currentQuestion}
               handleOptionClick={handleOptionClick}
               selectedOptions={selectedOptions}

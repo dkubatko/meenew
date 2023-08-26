@@ -1,16 +1,14 @@
-import { Tag } from "@/app/types/tag";
-
 export class Question {
   constructor(
-    public tag: Tag,
-    public question_text: string = "",
+    public id: number,
+    public name: string = "",
     public children: Question[] = [],
   ) { }
 
   static fromObject(object: any): Question {
-    const { tag, question_text, children } = object;
+    const { id, question_text, children } = object;
     return new Question(
-      Tag.fromObject(tag),
+      id,
       question_text,
       children ? children.map(Question.fromObject) : []
     );

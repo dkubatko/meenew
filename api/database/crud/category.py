@@ -4,7 +4,7 @@ from .base import CRUDBase
 from ..models import Category, CategoryTreeRead, CategoryLite, CategoryRead, CategoryCreate
 
 class CategoryCRUD(CRUDBase):
-      def get(self, restaurant_id: int, category_id: int):
+      def get(self, restaurant_id: int, category_id: int, extend = False):
         category = self.db.query(Category).filter(
             Category.id == category_id,
             Category.restaurant_id == restaurant_id
@@ -19,6 +19,9 @@ class CategoryCRUD(CRUDBase):
             for child in cat.children:
                 menu_items.extend(get_all_menu_items(child))
             return menu_items
+        
+        if not extend:
+            return category
 
         # Function to get all tag labels up the tree
         def get_all_tag_labels(cat):
@@ -55,6 +58,17 @@ class CategoryCRUD(CRUDBase):
             children=children,
             tag_labels=get_all_tag_labels(category)
         )
+      
+      def get_parent_category_ids(self, category_id: int):
+        parent_ids = []
+        while category_id:
+            parent_category = self.db.get(Category, category_id)
+            if parent_category and parent_category.parent_id:
+                parent_ids.append(parent_category.parent_id)
+                category_id = parent_category.parent_id
+            else:
+                break
+        return parent_ids
       
       def update(self, category: CategoryLite):
           db_category = self.db.query(Category).filter(

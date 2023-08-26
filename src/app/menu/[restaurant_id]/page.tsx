@@ -14,10 +14,12 @@ export const metadata: Metadata = {
 }
 
 export default async function Menu({ params: { restaurant_id } }: MenuProps) {
+  const restaurant = await ServerAPIClient.Restaurant.get_raw(restaurant_id);
   const categoryTree = await ServerAPIClient.Restaurant.get_raw_category_tree(restaurant_id);
 
   return (
     <Questionnaire
+      restaurantData={restaurant}
       categoryTree={categoryTree}
     />
   );
