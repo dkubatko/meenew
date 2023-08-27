@@ -72,7 +72,12 @@ export default function MenuItem({ menu_item, editable, postEdit, postDelete, ta
           <div className={styles.image}>
             {
               menu_item.image_path ?
-                <Image src={menu_item.image_path} alt={'preview'} fill style={{ objectFit: 'contain' }} /> : "Image"
+                <Image
+                  src={menu_item.image_path}
+                  alt='preview'
+                  fill
+                  className={styles.imageInner}
+                /> : "Image"
             }
           </div>
           <div className={styles.content}>
