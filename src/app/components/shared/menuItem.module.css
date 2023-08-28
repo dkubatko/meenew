@@ -22,8 +22,8 @@
 /* Mobile */
 @media (max-width: 768px) {
   .container {
-    min-width: 65vw;
-    aspect-ratio: 2.5 / 1;
+    min-width: 60vw;
+    aspect-ratio: 2.3 / 1;
   }
 }
 

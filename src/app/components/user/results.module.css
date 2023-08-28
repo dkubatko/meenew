@@ -35,7 +35,7 @@
 /* Mobile */
 @media (max-width: 768px) {
   .menuItem {
-    min-width: 80vw;
-    aspect-ratio: 2.7 / 1;
+    min-width: 85vw;
+    aspect-ratio: 2.6 / 1;
   }
 }
