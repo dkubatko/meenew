@@ -17,13 +17,13 @@
 
   /* On-page boxing */
   width: 100%;
-  margin: 3vw;
+  margin: 0.7vw;
   margin-bottom: 0;
   height: 35%;
   overflow: hidden;
 
   /* Styling */
-  font-size: 1.5rem;
+  font-size: 1.3rem;
   border-radius: 30%;
   border: none;
   color: white;
