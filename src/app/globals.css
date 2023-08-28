@@ -21,6 +21,7 @@
   --error-color: #f44336;
   --warning-color: #fdd835;
   --neutral-color: #cccccc;
+  --neutral-background-color: #ffe8daff;
 }
 
 :root {
@@ -34,6 +35,18 @@
     --foreground-rgb: 255, 255, 255;
     --background-start-rgb: 0, 0, 0;
     --background-end-rgb: 0, 0, 0;
+  }
+}
+
+/* Default font-size for web */
+:root {
+  font-size: 20px;
+}
+
+/* Font-size for mobile */
+@media (max-width: 768px) {
+  :root {
+    font-size: 14px;
   }
 }
 
@@ -100,6 +113,7 @@ body {
   font-size: 3vh;
   margin: 3vh 3vw;
   cursor: pointer;
+  text-align: center;
 }
 
 .link:hover {

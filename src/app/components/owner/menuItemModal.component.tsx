@@ -5,7 +5,7 @@ import MenuItem from "@/app/types/menuItem";
 import { Tag as TagType } from "@/app/types/tag";
 import Tag from "../shared/tag.component";
 import { useState } from "react";
-import AddInputButton from "../shared/addInputButton.component";
+import AddInputButton from "../shared/inlineOptionsInputButton.component";
 
 interface MenuItemModalProps {
   onCancel: () => void;
@@ -112,7 +112,8 @@ export default function MenuItemModal({ onCancel, onConfirm, menu_item, edit, ta
                     <Tag
                       key={tag.id}
                       tag={tag}
-                      onEdit={handleDeleteTag}
+                      removable={true}
+                      handleRemove={handleDeleteTag}
                       className={sharedStyles.smallTag}
                     />
                 )
@@ -120,6 +121,7 @@ export default function MenuItemModal({ onCancel, onConfirm, menu_item, edit, ta
               <AddInputButton
                 onSubmit={handleNewTagSubmit}
                 options={tagList.map((tag: TagType) => ({ id: tag.id, value: tag.name }))}
+                className={sharedStyles.smallInputButton}
               />
             </div>
           </div>

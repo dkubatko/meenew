@@ -1,17 +1,17 @@
 import React, { useState, useRef, useEffect } from 'react';
-import sharedStyles from '@/app/components/shared/shared.module.css';
 
 type OptionType = {
   id: number;
   value: string;
 }
 
-type AddInputButtonProps = {
+type inlineOptionsInputButtonProps = {
   onSubmit: (id: number) => void;
   options: OptionType[];
+  className: string;
 };
 
-export default function AddInputButton({ onSubmit, options }: AddInputButtonProps) {
+export default function InlineOptionsInputButton({ onSubmit, options, className }: inlineOptionsInputButtonProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [value, setValue] = useState('');
 
@@ -53,7 +53,7 @@ export default function AddInputButton({ onSubmit, options }: AddInputButtonProp
             onChange={event => setValue(event.target.value)}
             onBlur={handleBlur}
             onKeyDown={handleKeyDown}
-            className={sharedStyles.smallButton}
+            className={className}
           />
           <datalist id="options">
             {options.map((option, index) => (
@@ -63,7 +63,7 @@ export default function AddInputButton({ onSubmit, options }: AddInputButtonProp
         </>
       )
       : (
-        <button className={sharedStyles.smallButton} onClick={handleButtonClick}>
+        <button className={className} onClick={handleButtonClick}>
           Add
         </button>
       )

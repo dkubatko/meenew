@@ -1,18 +1,13 @@
-import { Tag } from "@/app/types/tag";
+import { CategoryTreeLite } from "./category";
+import { Tag, TagLabel } from "./tag";
 
 export class Question {
   constructor(
-    public tag: Tag,
-    public question_text: string = "",
+    public id: number,
+    public name: string = "",
     public children: Question[] = [],
+    public category?: CategoryTreeLite,
+    public tag_label?: TagLabel,
+    public tag?: Tag,
   ) { }
-
-  static fromObject(object: any): Question {
-    const { tag, question_text, children } = object;
-    return new Question(
-      Tag.fromObject(tag),
-      question_text,
-      children ? children.map(Question.fromObject) : []
-    );
-  }
 }

@@ -77,8 +77,8 @@ export default function Options({ question, handleOptionClick, selectedOptions }
                   }
                 }
                 onClick={_ => handleOptionClick(option)}
-                key={option.tag.id}>
-                {option.tag.name}
+                key={option.id}>
+                {option.name}
               </motion.div>
             )
           )) :

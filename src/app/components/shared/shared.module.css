@@ -48,63 +48,79 @@
 
 .tag {
   composes: baseTag;
-  padding: 0.5vh 2vw;
-  margin: 0vh 0.3vw;
+  font-size: 0.7rem;
+  padding: 0.3vh 2vw;
+  margin: 0vh 0.1vw;
 }
 
 .largeTag {
   composes: baseTag;
   width: 100%;
+  font-size: 0.9rem;
   padding: 0.5vh 0.5vw;
   margin: 0.5vh 0vw;
 }
 
 .smallTag {
   composes: baseTag;
-  font-size: small;
+  font-size: 0.5rem;
   padding: 0.5vh 1.5vw;
   margin: 0.2vh 0.2vw;
   min-width: 30%;
 }
 
-.addButton {
-  width: 100%;
-  background-color: var(--neutral-color); 
-  border-radius: 25%;
-  padding: 0.6vh 0.7vw;
-  margin: 0.3vh 0;
+
+.button {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  font-weight: bold;
   transition: 0.3s;
-  font-weight: bold;
-}
-
-.addButton:hover {
-  background-color: var(--accent-color);
-  scale: 1.05;
-}
-
-.smallButton {
-  position: relative;
-  width: 45%;
-  font-size: smaller;
-  margin: auto;
-  background-color: var(--neutral-color);
   border-radius: 15%;
-  padding: 0.3vh 0.3vw;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0.2vh 0.2vw;
-  font-weight: bold;
+  background-color: var(--neutral-color);
+}
+
+.bigButton {
+  composes: button;
+  width: 70%;
+  padding: 0.9vh 0.7vw;
+  margin: 0.8vh 0;
+  border-radius: 25%;
+}
+
+.bigButton:hover {
+  scale: 1.05;
+  background-color: var(--accent-color);
+}
+
+.inputButton {
+  composes: button;
+  width: 100%;
+  padding: 0.3vh 1vw;
+  margin: 0vh 0.2vw;
+  margin-bottom: 0.7vh;
   white-space: nowrap;
   border: 1px solid transparent;
-  transition: .1s;
+  text-align: center;
 }
 
-.smallButton:hover {
+.inputButton:hover {
+  border: 1px solid black;
+}
+
+.smallInputButton {
+  composes: button;
+  width: 45%;
+  font-size: smaller;
+  padding: 0.3vh 0.3vw;
+  margin: 0.2vh 0.2vw;
+  white-space: nowrap;
+  border: 1px solid transparent;
+}
+
+.smallInputButton:hover {
   border: 1px solid black;
 }
 
@@ -136,4 +152,31 @@
   width: 100%;
   border: 2px solid var(--accent-color);
   padding: 0.1vw 0.5vh;
+}
+
+.modal {
+  position: fixed;
+  width: 60%;
+  z-index: 1040;
+  top: 30%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border: 1px solid #e5e5e5;
+  background-color: white;
+  box-shadow: 0 0.3vh 0.5vw rgba(0, 0, 0, 0.5);
+  padding: 1vh 1vw;
+}
+
+.backdrop {
+  position: fixed;
+  z-index: 1040;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: #000;
+  opacity: 0.5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

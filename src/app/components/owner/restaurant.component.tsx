@@ -1,265 +1,180 @@
 'use client';
 
-import { useState, useEffect } from "react";
-import { useSearchParams } from 'next/navigation';
-import { Tag as TagType, TagCreate } from "@/app/types/tag";
+import { useRouter } from 'next/navigation'
+import { useState, useEffect, useRef } from "react";
+import { Tag as TagType, TagLabel as TagLabelType } from "@/app/types/tag";
 import MenuItemType from "@/app/types/menuItem";
-import TagCategory from "@/app/components/shared/tagCategory.component";
+import TagLabel from "@/app/components/shared/tagLabel.component";
 import styles from "@/app/components/owner/restaurant.module.css";
 import sharedStyles from "@/app/components/shared/shared.module.css";
-import MenuItem from "@/app/components/shared/menuItem.component";
 import Modal from 'react-overlays/Modal';
-import TagModal from "@/app/components/owner/tagModal.component";
-import useFetchRestaurant from '@/app/hooks/useFetchRestaurant';
-import useFetchTagTree from '@/app/hooks/useFetchTagTree';
+import TagModal from "@/app/components/owner/tagOrLabelModal.component";
 import MenuItemModal, { MenuItemFormData } from "./menuItemModal.component";
-import APIClient, { ServerAPIClient } from "@/app/api/APIClient";
+import { ServerAPIClient } from "@/app/api/APIClient";
+import { CategoryLite, CategoryTree } from "@/app/types/category";
+import CategoryView from "./categoryView.component";
+import RestaurantType from '@/app/types/restaurant';
+import InlineInputButton from '../shared/inlineInputButton.component';
 
-export default function Restaurant() {
-  const searchParams = useSearchParams();
-  const { restaurantData, fetchRestaurantData } = useFetchRestaurant(searchParams.get('id') ?? '0');
-  const { rootTag, fetchTagTree } = useFetchTagTree();
+interface RestaurantViewProps {
+  restaurant: any,
+  category: any
+}
 
-  const { restaurant_name = "", menu_items = [] } = restaurantData || {};
+export default function RestaurantView({ restaurant, category }: RestaurantViewProps) {
+  const router = useRouter();
 
-  const [selectedTag, setSelectedTag] = useState<TagType>();
-  const [selectedMenuItem, setSelectedMenuItem] = useState<MenuItemType>();
+  const [restaurantData, setRestaurantData] = useState<RestaurantType>(RestaurantType.fromObject(restaurant));
+  const [categoryData, setCategoryData] = useState<CategoryTree>(CategoryTree.fromObject(category));
 
-  const [showNewTagModal, setShowNewTagModal] = useState<boolean>(false);
-  const [showEditTagModal, setShowEditTagModal] = useState<boolean>(false);
-  const [showEditMenuItemModal, setShowEditMenuItemModal] = useState<boolean>(false);
-  const [showAddMenuItemModal, setShowAddMenuItemModal] = useState<boolean>(false);
+  const [currentTagLabels, setCurrentTagLabels] = useState<TagLabelType[]>(categoryData?.tag_labels || []);
+  const [menuItems, setMenuItems] = useState<MenuItemType[]>(categoryData?.menu_items || []);
 
-  function Backdrop(onClick: () => void) {
-    return (
-      <div
-        className={styles.backdrop}
-        onClick={onClick}
-      />
-    )
+  // Update current tags to be displayed based on retrieved category.
+  useEffect(() => {
+    setCurrentTagLabels(categoryData?.tag_labels || []);
+  }, [categoryData]);
+
+  function handleDeleteTagLabel(deletedTagLabel: TagLabelType) {
+    setCurrentTagLabels(currentTagLabels.filter(tagLabel => tagLabel.id !== deletedTagLabel.id));
   }
 
-  function handleAddTag(parentTag: TagType) {
-    setSelectedTag(parentTag);
-    setShowNewTagModal(true);
+  function handleAddTag(newTag: TagType) {
+    setCurrentTagLabels(prevTagLabels => {
+      return prevTagLabels.map(tagLabel => {
+        if (tagLabel.id === newTag.label_id) {
+          return {
+            ...tagLabel,
+            tags: [...tagLabel.tags, newTag], // Add the new tag to the tags array of the matching tagLabel
+          };
+        }
+        return tagLabel; // Return other tagLabels unmodified
+      });
+    });
   }
-
-  async function handleTagSubmit(tag: TagType) {
-    if (!tag) {
-      console.log("Empty tag");
-      return;
-    }
   
-    const createdTag = await ServerAPIClient.Tag.create(tag);
-  
-    if (!createdTag) {
-      console.error('An error occurred while creating a tag');
-      return;
-    }
-  
-    // Update the tag list with new data.
-    fetchTagTree();
-  
-    // Close the modal after successful update.
-    setShowNewTagModal(false);
+
+  async function handleDeleteTag(deletedTag: TagType) {
+    // Update tag labels
+    setCurrentTagLabels(prevTagLabels => {
+      return prevTagLabels.map(tagLabel => {
+        if (tagLabel.id === deletedTag.label_id) {
+          return {
+            ...tagLabel,
+            tags: tagLabel.tags.filter(tag => tag.id !== deletedTag.id), // Remove the deleted tag
+          };
+        }
+        return tagLabel; // Return other tagLabels unmodified
+      });
+    });
+
+    // Update menu items by removing the deleted tag.
+    setCategoryData(categoryData => {
+      return {
+        ...categoryData,
+        menu_items: categoryData.menu_items.map((menuItem) => {
+          return {
+            ...menuItem,
+            tags: menuItem.tags.filter((t: TagType) => t.id !== deletedTag.id), // Filter out the deleted tag
+          };
+        }),
+      };
+    });
   }
 
-  function handleEditTagClick(tag: TagType) {
-    setSelectedTag(tag);
-    setShowEditTagModal(true);
+  async function handleEditTag(updatedTag: TagType) {
+    // Update tag labels
+    setCurrentTagLabels(prevTagLabels => {
+      return prevTagLabels.map(tagLabel => {
+        if (tagLabel.id === updatedTag.label_id) {
+          return {
+            ...tagLabel,
+            tags: tagLabel.tags.map(tag => 
+              tag.id === updatedTag.id ? updatedTag : tag // Replace the edited tag
+            ),
+          };
+        }
+        return tagLabel; // Return other tagLabels unmodified
+      });
+    });
+
+    // Update menu items by replacing the edited tag.
+    setCategoryData(categoryData => {
+      return {
+        ...categoryData,
+        menu_items: categoryData.menu_items.map((menuItem) => {
+          return {
+            ...menuItem,
+            tags: menuItem.tags.map((tag: TagType) => tag.id === updatedTag.id ? updatedTag : tag),
+          };
+        }),
+      };
+    });
   }
 
-  async function handleDeleteTag(tag: TagType) {
-    const result = await ServerAPIClient.Tag.delete(tag.id);
+  async function handleAddTagLabel(tagLabel: TagLabelType) {
+    const createdTagLabel = await ServerAPIClient.Tag.createLabel(tagLabel);
 
-    if (!result || !result.ok) {
-      console.error('An error occurred while deleting a tag');
-      return;
-    }
-
-    // Update menu items.
-    fetchRestaurantData();
-    // Update the tag list with new data.
-    fetchTagTree();
-    // Close the modal after successful deletion.
-    setShowEditTagModal(false);
-  }
-
-  async function handleEditTag(tag: TagType) {
-    const updatedTag = await ServerAPIClient.Tag.update(tag);
-  
-    if (!updatedTag) {
-      console.error('An error occurred while updating a tag');
-      return;
-    }
-    
-    // Update menu items.
-    fetchRestaurantData();
-    // Update the tag list with new data.
-    fetchTagTree();
-    // Close the modal after successful update.
-    setShowEditTagModal(false);
-  }
-
-  async function handleEditMenuItemModalConfirm({ menu_item, image }: MenuItemFormData) {
-    // If new image is added, upload it to the server and update the image_path on the item.
-    if (image) {
-      const imageUrl = (await ServerAPIClient.MenuItem.uploadImage(image)).image_url;
-
-      if (!imageUrl) {
-        console.log("Could not upload image");
-        return;
-      }
-
-      menu_item.image_path = imageUrl
-    }
-
-    const updatedMenuItem = await ServerAPIClient.MenuItem.update(menu_item);
-
-    if (!updatedMenuItem) {
-      console.error('An error occurred while updating a menu item');
-      return;
-    }
-    
-    // Update menu items.
-    fetchRestaurantData();
-    // Close the modal after successful update.
-    setShowEditMenuItemModal(false);
-  }
-
-  async function handleEditMenuItemModalDelete(menuItem: MenuItemType) {
-    const result = await ServerAPIClient.MenuItem.delete(menuItem.id);
-
-    if (!result || !result.ok) {
-      console.error('An error occurred while deleting a menu item');
-      return;
-    }
-
-    // Update menu items.
-    fetchRestaurantData();
-    // Close the modal after successful update.
-    setShowEditMenuItemModal(false);
-  }
-
-  async function handleAddMenuItemModalConfirm({ menu_item, image }: MenuItemFormData) {
-    // If new image is added, upload it to the server and update the image_path on the item.
-    if (image) {
-      const imageUrl = (await ServerAPIClient.MenuItem.uploadImage(image)).image_url;
-
-      if (!imageUrl) {
-        console.log("Could not upload image");
-        return;
-      }
-
-      menu_item.image_path = imageUrl
-    }
-
-    const createdMenuItem = await ServerAPIClient.MenuItem.create(menu_item);
-
-    if (!createdMenuItem) {
+    if (!createdTagLabel) {
       console.error('An error occurred while creating a tag');
       return;
     }
 
-    // Update menu items.
-    fetchRestaurantData();
-    // Close the modal after successful update.
-    setShowAddMenuItemModal(false);
+    // Update tag labels
+    setCurrentTagLabels([...currentTagLabels, createdTagLabel]);
   }
 
-  function handleMenuItemEditClick(menu_item: MenuItemType) {
-    setSelectedMenuItem(menu_item);
-    setShowEditMenuItemModal(true);
-  }
+  const handleCategoryClick = (category: CategoryLite) => {
+    router.push(`/restaurant/${restaurant.id}/category/${category.id}`);
+  };
 
   return (
     <div className={styles.restaurantView}>
       <div className={styles.restaurantName}>
-        {restaurant_name}
+        {restaurantData?.restaurant_name}
       </div>
       <div className={styles.container}>
         <div className={styles.menu}>
           <div className={styles.title}>Menu</div>
           <div className={styles.itemlist}>
-            {
-              menu_items.map((menu_item: MenuItemType) => (
-                <MenuItem
-                  key={menu_item.id}
-                  menu_item={menu_item}
-                  editable={true}
-                  onEdit={() => handleMenuItemEditClick(menu_item)}
-                />
-              ))
+            {categoryData &&
+              <CategoryView
+                categoryTree={categoryData}
+                tagLabels={currentTagLabels}
+                handleCategoryClick={handleCategoryClick}
+              />
             }
-            <button
-              className={sharedStyles.addButton}
-              onClick={() => setShowAddMenuItemModal(true)}
-            >
-              +
-            </button>
           </div>
         </div>
         <div className={styles.tags}>
           <div className={styles.title}>Tags</div>
           <div className={styles.taglist}>
-            {rootTag && <TagCategory rootTag={rootTag} onAddTag={handleAddTag} onEditTag={handleEditTagClick} />}
+            {/* TODO: Separate into a standalone component */}
+            {
+              currentTagLabels && currentTagLabels.map(
+                (tagLabel: TagLabelType) =>
+                  <TagLabel
+                    key={tagLabel.id}
+                    tagLabel={tagLabel}
+                    postAddTag={handleAddTag}
+                    postDeleteTagLabel={handleDeleteTagLabel}
+                    postEditTag={handleEditTag}
+                    postDeleteTag={handleDeleteTag}
+                  />
+              )
+            }
+            <InlineInputButton
+              onSubmit={(name: string) => {
+                const tagLabel = TagLabelType.new(categoryData.id);
+                tagLabel.name = name;
+                handleAddTagLabel(tagLabel);
+              }}
+              className={sharedStyles.inputButton}
+            >
+              Add tag label
+            </InlineInputButton>
           </div>
         </div>
-        <Modal
-          className={styles.modal}
-          show={showNewTagModal}
-          onHide={() => setShowNewTagModal(false)}
-          renderBackdrop={() => Backdrop(() => setShowNewTagModal(false))}
-        >
-          <TagModal
-            tag={TagType.new(selectedTag?.id || 0)}
-            onConfirm={handleTagSubmit}
-            onCancel={() => setShowNewTagModal(false)}
-            isAdd={true}
-          />
-        </Modal>
-        <Modal
-          className={styles.modal}
-          show={showEditTagModal}
-          onHide={() => setShowEditTagModal(false)}
-          renderBackdrop={() => Backdrop(() => setShowEditTagModal(false))}
-        >
-          <TagModal
-            tag={selectedTag!}
-            onConfirm={handleEditTag}
-            onDelete={handleDeleteTag}
-            onCancel={() => setShowEditTagModal(false)}
-          />
-        </Modal>
-        <Modal
-          className={styles.modal}
-          show={showEditMenuItemModal}
-          onHide={() => setShowEditMenuItemModal(false)}
-          renderBackdrop={() => Backdrop(() => setShowEditMenuItemModal(false))}
-        >
-          <MenuItemModal
-            onCancel={() => setShowEditMenuItemModal(false)}
-            onConfirm={handleEditMenuItemModalConfirm}
-            onDelete={handleEditMenuItemModalDelete}
-            menu_item={selectedMenuItem!}
-            tagList={rootTag?.toTagLeafList()!}
-            edit={true}
-          />
-        </Modal>
-        <Modal
-          className={styles.modal}
-          show={showAddMenuItemModal}
-          onHide={() => setShowAddMenuItemModal(false)}
-          renderBackdrop={() => Backdrop(() => setShowAddMenuItemModal(false))}
-        >
-          <MenuItemModal
-            onCancel={() => setShowAddMenuItemModal(false)}
-            onConfirm={handleAddMenuItemModalConfirm}
-            menu_item={MenuItemType.new(restaurantData?.id!)}
-            tagList={rootTag?.toTagLeafList()!}
-            edit={false}
-          />
-        </Modal>
       </div>
     </div>
   )
