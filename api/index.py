@@ -122,11 +122,9 @@ def delete_menu_item(menu_item_id: int, db: Session = Depends(get_session)):
     return CRUD(db).MenuItem.delete(menu_item_id = menu_item_id)
 
 @app.post("/api/{restaurant_id}/best_match_item", response_model=models.MenuItemRead)
-def get_best_match_item(restaurant_id: int, tag_ids: List[int], db: Session = Depends(get_session)):
-    print(tag_ids)
-
+def get_best_match_item(restaurant_id: int, tag_ids: List[int], category_ids: List[int], db: Session = Depends(get_session)):
     restaurant = models.RestaurantRead.from_orm(CRUD(db).Restaurant.get(restaurant_id = restaurant_id))
     tags = [models.TagRead.from_orm(tag) for tag in CRUD(db).Tag.get_by_ids(tag_ids = tag_ids)]
 
     compute = Compute(restaurant)
-    return compute.get_best_match(tags)
+    return compute.get_best_match(tags, category_ids)

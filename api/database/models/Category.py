@@ -54,6 +54,7 @@ class CategoryTreeRead(CategoryBase):
 class CategoryTreeLite(CategoryBase):
     id: int
     children: List["CategoryTreeLite"] = []
+    tag_labels: List['TagLabelRead'] = []
 
 class CategoryCreate(CategoryBase):
     restaurant_id: int

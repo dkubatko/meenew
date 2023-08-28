@@ -40,18 +40,13 @@ export default class RestaurantAPI {
     return await this.fetcher(`restaurant/${id}/category_tree`, options);
   }
 
-  public async getQuestionnaire(id: string): Promise<Question> {
-    const data = await this.fetcher(`${id}/questionnaire`);
-    return Question.fromObject(data);
-  }
-
-  public async get_best_match_item(restaurantId: string, tag_ids: number[]): Promise<MenuItem | null> {
+  public async get_best_match_item(restaurantId: string, tag_ids: number[], category_ids: number[]): Promise<MenuItem | null> {
     const options: RequestInit = {
       method: "POST",
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(tag_ids),
+      body: JSON.stringify({ tag_ids: tag_ids, category_ids: category_ids }),
     };
 
     const data = await this.fetcher(`${restaurantId}/best_match_item`, options);
@@ -59,7 +54,7 @@ export default class RestaurantAPI {
     if (data) {
       return MenuItem.fromObject(data);
     }
-    
+
     return null;
   }
 }

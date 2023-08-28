@@ -16,7 +16,7 @@
 }
 
 .category {
-  font-size: large;
+  font-size: 1.1rem;
   font-weight: 500;
   cursor: pointer;
 }
@@ -38,7 +38,6 @@
   width: 100%;
   display: flex;
   flex-direction: column;
-  margin: 1vh 0;
 }
 
 .subcategoryTitle {

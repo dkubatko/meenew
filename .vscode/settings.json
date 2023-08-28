@@ -1,7 +1,8 @@
 {
   "editor.tabSize": 2,
   "css.lint.validProperties": [
-    "composes"
+    "composes",
+    "text-wrap"
   ],
   "typescript.tsdk": "node_modules/typescript/lib",
   "cssModules.pathAlias": {

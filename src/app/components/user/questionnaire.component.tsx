@@ -3,8 +3,8 @@
 import Image from 'next/image';
 import meenew from '@/assets/character/meenew.png';
 import styles from '@/app/components/user/questionnaire.module.css';
-import ProgressBar from '@/app/components/progressBar.component';
-import Results from '@/app/components/results.component';
+import ProgressBar from '@/app/components/user/progressBar.component';
+import Results from '@/app/components/user/results.component';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import Options from './options.component';
 import { Tag, TagLabel } from '@/app/types/tag';
@@ -17,15 +17,18 @@ function tagToQuestion(tag: Tag): Question {
   return {
     id: tag.id!,
     name: tag.name,
-    children: []
+    children: [],
+    tag: tag,
   }
 }
 
-function tagLabelToQuestion(tagLabel: TagLabel): Question {
+function tagLabelToQuestion(tagLabel: TagLabel, category: CategoryTreeLite): Question {
   return {
     id: tagLabel.id!,
     name: tagLabel.name,
-    children: tagLabel.tags.map(tagToQuestion)
+    children: tagLabel.tags.map(tagToQuestion),
+    tag_label: tagLabel,
+    category: category,
   }
 }
 
@@ -33,7 +36,9 @@ function categoryToQuestion(category: CategoryTreeLite): Question {
   return {
     id: category.id!,
     name: category.name,
-    children: category.children.map(categoryToQuestion)
+    // Add questions related to the tag labels and subcategories as children of this question.
+    children: category.children.map(categoryToQuestion),
+    category: category,
   }
 }
 
@@ -53,29 +58,18 @@ export default function Questionnaire({ restaurantData, categoryTree }: Question
   const [selectedTagIds, setSelectedTagsIds] = useState<number[]>([]);
   const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
 
-  const [selectingTags, setSelectingTags] = useState(false);
-
   // Sets the current question to the top-most element of the question stack upon
   // questionStack update.
   const getNextQuestion = useCallback(async () => {
     if (questionStack.length > 0) {
       const nextQuestion = questionStack[0];
       setCurrentQuestion(nextQuestion);
-    } else if (!selectingTags && questionStack.length == 0) {
-      // If no questions are left in the question stack and no tags are selected,
-      // then fetch the questions for the selected categories.
-      const tagLabels = await ServerAPIClient.TagLabel.get_by_categories(selectedCategoriesIds);
-      setQuestionStack(tagLabels.map(tagLabelToQuestion));
-
-      setCurrentQuestion(questionStack[0]);
-
-      setSelectingTags(true);
     } else {
       // If no questions are left in the question stack and tags are selected,
       // then the questionnaire is complete.
       setComplete(true);
     }
-  }, [questionStack, selectedCategoriesIds, selectingTags]);
+  }, [questionStack]);
 
   // Updates the current question whenever the questionStack is changed.
   useEffect(() => {
@@ -99,32 +93,33 @@ export default function Questionnaire({ restaurantData, categoryTree }: Question
   function handleAnswerClick() {
     // Start by removing the current question from the stack.
     const updatedStack = [...questionStack].slice(1);
-    // Ids to be added as final preferences.
-    const selectedIds: number[] = [];
 
     selectedOptions.forEach(selectedOption => {
-      if (selectedOption.children.length == 0) {
-        // If an option is a leaf, add it to the final preferences.
-        selectedIds.push(selectedOption.id);
-      } else {
-        // Otherwise, add the question related to this option
-        // to the stack of questions.
+      if (selectedOption.tag) {
+        // If an option is a tag, add it to selected tags.
+        setSelectedTagsIds([...selectedTagIds, selectedOption.id]);
+      } else if (selectedOption.tag_label) {
+        // For tag label question, just add the question related.
         updatedStack.unshift(selectedOption);
-      }
+      } else if (selectedOption.category) {
+        // If an option is a category, add it to selected categories.
+        setSelectedCategoriesIds([...selectedCategoriesIds, selectedOption.id]);
+        // Add this option to the stack if it has more subcategories.
+        if (selectedOption.category.children.length > 0) {
+          updatedStack.unshift(selectedOption);
+        }
+        // Add questions related to all the tag labels for this category to the stack.
+        selectedOption.category.tag_labels.forEach(tagLabel => {
+          updatedStack.unshift(tagLabelToQuestion(tagLabel, selectedOption.category!));
+        });
+      };
     });
-
-    // Add new ids to the state
-    if (selectedIds.length > 0) {
-      selectingTags ? 
-      setSelectedTagsIds(prevSelectedTagIds => [...prevSelectedTagIds, ...selectedIds]) : 
-      setSelectedCategoriesIds(prevSelectedCategories => [...prevSelectedCategories, ...selectedIds]);
-    }
 
     // Update the question stack
     setQuestionStack(updatedStack);
     // Update the question number
     setQuestionNumber(questionNumber + 1);
-    // You might also want to reset the selected options after handling them
+
     setSelectedOptions([]);
   }
 
@@ -148,7 +143,9 @@ export default function Questionnaire({ restaurantData, categoryTree }: Question
           </button>}
         </div>
         <div className={styles.prompt}>
-          {!complete && (selectingTags ? "As for the preferences..." : "I would like...")}
+          {!complete && currentQuestion.tag_label ?
+          `What ${currentQuestion.tag_label.name.toLowerCase()} would you like for your ${currentQuestion.category!.name.toLowerCase()}?` :
+          `Out of ${currentQuestion.category!.name.toLowerCase()}, what would you prefer?`}
         </div>
         <div className={styles.vflex}>
           {selectedOptions.length > 0 && <button
@@ -167,6 +164,7 @@ export default function Questionnaire({ restaurantData, categoryTree }: Question
           <Results
             restaurantId={restaurantData?.id.toString()!}
             selectedTagIds={selectedTagIds}
+            selectedCategoryIds={selectedCategoriesIds}
           /> :
           (currentQuestion &&
             <Options

@@ -6,9 +6,13 @@ class Compute:
     def __init__(self, restaurant: RestaurantRead):
         self.restaurant = restaurant
     
-    def get_best_match(self, tags: List[TagRead]) -> MenuItemRead:
+    def get_best_match(self, tags: List[TagRead], category_ids: List[int]) -> MenuItemRead:
         # Fetch all menu items of the restaurant
         menu_items = self.restaurant.menu_items
+
+        # Filter menu items by categories
+        if category_ids:
+            menu_items = [item for item in menu_items if item.category_id in category_ids]
 
         max_overlap = 0
         best_match = None

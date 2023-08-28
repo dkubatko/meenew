@@ -93,15 +93,17 @@ export class CategoryTreeLite {
     public restaurant_id: number,
     public name: string,
     public children: CategoryTreeLite[] = [],
+    public tag_labels: TagLabel[] = []
   ) { }
 
   static fromObject(object: any): CategoryTreeLite {
-    const { id, restaurant_id, name, children } = object;
+    const { id, restaurant_id, name, children, tag_labels } = object;
     return new CategoryTreeLite(
       id,
       restaurant_id,
       name,
       children ? children.map(CategoryTreeLite.fromObject) : [],
+      tag_labels ? tag_labels.map(TagLabel.fromObject) : []
     );
   }
 }

@@ -13,13 +13,14 @@ import { ServerAPIClient } from "@/app/api/APIClient";
 
 interface MenuItemProps {
   menu_item: MenuItemType;
+  className?: string;
   tagList?: TagType[];
   editable?: boolean;
   postEdit?: (menu_item: MenuItemType) => void;
   postDelete?: (menu_item: MenuItemType) => void;
 }
 
-export default function MenuItem({ menu_item, editable, postEdit, postDelete, tagList = [] }: MenuItemProps) {
+export default function MenuItem({ menu_item, className, editable, postEdit, postDelete, tagList = [] }: MenuItemProps) {
   const [showEditMenuItemModal, setShowEditMenuItemModal] = useState<boolean>(false);
   const [currentMenuItem, setCurrentMenuItem] = useState<MenuItemType>(menu_item);
 
@@ -67,7 +68,7 @@ export default function MenuItem({ menu_item, editable, postEdit, postDelete, ta
 
   return (
     <>
-      <div className={styles.container}>
+      <div className={`${styles.container} ${className || ""}`}>
         <div className={styles.item}>
           <div className={styles.image}>
             {

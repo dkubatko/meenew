@@ -38,6 +38,18 @@
   }
 }
 
+/* Default font-size for web */
+:root {
+  font-size: 20px;
+}
+
+/* Font-size for mobile */
+@media (max-width: 768px) {
+  :root {
+    font-size: 14px;
+  }
+}
+
 body {
   background-color: var(--background-color);
   color: black;
@@ -101,6 +113,7 @@ body {
   font-size: 3vh;
   margin: 3vh 3vw;
   cursor: pointer;
+  text-align: center;
 }
 
 .link:hover {

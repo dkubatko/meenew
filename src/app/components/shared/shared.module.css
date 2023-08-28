@@ -48,20 +48,22 @@
 
 .tag {
   composes: baseTag;
-  padding: 0.5vh 2vw;
-  margin: 0vh 0.3vw;
+  font-size: 0.7rem;
+  padding: 0.3vh 2vw;
+  margin: 0vh 0.1vw;
 }
 
 .largeTag {
   composes: baseTag;
   width: 100%;
+  font-size: 0.9rem;
   padding: 0.5vh 0.5vw;
   margin: 0.5vh 0vw;
 }
 
 .smallTag {
   composes: baseTag;
-  font-size: small;
+  font-size: 0.5rem;
   padding: 0.5vh 1.5vw;
   margin: 0.2vh 0.2vw;
   min-width: 30%;
@@ -84,7 +86,7 @@
   composes: button;
   width: 70%;
   padding: 0.9vh 0.7vw;
-  margin: 0.3vh 0;
+  margin: 0.8vh 0;
   border-radius: 25%;
 }
 
@@ -97,7 +99,8 @@
   composes: button;
   width: 100%;
   padding: 0.3vh 1vw;
-  margin: 0.5vh 0.2vw;
+  margin: 0vh 0.2vw;
+  margin-bottom: 0.7vh;
   white-space: nowrap;
   border: 1px solid transparent;
   text-align: center;

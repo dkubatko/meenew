@@ -33,4 +33,5 @@ class MenuItemCreate(MenuItemBase):
 class MenuItemRead(MenuItemBase):
     id: int
     image_path: Optional[str]
+    category_id: int
     tags: List['TagRead'] = []
