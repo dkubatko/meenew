@@ -3,7 +3,7 @@
   width: 100%;
   text-align: center;
   border: 1px solid black;
-  margin: 0.5vh 0vw;
+  margin-bottom: 0.7vh;
   padding: 0.3vh 0.3vw;
   background-color: var(--secondary-color);
   display: flex;
@@ -21,7 +21,7 @@
   height: 0; 
   border-top: 0.8vh solid transparent;
   border-bottom: 0.8vh solid transparent;
-  border-left: 1vw solid rgb(115, 103, 134);
+  border-left: 1.5vw solid rgb(115, 103, 134);
 }
 
 .items {

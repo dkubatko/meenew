@@ -11,8 +11,7 @@ export default function Home() {
     <>
       <div className='list'>
         <Link className='link' href='/restaurant/0'>Restaurant management demo!</Link>
-        <Link className='link' href='/menu/123'>Sample menu!</Link>
-        <Link className='link' href='http://127.0.0.1:8000/api/python'>Try the Python integration!</Link>
+        <Link className='link' href='/menu/0'>Sample menu!</Link>
       </div>
     </>
   );
