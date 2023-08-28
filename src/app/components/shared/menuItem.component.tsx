@@ -78,6 +78,8 @@ export default function MenuItem({ menu_item, className, editable, postEdit, pos
                   alt='preview'
                   fill
                   className={styles.imageInner}
+                  priority={true}
+                  placeholder="blur"
                 /> : "Image"
             }
           </div>

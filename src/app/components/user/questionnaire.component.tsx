@@ -177,7 +177,7 @@ export default function Questionnaire({ restaurantData, categoryTree }: Question
             />)
       }
       <div className={styles.bottom}>
-        <Image src={meenew} alt='meenew' className={styles.mascot}></Image>
+        <Image src={meenew} alt='meenew' className={styles.mascot} priority={true} placeholder='blur'/>
       </div>
     </div>
   )
