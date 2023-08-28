@@ -63,7 +63,7 @@
 
 .smallTag {
   composes: baseTag;
-  font-size: 0.5rem;
+  font-size: 0.7rem;
   padding: 0.5vh 1.5vw;
   margin: 0.2vh 0.2vw;
   min-width: 30%;

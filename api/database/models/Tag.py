@@ -8,7 +8,7 @@ if TYPE_CHECKING:
     from .MenuItem import MenuItem
 
 class TagBase(SQLModel):
-    name: str = Field(unique=True, index=True)
+    name: str = Field(index=True)
     label_id: Optional[int] = Field(default=None, foreign_key="taglabels.id", nullable=True)
 
 class Tag(TagBase, table=True):
