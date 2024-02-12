@@ -12,6 +12,12 @@ Meenew offers a short questionnaire for a quick assessment for the best dish rec
 
 ![](https://github.com/dkubatko/meenew/blob/main/README/client.gif)
 
+# Restaurant management demo
+
+On the restaurant's end, all the menu items can be categorized and tagged within the category, which serves as an algorithmic base for the questionaire construction.
+
+![](https://github.com/dkubatko/meenew/blob/main/README/server.gif)
+
 # How to run locally?
 
 ```bash
@@ -26,3 +32,8 @@ Python FastAPI server is served on [http://localhost:8000](http://localhost:3000
 Current task tracking has been exported to Obsidian. 
 
 Issues can be created on GitHub for public feature requests.
+
+# Stack
+
+Frontend: Next.js + Vercel
+Backend: Python FastAPI, SQLModel, Alembic, Google Cloud PostgreSQL
