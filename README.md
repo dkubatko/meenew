@@ -6,6 +6,12 @@ The application is built with Next.js + Python FastAPI [serverless functions](ht
 
 This project was bootstrapped with the [Next.js FastAPI starter](https://vercel.com/templates/next.js/nextjs-fastapi-starter).
 
+# Customer demo
+
+Meenew offers a short questionnaire for a quick assessment for the best dish recomendation from the restaurant's menu.
+
+![](https://github.com/dkubatko/meenew/blob/main/README/client.gif)
+
 # How to run locally?
 
 ```bash
